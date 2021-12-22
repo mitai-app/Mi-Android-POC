@@ -1,4 +1,4 @@
-package nyc.vonley.lambda
+package nyc.vonley.mi
 
 import org.junit.Test
 

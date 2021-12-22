@@ -1,4 +1,4 @@
-package nyc.vonley.lambda
+package nyc.vonley.mi
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
