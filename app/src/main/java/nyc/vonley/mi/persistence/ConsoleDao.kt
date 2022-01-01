@@ -8,5 +8,5 @@ import nyc.vonley.mi.models.Console
 @Dao
 interface ConsoleDao: IDao<Console, String>{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun inserts(consoles: List<ConsoleDao>)
+    suspend fun inserts(consoles: List<Console>)
 }

@@ -10,7 +10,5 @@ import nyc.vonley.mi.models.Console
     ], version = 1, exportSchema = true
 )
 abstract class AppDatabase: RoomDatabase() {
-
     abstract fun consoleDao(): ConsoleDao
-
 }
