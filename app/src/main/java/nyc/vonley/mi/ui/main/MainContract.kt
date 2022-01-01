@@ -1,7 +1,7 @@
 package nyc.vonley.mi.ui.main
 
 import nyc.vonley.mi.base.BaseContract
-import nyc.vonley.mi.enums.ConsoleType
+import nyc.vonley.mi.models.enums.ConsoleType
 
 interface MainContract {
 

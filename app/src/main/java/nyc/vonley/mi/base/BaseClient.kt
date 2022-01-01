@@ -6,7 +6,7 @@ import okhttp3.Request
 import okhttp3.RequestBody
 
 abstract class BaseClient(
-    protected val client: OkHttpClient
+    protected val http: OkHttpClient
 ) {
 
     fun post(url: String, body: RequestBody, headers: Headers) {
@@ -15,7 +15,7 @@ abstract class BaseClient(
             .headers(headers)
             .post(body)
             .build()
-        val execute = client.newCall(req).execute()
+        val execute = http.newCall(req).execute()
     }
 
 

@@ -2,7 +2,7 @@ package nyc.vonley.mi.di.network
 
 import android.content.Context
 import nyc.vonley.mi.base.BaseClient
-import nyc.vonley.mi.di.annotations.GuestRetrofitClient
+import nyc.vonley.mi.models.Client
 import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
@@ -10,11 +10,12 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
 class PS4Client constructor(
-    protected var ip: String,
-    protected var port: Int,
-    @GuestRetrofitClient client: OkHttpClient
-) : BaseClient(client) {
+    client: Client,
+    private var port: Int,
+    http: OkHttpClient
+) : BaseClient(http) {
 
+    val ip = client.hostName
 
     /**
      * Uploads file to web

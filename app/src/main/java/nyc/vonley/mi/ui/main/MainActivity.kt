@@ -9,14 +9,19 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.fragment.app.findFragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.snackbar.Snackbar
 import nyc.vonley.mi.databinding.ActivityMainBinding
 import java.io.File
@@ -45,17 +50,27 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
+        setSupportActionBar(binding.bottomAppBar)
 
-        //val navController = findNavController(R.id.nav_host_fragment_content_main)
-        //appBarConfiguration = AppBarConfiguration(navController.graph)
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment?
+        val navController = navHostFragment!!.navController
+        NavigationUI.setupWithNavController(binding.bottomNavigation, navController)
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            binding.fab.visibility = when(destination.id) {
+                R.id.fragment_home, R.id.fragment_settings -> View.VISIBLE
+                else -> View.GONE
+            }
+        }
+        /*
+        appBarConfiguration = AppBarConfiguration(navController.graph)
         //-+
-        // setupActionBarWithNavController(navController, appBarConfiguration)
+        setupActionBarWithNavController(navController, appBarConfiguration)
 
         binding.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
-        }
+        }*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -128,6 +143,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     override fun onError(e: Throwable) {
 
     }
+
     companion object {
 
         /** Use external media if it is available, our app's file directory otherwise */

@@ -8,12 +8,21 @@ import android.net.wifi.WifiManager
 import android.text.format.Formatter
 import android.util.Log
 import kotlinx.coroutines.*
+import nyc.vonley.mi.extensions.client
+import nyc.vonley.mi.models.Client
+import nyc.vonley.mi.models.Console
 import java.lang.ref.WeakReference
 import java.net.InetAddress
 import kotlin.coroutines.CoroutineContext
 
+
+//TODO: Consider using a view model
 class ClientSync constructor(context: Context) : CoroutineScope {
 
+    private val clients: HashMap<String, Client> = hashMapOf()
+    private val consoles: HashMap<String, Console> = hashMapOf()
+
+    val activeClients: List<Client> = clients.values.filter { client -> client.reachable }
 
     protected val job = Job()
 
@@ -47,26 +56,24 @@ class ClientSync constructor(context: Context) : CoroutineScope {
 
                 val prefix = ipString.substring(0, ipString.lastIndexOf(".") + 1);
                 Log.d(TAG, "prefix: $prefix");
-                for (i in 0 until 256) {
-
+                for (i in 1 until 256) {
                     val testIp = "$prefix$i";
-
-                    val address = InetAddress.getByName(testIp);
-                    val reachable = address.isReachable(50);
-                    val hostName = address.canonicalHostName;
-
-                    if (reachable) {
-                        val element = Client(address, reachable, hostName)
-                        reachables.add(element)
-                        Log.e(TAG, "Host: ($hostName : $address) is reachable!");
+                    val client = InetAddress.getByName(testIp).client()
+                    if (client.reachable) {
+                        clients[client.hostName] = client
+                        val activePorts = client.activePorts
+                        reachables.add(client)
+                        Log.e(TAG, "Host: (${client.hostName} : ${client.address.hostAddress}) ${client.address.hostName} is reachable! w/ $activePorts");
+                    } else {
+                        clients[client.hostName] = client
                     }
                 }
             }
         } catch (t: Throwable) {
             Log.e(TAG, "Well that's not good.", t);
-            Log.e(TAG, t.message?:"Somethign wrong")
+            Log.e(TAG, t.message ?: "Somethign wrong")
         }
-        return reachables;
+        return reachables
     }
 
     private suspend fun fetchClientListAsync(): List<Client> {
@@ -88,13 +95,4 @@ class ClientSync constructor(context: Context) : CoroutineScope {
     }
 
 
-    data class Client(
-        val address: InetAddress,
-        val reachable: Boolean,
-        val hostName: String
-    ) {
-    }
-
 }
-
-
