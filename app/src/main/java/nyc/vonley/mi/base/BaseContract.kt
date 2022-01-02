@@ -9,6 +9,7 @@ interface BaseContract {
     }
 
     interface Presenter : CoroutineScope {
+        fun init()
         fun cleanup()
     }
 

@@ -9,6 +9,7 @@ import android.text.format.Formatter
 import android.util.Log
 import kotlinx.coroutines.*
 import nyc.vonley.mi.extensions.client
+import nyc.vonley.mi.extensions.console
 import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console
 import java.lang.ref.WeakReference
@@ -23,6 +24,7 @@ class ClientSync constructor(context: Context) : CoroutineScope {
     private val consoles: HashMap<String, Console> = hashMapOf()
 
     val activeClients: List<Client> = clients.values.filter { client -> client.reachable }
+    val activeConsoles: List<Console> = consoles.values.toList()
 
     protected val job = Job()
 
@@ -56,23 +58,31 @@ class ClientSync constructor(context: Context) : CoroutineScope {
 
                 val prefix = ipString.substring(0, ipString.lastIndexOf(".") + 1);
                 Log.d(TAG, "prefix: $prefix");
-                for (i in 1 until 256) {
-                    val testIp = "$prefix$i";
+                for (i in 0 until 256) {
+                    val testIp = "$prefix$i"
+                    Log.d(TAG, "testIP: $testIp");
+
                     val client = InetAddress.getByName(testIp).client()
                     if (client.reachable) {
                         clients[client.hostName] = client
+                        Log.e(TAG, "Host: (${client.hostName} : ${client.address.hostAddress}) is reachables");
                         val activePorts = client.activePorts
                         reachables.add(client)
-                        Log.e(TAG, "Host: (${client.hostName} : ${client.address.hostAddress}) ${client.address.hostName} is reachable! w/ $activePorts");
-                    } else {
-                        clients[client.hostName] = client
+                        if (activePorts.isNotEmpty()) {
+                            Log.e(TAG, "Host: (${client.hostName} w/ $activePorts");
+                            val console = client.console()
+                            if (console != null) {
+                                consoles[console.ip] = console
+                            }
+                        }
                     }
                 }
             }
         } catch (t: Throwable) {
             Log.e(TAG, "Well that's not good.", t);
-            Log.e(TAG, t.message ?: "Somethign wrong")
+            Log.e(TAG, t.message ?: "Something wrong")
         }
+        Log.e(TAG, "END OF SCAN")
         return reachables
     }
 
@@ -85,14 +95,17 @@ class ClientSync constructor(context: Context) : CoroutineScope {
     }
 
 
-    fun getClients(callable: (clients: List<Client>) -> Unit) {
+    /**
+     * Gets Active Clients & Gets Consoles
+     */
+    fun getClients(callable: (clients: List<Client>, consoles: List<Console>) -> Unit) {
         launch {
             val clients = fetchClientListAsync()
             withContext(Dispatchers.Main) {
-                callable(clients)
+                Log.e(TAG, "${consoles.values.toList()}")
+                callable(clients, consoles.values.toList())
             }
         }
     }
-
 
 }

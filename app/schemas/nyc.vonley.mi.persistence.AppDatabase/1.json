@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b2e8d33bd316501e57bf63f6d0c0d588",
+    "identityHash": "0ce399382796be3e3e1de1e232101d21",
     "entities": [
       {
         "tableName": "Console",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ip` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, PRIMARY KEY(`ip`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ip` TEXT NOT NULL, `name` TEXT NOT NULL, `type` INTEGER NOT NULL, `features` TEXT NOT NULL, PRIMARY KEY(`ip`))",
         "fields": [
           {
             "fieldPath": "ip",
@@ -23,6 +23,12 @@
           {
             "fieldPath": "type",
             "columnName": "type",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "features",
+            "columnName": "features",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -40,7 +46,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b2e8d33bd316501e57bf63f6d0c0d588')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0ce399382796be3e3e1de1e232101d21')"
     ]
   }
 }

@@ -1,4 +1,4 @@
-package nyc.vonley.mi.ui.main.fragments
+package nyc.vonley.mi.ui.main.settings
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

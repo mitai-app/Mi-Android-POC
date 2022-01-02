@@ -27,6 +27,7 @@ import nyc.vonley.mi.databinding.ActivityMainBinding
 import java.io.File
 import dagger.hilt.android.AndroidEntryPoint
 import nyc.vonley.mi.R
+import nyc.vonley.mi.models.Console
 import javax.inject.Inject
 
 const val KEY_EVENT_ACTION = "key_event_action"
@@ -42,17 +43,11 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setSupportActionBar(binding.bottomAppBar)
-
-
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment?
         val navController = navHostFragment!!.navController
         NavigationUI.setupWithNavController(binding.bottomNavigation, navController)
@@ -63,15 +58,15 @@ class MainActivity : AppCompatActivity(), MainContract.View {
             }
         }
         /*
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        //-+
-        setupActionBarWithNavController(navController, appBarConfiguration)
-
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }*/
+            appBarConfiguration = AppBarConfiguration(navController.graph)
+            setupActionBarWithNavController(navController, appBarConfiguration)
+            binding.fab.setOnClickListener { view ->
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+            }
+        */
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -137,6 +132,10 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     override fun start() {
+
+    }
+
+    override fun onConsolesFound(consoles: List<Console>) {
 
     }
 

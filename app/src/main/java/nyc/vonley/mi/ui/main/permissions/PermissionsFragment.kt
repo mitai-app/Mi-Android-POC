@@ -1,4 +1,4 @@
-package nyc.vonley.mi.ui.main.fragments
+package nyc.vonley.mi.ui.main.permissions
 
 /*
  * Copyright 2020 The Android Open Source Project
