@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import dagger.hilt.android.AndroidEntryPoint
 import nyc.vonley.mi.R
 import nyc.vonley.mi.databinding.FragmentConsoleBinding
+import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console
 import nyc.vonley.mi.ui.main.console.adapters.ConsoleRecyclerAdapter
 import javax.inject.Inject
@@ -79,6 +80,10 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
 
     override fun onConsolesFound(consoles: List<Console>) {
         adapter.setData(consoles)
+    }
+
+    override fun onClientsFound(clients: List<Client>) {
+
     }
 
     override fun onError(e: Throwable) {

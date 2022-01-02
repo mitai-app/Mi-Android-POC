@@ -16,7 +16,7 @@ fun InetAddress.client(): Client {
 }
 
 fun Client.console(): Console? {
-    val actives = activePorts
+    val actives = getActivePorts()
     if (actives.isNotEmpty()) {
         val features = actives.map { port ->
             val values = Features.values()

@@ -19,9 +19,13 @@ class ConsolePresenter @Inject constructor(
 
 
     override fun init() {
-        sync.getClients { clients, consoles ->
+        val callableClients: (clients: List<Client>) -> Unit = { clients ->
+            view.onClientsFound(clients)
+        }
+        val callableConsoles: (consoles: List<Console>) -> Unit = { consoles ->
             view.onConsolesFound(consoles)
         }
+        sync.getClients(callableClients, callableConsoles)
     }
 
     override fun cleanup() {

@@ -14,8 +14,11 @@ class ConsoleRecyclerAdapter : RecyclerView.Adapter<ConsoleRecyclerAdapter.Conso
         RecyclerView.ViewHolder(binding.root) {
 
         fun setConsole(console: Console) {
-            binding.vhConsoleNickname.text = console.name
-            binding.vhConsoleIp.text = console.ip
+            val headers = "${console.name} - ${console.ip}"
+            binding.vhConsoleNickname.text = headers
+            val features =
+                "Features: ${if (console.features.size > 1) console.features.filter { f -> f.port > 0 } else console.features} "
+            binding.vhConsoleIp.text = features
             binding.root.setOnClickListener {
                 //TODO: Set Click
 
@@ -25,11 +28,17 @@ class ConsoleRecyclerAdapter : RecyclerView.Adapter<ConsoleRecyclerAdapter.Conso
 
     fun setData(consoles: List<Console>) {
         this.consoles = consoles
-        this.notifyDataSetChanged()
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConsoleViewHolder {
-        return ConsoleViewHolder(VhConsoleBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ConsoleViewHolder(
+            VhConsoleBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: ConsoleViewHolder, position: Int) {

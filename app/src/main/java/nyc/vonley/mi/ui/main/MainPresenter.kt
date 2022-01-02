@@ -16,9 +16,7 @@ class MainPresenter @Inject constructor(
     }
 
     override fun init() {
-        sync.getClients { clients, consoles ->
-            view.onConsolesFound(consoles)
-        }
+
     }
 
     override fun cleanup() {

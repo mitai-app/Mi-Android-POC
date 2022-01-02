@@ -20,11 +20,27 @@ import kotlin.coroutines.CoroutineContext
 //TODO: Consider using a view model
 class ClientSync constructor(context: Context) : CoroutineScope {
 
+    private val mContextRef: WeakReference<Context> = WeakReference<Context>(context);
+
     private val clients: HashMap<String, Client> = hashMapOf()
     private val consoles: HashMap<String, Console> = hashMapOf()
 
-    val activeClients: List<Client> = clients.values.filter { client -> client.reachable }
-    val activeConsoles: List<Console> = consoles.values.toList()
+    val activeClients: List<Client> get() = clients.values.filter { client -> client.lastKnownReachable }
+    val activeConsoles: List<Console> get() =  consoles.values.toList()
+    lateinit var cm: ConnectivityManager
+    lateinit var wm: WifiManager
+
+    val activeNetwork: NetworkInfo?
+        get() = cm.activeNetworkInfo
+
+    val connectionInfo: WifiInfo
+        get() = wm.connectionInfo
+
+    val ipAddress: Int
+        get() = connectionInfo.ipAddress
+
+    val ipString: String
+        get() = Formatter.formatIpAddress(ipAddress)
 
     protected val job = Job()
 
@@ -35,75 +51,112 @@ class ClientSync constructor(context: Context) : CoroutineScope {
         const val TAG = "client"
     }
 
-    private val mContextRef: WeakReference<Context> = WeakReference<Context>(context);
+    init {
+        val con = mContextRef.get()
+        if (con != null) {
+            cm = con.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            wm = con.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        }
+    }
 
-    fun fetchClients(): ArrayList<Client> {
+    ////////////////////////////////////////
+    ///   Author: Mr-Smithy-x (Vonley)   ///
+    ///     Purpose: Fetch Consoles      ///
+    ///        Project Mi: 1.2.22		 ///
+    ////////////////////////////////////////
+
+
+    /**
+     * Fetch PS4 & PS3 Consoles on the current
+     * network for jailbroken devices
+     */
+    fun fetchConsoles(clients: List<Client>): List<Console> {
+        try {
+            Log.i(TAG, "[FetchConsoles::Start] Active Network: $activeNetwork")
+            Log.i(TAG, "[Device Local IP] $ipString")
+            val prefix = ipString.substring(0, ipString.lastIndexOf(".") + 1)
+            Log.i(TAG, "[Local IP Prefix] $prefix")
+            val consoles = clients
+                .filter { client -> client.getActivePorts().isNotEmpty() }
+                .mapNotNull { client -> client.console() }
+            consoles.forEachIndexed { index, console ->
+                this.consoles[console.ip] = console
+            }
+            Log.v(TAG, "[FetchConsoles::End] End of Scan #: ${consoles.size}")
+            return consoles
+        } catch (t: Throwable) {
+            Log.e(TAG, "[FetchConsoles::End] Well... that's not good. ${t.message}", t)
+        }
+        return emptyList()
+    }
+
+    /**
+     * Fetch All Connected Clients on the network
+     * for potential match (IPV4 Clients Only)
+     * TODO: Accomodate for IPV6 Clients
+     */
+    fun fetchClients(): List<Client> {
         val reachables: ArrayList<Client> = ArrayList()
         try {
-            val context = mContextRef.get();
-
-            if (context != null) {
-
-                val cm =
-                    context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-                val wm = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
-
-                val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-                val connectionInfo = wm.connectionInfo as WifiInfo
-                val ipAddress = connectionInfo.ipAddress;
-                val ipString = Formatter.formatIpAddress(ipAddress);
-
-                Log.d(TAG, "activeNetwork: $activeNetwork");
-                Log.d(TAG, "ipString: $ipString");
-
-                val prefix = ipString.substring(0, ipString.lastIndexOf(".") + 1);
-                Log.d(TAG, "prefix: $prefix");
-                for (i in 0 until 256) {
-                    val testIp = "$prefix$i"
-                    Log.d(TAG, "testIP: $testIp");
-
-                    val client = InetAddress.getByName(testIp).client()
+            Log.i(TAG, "[FetchClients::Start] Active Network: $activeNetwork")
+            Log.i(TAG, "[Device Local IP] $ipString")
+            val prefix = ipString.substring(0, ipString.lastIndexOf(".") + 1)
+            Log.i(TAG, "[Local IP Prefix] $prefix")
+            for (i in 1 until 256) {
+                try {
+                    val ip = "$prefix$i"
+                    val client = InetAddress.getByName(ip).client()
                     if (client.reachable) {
+                        Log.i(TAG, "[Client IP] (${client.hostName}) is reachable")
                         clients[client.hostName] = client
-                        Log.e(TAG, "Host: (${client.hostName} : ${client.address.hostAddress}) is reachables");
-                        val activePorts = client.activePorts
                         reachables.add(client)
-                        if (activePorts.isNotEmpty()) {
-                            Log.e(TAG, "Host: (${client.hostName} w/ $activePorts");
-                            val console = client.console()
-                            if (console != null) {
-                                consoles[console.ip] = console
-                            }
-                        }
+                    } else {
+                        Log.e(TAG, "[Client IP] ${client.hostName} is unreachable")
                     }
+                } catch (e: Throwable) {
+                    Log.e(TAG, "[Error] ${e.message}")
                 }
             }
+            Log.v(TAG, "[FetchClients::End] End of scan, #: ${reachables.size}")
+            return reachables
         } catch (t: Throwable) {
-            Log.e(TAG, "Well that's not good.", t);
-            Log.e(TAG, t.message ?: "Something wrong")
+            Log.e(TAG, "[Error] Hmmm. that's not good. ${t.message}", t)
         }
-        Log.e(TAG, "END OF SCAN")
-        return reachables
+        return emptyList()
     }
 
     private suspend fun fetchClientListAsync(): List<Client> {
-        return coroutineScope {
-            async<List<Client>> {
-                return@async fetchClients()
-            }.await()
-        }
+        return coroutineScope { async { return@async fetchClients() }.await() }
     }
 
+    private suspend fun fetchConsolesListAsync(clients: List<Client>): List<Console> {
+        return coroutineScope { async { return@async fetchConsoles(clients) }.await() }
+    }
+
+    lateinit var activeJob: Job
 
     /**
      * Gets Active Clients & Gets Consoles
      */
-    fun getClients(callable: (clients: List<Client>, consoles: List<Console>) -> Unit) {
-        launch {
+    fun getClients(callableClients: (clients: List<Client>) -> Unit, callableConsoles: (consoles: List<Console>) -> Unit) {
+        val block: suspend CoroutineScope.() -> Unit = {
             val clients = fetchClientListAsync()
             withContext(Dispatchers.Main) {
-                Log.e(TAG, "${consoles.values.toList()}")
-                callable(clients, consoles.values.toList())
+                Log.e(TAG, "$clients")
+                callableClients(clients)
+            }
+
+            val consoles = fetchConsolesListAsync(clients)
+            withContext(Dispatchers.Main){
+                Log.e(TAG, "$consoles")
+                callableConsoles(consoles)
+            }
+        }
+        if (!this::activeJob.isInitialized) activeJob = launch(block = block)
+        if (this.activeJob.isActive) return
+        if (this.activeJob.isCompleted) {
+            if (!activeJob.start()) {
+                activeJob = launch(block = block)
             }
         }
     }
