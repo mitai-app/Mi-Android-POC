@@ -118,16 +118,13 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
                 val file = DataInputStream(contentResolver.openInputStream(uri))
                 val bytes = file.readBytes()
                 file.close()
-                val question = "Is this the correct payload?"
+                val question = "Click confirm if this is the correct payload."
                 val action = Snackbar.make(requireView(), question, Snackbar.LENGTH_INDEFINITE);
                 val yes: (v: View) -> Unit = { view ->
                     presenter.sendPayload(bytes)
                     action.dismiss()
                 }
-                val no: (v: View) -> Unit = { view ->
-                    action.dismiss()
-                }
-                action.setAction("Yes", yes).setAction("No", no)
+                action.setAction("Confirm", yes)
                 action.show()
             } else {
                 val question = "I have failed you :("
