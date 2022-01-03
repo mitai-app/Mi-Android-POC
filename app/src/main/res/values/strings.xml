@@ -3,4 +3,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="action_settings">Settings</string>
+    <string name="preference_uuid">nyc.vonley.uuid</string>
+    <string name="preference_voices">nyc.vonley.voices</string>
+    <string name="preference_speed">nyc.vonley.speed</string>
+    <string name="preference_pitch">nyc.vonley.speed</string>
 </resources>

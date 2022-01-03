@@ -7,9 +7,9 @@
     tools:context=".ui.main.MainActivity">
 
     <include
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/content_main"
-        layout="@layout/content_main" />
+        layout="@layout/content_main"
+        app:layout_behavior="com.google.android.material.bottomappbar.BottomAppBar$Behavior" />
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"

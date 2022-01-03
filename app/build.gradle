@@ -63,6 +63,10 @@ dependencies {
 
     implementation 'com.google.android.gms:play-services-mlkit-text-recognition:17.0.1'
 
+    implementation "commons-net:commons-net:3.6"
+
+
+
     implementation "com.google.code.gson:gson:2.8.6"
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
