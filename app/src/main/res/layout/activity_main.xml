@@ -35,9 +35,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/colorPrimary"
-            app:itemIconTint="@android:color/black"
-            app:itemTextColor="@android:color/black"
-            app:labelVisibilityMode="unlabeled"
+            app:itemIconTint="@color/tab_selected_color"
+            app:itemTextColor="@color/tab_selected_color"
+            app:labelVisibilityMode="auto"
             app:menu="@menu/bottom_menu" />
 
     </com.google.android.material.bottomappbar.BottomAppBar>

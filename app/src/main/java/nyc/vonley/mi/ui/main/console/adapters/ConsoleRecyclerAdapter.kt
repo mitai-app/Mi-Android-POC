@@ -16,8 +16,7 @@ class ConsoleRecyclerAdapter : RecyclerView.Adapter<ConsoleRecyclerAdapter.Conso
         fun setConsole(console: Console) {
             val headers = "${console.name} - ${console.ip}"
             binding.vhConsoleNickname.text = headers
-            val features =
-                "Features: ${if (console.features.size > 1) console.features.filter { f -> f.port > 0 } else console.features} "
+            val features = "Features: ${if (console.features.size > 1) console.features.filter { f -> f.port > 0 } else console.features} "
             binding.vhConsoleIp.text = features
             binding.root.setOnClickListener {
                 //TODO: Set Click

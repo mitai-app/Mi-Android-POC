@@ -14,6 +14,9 @@ import nyc.vonley.mi.ui.main.MainPresenter
 import nyc.vonley.mi.ui.main.console.ConsoleContract
 import nyc.vonley.mi.ui.main.console.ConsoleFragment
 import nyc.vonley.mi.ui.main.console.ConsolePresenter
+import nyc.vonley.mi.ui.main.payload.PayloadContract
+import nyc.vonley.mi.ui.main.payload.PayloadFragment
+import nyc.vonley.mi.ui.main.payload.PayloadPresenter
 
 @Module
 @InstallIn(FragmentComponent::class)
@@ -26,5 +29,13 @@ abstract class FragmentPresenterModule {
     @Binds
     @FragmentScoped
     abstract fun bindConsolePresenter(impl: ConsolePresenter): ConsoleContract.Presenter
+
+    @Binds
+    @FragmentScoped
+    abstract fun bindPayloadFragment(impl: PayloadFragment): PayloadContract.View
+
+    @Binds
+    @FragmentScoped
+    abstract fun bindPayloadPresenter(impl: PayloadPresenter): PayloadContract.Presenter
 
 }
