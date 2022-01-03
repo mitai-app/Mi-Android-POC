@@ -25,10 +25,15 @@ class ConsolePresenter @Inject constructor(
         val callableConsoles: (consoles: List<Console>) -> Unit = { consoles ->
             view.onConsolesFound(consoles)
         }
+        sync.addListener(this)
         sync.getClients(callableClients, callableConsoles)
     }
 
     override fun cleanup() {
 
+    }
+
+    override fun onConsoleFound(console: Console) {
+        view.onConsoleFound(console)
     }
 }

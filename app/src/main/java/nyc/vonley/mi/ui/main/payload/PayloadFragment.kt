@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import nyc.vonley.mi.databinding.FragmentPayloadBinding
+import nyc.vonley.mi.models.Console
 import java.io.DataInputStream
 import javax.inject.Inject
 
@@ -86,8 +87,13 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentPayloadBinding.inflate(inflater, container, false)
-        binding.browseBtn.setOnClickListener(this@PayloadFragment::open)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.browseBtn.setOnClickListener(this@PayloadFragment::open)
+        presenter.init()
     }
 
     companion object {
@@ -131,6 +137,10 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
                 Snackbar.make(requireView(), question, Snackbar.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onConsoleFound(console: Console) {
+        
     }
 
     override fun onError(e: Throwable) {

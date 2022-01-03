@@ -20,15 +20,27 @@ import kotlin.coroutines.CoroutineContext
 //TODO: Consider using a view model
 class ClientSync constructor(context: Context) : CoroutineScope {
 
+    interface ConsoleListener {
+        fun onConsoleFound(console: Console)
+    }
+
+    private val listeners: HashMap<String, ConsoleListener> = hashMapOf()
+
+    fun addListener(console: ConsoleListener) {
+        listeners[console.javaClass.name] = console
+    }
+
     private val mContextRef: WeakReference<Context> = WeakReference<Context>(context);
 
     private val clients: HashMap<String, Client> = hashMapOf()
     private val consoles: HashMap<String, Console> = hashMapOf()
 
     val activeClients: List<Client> get() = clients.values.filter { client -> client.lastKnownReachable }
-    val activeConsoles: List<Console> get() =  consoles.values.toList()
+    val activeConsoles: List<Console> get() = consoles.values.toList()
     lateinit var cm: ConnectivityManager
     lateinit var wm: WifiManager
+
+    lateinit var activeJob: Job
 
     val activeNetwork: NetworkInfo?
         get() = cm.activeNetworkInfo
@@ -81,6 +93,14 @@ class ClientSync constructor(context: Context) : CoroutineScope {
                 .mapNotNull { client -> client.console() }
             consoles.forEachIndexed { index, console ->
                 this.consoles[console.ip] = console
+                launch {
+                    withContext(Dispatchers.Main) {
+                        listeners.values.forEach {
+                            it.onConsoleFound(console)
+                        }
+                    }
+                }
+
             }
             Log.v(TAG, "[FetchConsoles::End] End of Scan #: ${consoles.size}")
             return consoles
@@ -133,12 +153,13 @@ class ClientSync constructor(context: Context) : CoroutineScope {
         return coroutineScope { async { return@async fetchConsoles(clients) }.await() }
     }
 
-    lateinit var activeJob: Job
-
     /**
      * Gets Active Clients & Gets Consoles
      */
-    fun getClients(callableClients: (clients: List<Client>) -> Unit, callableConsoles: (consoles: List<Console>) -> Unit) {
+    fun getClients(
+        callableClients: (clients: List<Client>) -> Unit,
+        callableConsoles: (consoles: List<Console>) -> Unit
+    ) {
         val block: suspend CoroutineScope.() -> Unit = {
             val clients = fetchClientListAsync()
             withContext(Dispatchers.Main) {
@@ -147,7 +168,7 @@ class ClientSync constructor(context: Context) : CoroutineScope {
             }
 
             val consoles = fetchConsolesListAsync(clients)
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 Log.e(TAG, "$consoles")
                 callableConsoles(consoles)
             }

@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
                 else -> View.GONE
             }
         }
+        presenter.init()
     }
 
 
@@ -132,6 +133,10 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     override fun onError(e: Throwable) {
+
+    }
+
+    override fun onConsoleFound(console: Console) {
 
     }
 

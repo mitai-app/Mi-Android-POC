@@ -32,7 +32,7 @@ data class Client(
                 Log.i("[Client:CheckPort]", "Checking $hostName:$port")
                 val socket = Socket()
                 val socketAddress = InetSocketAddress(address, port)
-                socket.connect(socketAddress, 500)
+                socket.connect(socketAddress, 1000)
                 if (socket.isConnected) {
                     Log.i("Client:Connected", "$hostName:$port is active")
                     socket.closeQuietly()

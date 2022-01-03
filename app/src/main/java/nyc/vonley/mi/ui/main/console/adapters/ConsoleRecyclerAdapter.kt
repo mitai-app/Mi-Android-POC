@@ -6,9 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import nyc.vonley.mi.databinding.VhConsoleBinding
 import nyc.vonley.mi.models.Console
 
-class ConsoleRecyclerAdapter : RecyclerView.Adapter<ConsoleRecyclerAdapter.ConsoleViewHolder>() {
+class ConsoleRecyclerAdapter(console: ArrayList<Console> = arrayListOf()) : RecyclerView.Adapter<ConsoleRecyclerAdapter.ConsoleViewHolder>() {
 
-    private var consoles: List<Console> = emptyList()
+    private val consoles: ArrayList<Console> = console
 
     class ConsoleViewHolder(val binding: VhConsoleBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -26,7 +26,8 @@ class ConsoleRecyclerAdapter : RecyclerView.Adapter<ConsoleRecyclerAdapter.Conso
     }
 
     fun setData(consoles: List<Console>) {
-        this.consoles = consoles
+        this.consoles.clear()
+        this.consoles.addAll(consoles)
         notifyDataSetChanged()
     }
 
@@ -46,6 +47,11 @@ class ConsoleRecyclerAdapter : RecyclerView.Adapter<ConsoleRecyclerAdapter.Conso
 
     override fun getItemCount(): Int {
         return this.consoles.size
+    }
+
+    fun addConsole(console: Console) {
+        this.consoles.add(console)
+        notifyDataSetChanged()
     }
 
 

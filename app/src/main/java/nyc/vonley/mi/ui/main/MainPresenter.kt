@@ -2,6 +2,7 @@ package nyc.vonley.mi.ui.main
 
 import nyc.vonley.mi.base.BasePresenter
 import nyc.vonley.mi.di.network.ClientSync
+import nyc.vonley.mi.models.Console
 import nyc.vonley.mi.models.enums.ConsoleType
 import javax.inject.Inject
 
@@ -16,10 +17,14 @@ class MainPresenter @Inject constructor(
     }
 
     override fun init() {
-
+        sync.addListener(this)
     }
 
     override fun cleanup() {
+
+    }
+
+    override fun onConsoleFound(console: Console) {
 
     }
 }
