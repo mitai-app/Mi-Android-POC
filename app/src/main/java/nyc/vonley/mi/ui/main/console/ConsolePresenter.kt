@@ -1,9 +1,11 @@
 package nyc.vonley.mi.ui.main.console
 
 import nyc.vonley.mi.base.BasePresenter
+
 import nyc.vonley.mi.di.network.impl.ClientSyncService
 import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console
+
 import javax.inject.Inject
 
 class ConsolePresenter @Inject constructor(
@@ -35,7 +37,6 @@ class ConsolePresenter @Inject constructor(
     override fun onAlreadyStored() {
 
     }
-
 
     override fun cleanup() {
 

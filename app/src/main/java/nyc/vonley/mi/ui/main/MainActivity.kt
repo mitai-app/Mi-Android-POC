@@ -57,13 +57,28 @@ class MainActivity : AppCompatActivity(), MainContract.View {
                 else -> View.GONE
             }
         }
+<<<<<<< HEAD
         presenter.init()
+=======
+        /*
+            appBarConfiguration = AppBarConfiguration(navController.graph)
+            setupActionBarWithNavController(navController, appBarConfiguration)
+            binding.fab.setOnClickListener { view ->
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+            }
+        */
+>>>>>>> b6ad848beeff89f262b87d4d684f9a420852a922
     }
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
+<<<<<<< HEAD
         //menuInflater.inflate(R.menu.menu_main, menu)
+=======
+        menuInflater.inflate(R.menu.menu_main, menu)
+>>>>>>> b6ad848beeff89f262b87d4d684f9a420852a922
         return true
     }
 
@@ -136,10 +151,13 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     }
 
+<<<<<<< HEAD
     override fun onConsoleFound(console: Console) {
 
     }
 
+=======
+>>>>>>> b6ad848beeff89f262b87d4d684f9a420852a922
     companion object {
 
         /** Use external media if it is available, our app's file directory otherwise */

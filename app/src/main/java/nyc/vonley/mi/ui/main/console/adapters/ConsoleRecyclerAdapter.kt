@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import nyc.vonley.mi.databinding.VhConsoleBinding
+
 import nyc.vonley.mi.di.network.ClientSync
 import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console

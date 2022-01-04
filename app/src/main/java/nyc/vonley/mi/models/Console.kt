@@ -22,10 +22,9 @@ data class Console(
     override var wifi: String,
 ) : Client, Parcelable {
 
-
     override fun toString(): String {
         return """
-                    IP: $ip
+                    \nIP: $ip
                     Name: $name
                     Type: $type
                     Features: $features

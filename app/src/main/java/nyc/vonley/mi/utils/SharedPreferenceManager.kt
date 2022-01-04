@@ -11,8 +11,6 @@ import nyc.vonley.mi.models.OAuthToken
  */
 interface SharedPreferenceManager {
 
-
-
     val context: Context
 
     fun setId(user_id: Int)

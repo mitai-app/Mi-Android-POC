@@ -2,12 +2,21 @@ package nyc.vonley.mi.ui.main.console
 
 import android.os.Bundle
 import android.util.Log
+<<<<<<< HEAD
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import dagger.hilt.android.AndroidEntryPoint
+=======
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import dagger.hilt.android.AndroidEntryPoint
+import nyc.vonley.mi.R
+>>>>>>> b6ad848beeff89f262b87d4d684f9a420852a922
 import nyc.vonley.mi.databinding.FragmentConsoleBinding
 import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console
@@ -30,18 +39,27 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
     private var param1: String? = null
     private var param2: String? = null
 
+<<<<<<< HEAD
     @Inject
     lateinit var vm: ConsoleViewModel
 
     @Inject
+=======
+>>>>>>> b6ad848beeff89f262b87d4d684f9a420852a922
     lateinit var adapter: ConsoleRecyclerAdapter
 
     @Inject
     lateinit var presenter: ConsoleContract.Presenter
 
+<<<<<<< HEAD
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+=======
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        adapter = ConsoleRecyclerAdapter()
+>>>>>>> b6ad848beeff89f262b87d4d684f9a420852a922
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -53,11 +71,14 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
         savedInstanceState: Bundle?
     ): View {
         val inflate = FragmentConsoleBinding.inflate(inflater, container, false)
+<<<<<<< HEAD
         vm.consoles.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
                 adapter.setData(it)
             }
         })
+=======
+>>>>>>> b6ad848beeff89f262b87d4d684f9a420852a922
         inflate.consoleRecycler.adapter = adapter
         return inflate.root
     }
@@ -87,6 +108,13 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
             }
     }
 
+<<<<<<< HEAD
+=======
+    override fun onConsolesFound(consoles: List<Console>) {
+        adapter.setData(consoles)
+    }
+
+>>>>>>> b6ad848beeff89f262b87d4d684f9a420852a922
     override fun onClientsFound(clients: List<Client>) {
 
     }
@@ -95,6 +123,7 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
         Log.e("ERROR", "You are shit", e)
     }
 
+<<<<<<< HEAD
     override fun onConsoleFound(console: Console) {
 
     }
@@ -110,5 +139,7 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
     override val TAG: String
         get() = ConsoleFragment::class.java.name
 
+=======
+>>>>>>> b6ad848beeff89f262b87d4d684f9a420852a922
 
 }

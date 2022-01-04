@@ -14,7 +14,6 @@ interface BaseContract {
     interface Presenter : CoroutineScope, OnClientListener {
         fun init()
         fun cleanup()
-
     }
 
 }

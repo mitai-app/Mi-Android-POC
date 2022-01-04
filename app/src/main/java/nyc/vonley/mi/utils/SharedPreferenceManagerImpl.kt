@@ -11,7 +11,6 @@ class SharedPreferenceManagerImpl(
     override val sharedPreferences: SharedPreferences
 ) : SharedPreferenceManager {
 
-
     override fun setId(user_id: Int) {
         val edit = sharedPreferences.edit()
         edit.putInt(USER_ID, user_id)
