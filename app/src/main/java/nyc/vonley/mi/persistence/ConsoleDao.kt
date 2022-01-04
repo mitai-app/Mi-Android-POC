@@ -1,12 +1,16 @@
 package nyc.vonley.mi.persistence
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import nyc.vonley.mi.models.Console
 
 @Dao
 interface ConsoleDao: IDao<Console, String>{
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun inserts(consoles: List<ConsoleDao>)
+
+    @Query("SELECT * FROM Console WHERE wifi = :wifi_ ORDER BY LENGTH(features) DESC, lastKnownReachable DESC ")
+    fun get(wifi_: String): LiveData<List<Console>>
+
+    @Query("SELECT * FROM Console ORDER BY LENGTH(features) DESC, lastKnownReachable DESC ")
+    fun getAll(): LiveData<List<Console>>
 }

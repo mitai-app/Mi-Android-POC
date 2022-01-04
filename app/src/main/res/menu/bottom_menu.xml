@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/fragment_home"
+        android:title="Home"
+        android:icon="@drawable/icon_svg_home"/>
+    <item
+        android:id="@+id/fragment_console"
+        android:title="Console"
+        android:icon="@drawable/icon_svg_monitor"/>
+    <item
+        android:id="@+id/fragment_payload"
+        android:title="Payload"
+        android:icon="@drawable/icon_svg_folder"/>
+    <item
+        android:id="@+id/fragment_ftp"
+        android:title="FTP"
+        android:icon="@drawable/icon_svg_upload_two"/>
+    <item
+        android:id="@+id/fragment_settings"
+        android:title="Setting"
+        android:icon="@drawable/icon_svg_settings"/>
+</menu>
