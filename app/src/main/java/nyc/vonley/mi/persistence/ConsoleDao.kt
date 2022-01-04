@@ -8,9 +8,9 @@ import nyc.vonley.mi.models.Console
 @Dao
 interface ConsoleDao: IDao<Console, String>{
 
-    @Query("SELECT * FROM Console WHERE wifi = :wifi_ ORDER BY ip ASC")
+    @Query("SELECT * FROM Console WHERE wifi = :wifi_ ORDER BY LENGTH(features) DESC, lastKnownReachable DESC ")
     fun get(wifi_: String): LiveData<List<Console>>
 
-    @Query("SELECT * FROM Console ORDER BY ip ASC")
+    @Query("SELECT * FROM Console ORDER BY LENGTH(features) DESC, lastKnownReachable DESC ")
     fun getAll(): LiveData<List<Console>>
 }

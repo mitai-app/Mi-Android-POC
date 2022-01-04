@@ -33,9 +33,7 @@ class ConsoleRecyclerAdapter @Inject constructor(consoleDao: ConsoleDao, sync: C
     }
 
     fun setData(consoles: List<Console>) {
-        this.consoles = consoles.sortedBy { u ->
-            return@sortedBy u.features.contains(Features.GOLDENHEN) || u.features.contains(Features.FTP)
-        }
+        this.consoles = consoles
         notifyDataSetChanged()
     }
 
