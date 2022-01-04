@@ -1,4 +1,4 @@
-package nyc.vonley.mi.di.network
+package nyc.vonley.mi.di.network.auth
 
 
 import android.accounts.Account

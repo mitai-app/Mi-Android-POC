@@ -14,17 +14,22 @@ import nyc.vonley.mi.models.enums.FeaturesConverter
 @Parcelize
 @TypeConverters(ConsoleTypeConverter::class, FeaturesConverter::class)
 data class Console(
-    @PrimaryKey val ip: String,
-    var name: String,
-    var type: ConsoleType,
-    var features: List<Features> = emptyList()
-) : Parcelable {
+    @PrimaryKey override val ip: String,
+    override var name: String,
+    override var type: ConsoleType,
+    override var features: List<Features> = emptyList(),
+    override var lastKnownReachable: Boolean,
+    override var wifi: String,
+) : Client, Parcelable {
+
+
     override fun toString(): String {
         return """
                     IP: $ip
                     Name: $name
                     Type: $type
                     Features: $features
+                    Reachable: $lastKnownReachable
                 """.trimIndent()
     }
 }

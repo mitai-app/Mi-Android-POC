@@ -9,7 +9,7 @@ import nyc.vonley.mi.extensions.fromJson
 
 @Entity
 @Parcelize
-enum class ConsoleType() : Parcelable {
+enum class ConsoleType : Parcelable {
     UNKNOWN, PS3, PS4
 }
 
@@ -34,12 +34,13 @@ class FeaturesConverter {
 
     @TypeConverter
     fun toType(features: String): List<Features> {
-        return GsonBuilder().create().fromJson(features)
+        return GsonBuilder().create().fromJson<List<Int>>(features)
+            .map { enumValues<Features>()[it] }
     }
 
     @TypeConverter
     fun fromType(values: List<Features>): String {
-        val transform: (Features) -> Int = { it.ordinal ?: 0 }
+        val transform: (Features) -> Int = { it.ordinal }
         val map = values.map(transform)
         return GsonBuilder().create().toJson(map)
     }

@@ -8,8 +8,7 @@
 
     <include
         android:id="@+id/content_main"
-        layout="@layout/content_main"
-        app:layout_behavior="com.google.android.material.bottomappbar.BottomAppBar$Behavior" />
+        layout="@layout/content_main" />
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"

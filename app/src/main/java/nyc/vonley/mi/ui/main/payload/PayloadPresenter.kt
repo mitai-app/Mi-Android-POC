@@ -1,13 +1,12 @@
 package nyc.vonley.mi.ui.main.payload
 
 import nyc.vonley.mi.base.BasePresenter
-import nyc.vonley.mi.di.network.ClientSync
-import nyc.vonley.mi.models.Console
+import nyc.vonley.mi.di.network.impl.ClientSyncService
 import javax.inject.Inject
 
 class PayloadPresenter @Inject constructor(
     val view: PayloadContract.View,
-    val sync: ClientSync
+    val sync: ClientSyncService
 ) : BasePresenter(),
     PayloadContract.Presenter {
 
@@ -16,14 +15,19 @@ class PayloadPresenter @Inject constructor(
     }
 
     override fun init() {
-        sync.addListener(this)
+        //sync.initialize()
+        //sync.addConsoleListener(this)
     }
 
     override fun cleanup() {
 
     }
 
+    override val TAG: String
+        get() = this::class.java.name
+
+    /*
     override fun onConsoleFound(console: Console) {
         view.onConsoleFound(console)
-    }
+    }*/
 }

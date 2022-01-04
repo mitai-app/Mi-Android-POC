@@ -1,56 +1,70 @@
 package nyc.vonley.mi.models
 
 import android.util.Log
+import nyc.vonley.mi.models.enums.ConsoleType
 import nyc.vonley.mi.models.enums.Features
 import okhttp3.internal.closeQuietly
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
 
-data class Client(
-    val address: InetAddress
-) {
-    var lastKnownReachable: Boolean = false
+interface Client {
 
-    val reachable: Boolean
-        get() {
-            return try {
+    val ip: String
+    var name: String
+    var type: ConsoleType
+    var features: List<Features>
+    var wifi: String
+    var lastKnownReachable: Boolean
+
+    fun getInetAddress(): InetAddress? {
+        return try {
+            InetAddress.getByName(ip)
+        } catch (e: Throwable) {
+            return null
+        }
+    }
+
+
+    fun getReachable(): Boolean {
+        return try {
+            val address = getInetAddress()
+            if (address != null) {
                 lastKnownReachable = address.isReachable(100)
                 lastKnownReachable
-            }catch (throwable: Throwable){
-                false
             }
+            false
+        } catch (throwable: Throwable) {
+            false
         }
-
-    val hostName: String
-        get() = address.canonicalHostName
+    }
 
     fun getActivePorts(): List<Int> {
         val ports = Features.values().map { f -> f.port }.filter { f -> f > 0 }.toTypedArray()
         val result = ports.map { port ->
             try {
-                Log.i("[Client:CheckPort]", "Checking $hostName:$port")
+                Log.i("[Client:CheckPort]", "Checking ${ip}:$port")
                 val socket = Socket()
-                val socketAddress = InetSocketAddress(address, port)
+                val socketAddress = InetSocketAddress(ip, port)
                 socket.connect(socketAddress, 1000)
                 if (socket.isConnected) {
-                    Log.i("Client:Connected", "$hostName:$port is active")
+                    Log.i("Client:Connected", "${ip}:$port is active")
                     socket.closeQuietly()
                     return@map port
                 }
             } catch (e: Throwable) {
-                Log.e("[Client:FailedToConnect]", "$hostName:$port ")
+                Log.e("[Client:FailedToConnect]", "${ip}:$port ")
             }
             return@map Features.NONE.port
         }.distinct()
         return result
     }
 
-
-    override fun toString(): String {
-        return """
-                    HostName: $hostName
+    val debug: String
+        get() {
+            return """
+                    HostName: $ip
                     Reachable: $lastKnownReachable
                 """.trimIndent()
-    }
+        }
 }

@@ -4,19 +4,26 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import nyc.vonley.mi.databinding.VhConsoleBinding
+import nyc.vonley.mi.di.network.ClientSync
+import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console
+import nyc.vonley.mi.models.enums.Features
+import nyc.vonley.mi.persistence.ConsoleDao
+import javax.inject.Inject
 
-class ConsoleRecyclerAdapter(console: ArrayList<Console> = arrayListOf()) : RecyclerView.Adapter<ConsoleRecyclerAdapter.ConsoleViewHolder>() {
+class ConsoleRecyclerAdapter @Inject constructor(consoleDao: ConsoleDao, sync: ClientSync) :
+    RecyclerView.Adapter<ConsoleRecyclerAdapter.ConsoleViewHolder>() {
 
-    private val consoles: ArrayList<Console> = console
+    private var consoles = emptyList<Console>()
 
     class ConsoleViewHolder(val binding: VhConsoleBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun setConsole(console: Console) {
+        fun setConsole(console: Client) {
             val headers = "${console.name} - ${console.ip}"
             binding.vhConsoleNickname.text = headers
-            val features = "Features: ${if (console.features.size > 1) console.features.filter { f -> f.port > 0 } else console.features} "
+            val features =
+                "Features: ${if (console.features.size > 1) console.features.filter { f -> f.port > 0 } else console.features} "
             binding.vhConsoleIp.text = features
             binding.root.setOnClickListener {
                 //TODO: Set Click
@@ -26,8 +33,9 @@ class ConsoleRecyclerAdapter(console: ArrayList<Console> = arrayListOf()) : Recy
     }
 
     fun setData(consoles: List<Console>) {
-        this.consoles.clear()
-        this.consoles.addAll(consoles)
+        this.consoles = consoles.sortedBy { u ->
+            return@sortedBy u.features.contains(Features.GOLDENHEN) || u.features.contains(Features.FTP)
+        }
         notifyDataSetChanged()
     }
 
@@ -47,11 +55,6 @@ class ConsoleRecyclerAdapter(console: ArrayList<Console> = arrayListOf()) : Recy
 
     override fun getItemCount(): Int {
         return this.consoles.size
-    }
-
-    fun addConsole(console: Console) {
-        this.consoles.add(console)
-        notifyDataSetChanged()
     }
 
 

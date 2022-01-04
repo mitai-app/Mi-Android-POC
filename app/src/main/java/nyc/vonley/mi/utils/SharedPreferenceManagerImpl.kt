@@ -1,13 +1,16 @@
 package nyc.vonley.mi.utils
 
-import nyc.vonley.mi.models.OAuthToken
-
+import android.content.Context
 import android.content.SharedPreferences
-import android.util.Base64
 import android.util.Log
 import com.google.gson.Gson
+import nyc.vonley.mi.models.OAuthToken
 
-class SharedPreferenceManagerImpl(private val sharedPreferences: SharedPreferences) : SharedPreferenceManager {
+class SharedPreferenceManagerImpl(
+    override val context: Context,
+    override val sharedPreferences: SharedPreferences
+) : SharedPreferenceManager {
+
 
     override fun setId(user_id: Int) {
         val edit = sharedPreferences.edit()

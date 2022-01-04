@@ -1,4 +1,4 @@
-package nyc.vonley.mi.di.network
+package nyc.vonley.mi.di.network.impl
 
 import android.content.Context
 import nyc.vonley.mi.base.BaseClient
@@ -15,7 +15,7 @@ class PS4Client constructor(
     http: OkHttpClient
 ) : BaseClient(http) {
 
-    val ip = client.hostName
+    val ip = client.ip
 
     /**
      * Uploads file to web

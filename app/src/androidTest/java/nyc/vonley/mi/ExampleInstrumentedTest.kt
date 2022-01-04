@@ -3,7 +3,7 @@ package nyc.vonley.mi
 import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import nyc.vonley.mi.di.network.ClientSync
+import nyc.vonley.mi.di.network.impl.ClientSyncService
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,12 +20,12 @@ class ExampleInstrumentedTest {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("nyc.vonley.lambda", appContext.packageName)
-        val clientSync = ClientSync(appContext)
+        val clientSync = ClientSyncService(appContext)
         clientSync.fetchClients().forEach { client ->
-            val info = "Info: ${client.hostName} : ${client.address.hostAddress}"
+            val info = "Info: ${client.getHostName()} : ${client.address.hostAddress}"
             Log.e("client", info)
             println(info)
-            assertEquals(client.hostName, client.hostName)
+            assertEquals(client.getHostName(), client.getHostName())
         }
     }
 }
