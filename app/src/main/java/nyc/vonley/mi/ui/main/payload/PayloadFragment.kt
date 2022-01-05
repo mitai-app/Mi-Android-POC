@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -118,17 +119,24 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
             }
     }
 
+    val assets get() = requireContext().assets
+
     override fun onActivityResult(result: ActivityResult) {
         if (result.resultCode == RESULT_OK) {
             val intent = result.data
             val uri = intent?.data
             if (uri != null) {
-                val file = DataInputStream(contentResolver.openInputStream(uri))
-                val bytes = file.readBytes()
-                file.close()
+                //val bytes = file.readBytes()
+                val openInputStream = assets.open("payloads/orbis/755.bin")
+                //val openInputStream = contentResolver.openInputStream(uri)
+                val dis = DataInputStream(openInputStream)
+                val bytes = dis.readBytes()
+                dis.close()
+
                 val question = "Click confirm if this is the correct payload."
                 val action = Snackbar.make(requireView(), question, Snackbar.LENGTH_INDEFINITE);
                 val yes: (v: View) -> Unit = { view ->
+                    Log.e("TAG", "IM HERE BITCH")
                     presenter.sendPayload(bytes)
                     action.dismiss()
                 }
@@ -142,7 +150,7 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
     }
 
     override fun onConsoleFound(console: Console) {
-        
+
     }
 
     override fun onError(e: Throwable) {

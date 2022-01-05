@@ -1,17 +1,17 @@
 package nyc.vonley.mi.ui.main.payload
 
 import nyc.vonley.mi.base.BasePresenter
-import nyc.vonley.mi.di.network.impl.ClientSyncService
+import nyc.vonley.mi.di.network.impl.PS4ClientService
 import javax.inject.Inject
 
 class PayloadPresenter @Inject constructor(
     val view: PayloadContract.View,
-    val sync: ClientSyncService
+    val ps4: PS4ClientService
 ) : BasePresenter(),
     PayloadContract.Presenter {
 
     override fun sendPayload(bytes: ByteArray) {
-
+        ps4.uploadBin(bytes)
     }
 
     override fun init() {

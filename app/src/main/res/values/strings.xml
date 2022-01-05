@@ -7,4 +7,14 @@
     <string name="preference_voices">nyc.vonley.voices</string>
     <string name="preference_speed">nyc.vonley.speed</string>
     <string name="preference_pitch">nyc.vonley.speed</string>
+    <string name="preference_wifi">nyc.vonley.mi.prefs.wifi</string>
+    <string name="header_control">Control</string>
+    <string name="data_header">Configuration</string>
+    <string name="build_complete">0.0.1</string>
+    <string name="preference_clear">nyc.vonley.mi.prefs.clear</string>
+    <string name="preference_version">nyc.vonley.mi.prefs.version</string>
+    <string name="preference_dev">nyc.vonley.mi.prefs.dev</string>
+    <string name="preference_rest">nyc.vonley.mi.prefs.rest</string>
+    <string name="preference_reboot">nyc.vonley.mi.prefs.reboot</string>
+    <string name="preference_shutdown">nyc.vonley.mi.prefs.shutdown</string>
 </resources>

@@ -16,7 +16,8 @@ class MainPresenter @Inject constructor(
     }
 
     override fun init() {
-
+        view.setTitle(sync.connectionInfo.ssid)
+        view.setSummary(sync.ip)
     }
 
     override fun cleanup() {

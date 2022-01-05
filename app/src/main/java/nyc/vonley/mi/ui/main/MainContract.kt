@@ -9,6 +9,8 @@ interface MainContract {
     interface View : BaseContract.View {
         fun start()
         fun onConsolesFound(consoles: List<Console>)
+        fun setTitle(title: String?)
+        fun setSummary(summary: String?)
     }
 
     interface Presenter : BaseContract.Presenter {

@@ -37,8 +37,8 @@ import kotlin.coroutines.CoroutineContext
 /**
  *
  */
-class ClientSyncService @Inject constructor(
-    @ApplicationContext context: Context,
+class ClientSyncService constructor(
+    context: Context,
     database: AppDatabase
 ) : ClientSync, CoroutineScope {
 
@@ -54,6 +54,11 @@ class ClientSyncService @Inject constructor(
     //region Override
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
+
+    var _target: Client? = null
+
+    override val target: Client?
+        get() = _target
 
     override val activeNetworkInfo: NetworkInfo?
         get() = cm.activeNetworkInfo
@@ -112,7 +117,7 @@ class ClientSyncService @Inject constructor(
     /**
      * Gets Active Clients & Gets Consoles
      */
-    fun getClients() {
+    override fun getClients() {
         val block: suspend CoroutineScope.() -> Unit = {
             fetchConsolesListAsync(fetchClientListAsync())
         }
@@ -125,8 +130,12 @@ class ClientSyncService @Inject constructor(
         }
     }
 
+    override fun setTarget(client: Client) {
+        this._target = client
+    }
 
-    fun addConsoleListener(console: OnConsoleListener) {
+
+    override fun addConsoleListener(console: OnConsoleListener) {
         this[ConsoleClientHandler::class.java].listeners[console.javaClass] = console
     }
 
@@ -176,7 +185,7 @@ class ClientSyncService @Inject constructor(
             for (i in 1 until 256) {
                 try {
                     val ip = "$prefix$i"
-                    val byName = activeNetwork?.getByName(ip)?:continue
+                    val byName = activeNetwork?.getByName(ip) ?: continue
                     if (byName.isReachable(100)) {
                         Log.i(
                             TAG,

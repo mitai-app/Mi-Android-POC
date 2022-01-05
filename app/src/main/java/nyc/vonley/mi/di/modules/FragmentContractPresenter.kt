@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.preference.PreferenceFragmentCompat
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,10 +14,16 @@ import nyc.vonley.mi.di.repository.ConsoleRepository
 import nyc.vonley.mi.ui.main.console.ConsoleFragment
 import nyc.vonley.mi.ui.main.console.ConsoleViewModel
 import nyc.vonley.mi.ui.main.payload.PayloadFragment
+import nyc.vonley.mi.ui.main.settings.SettingsFragment
 
 @Module
 @InstallIn(FragmentComponent::class)
 object FragmentContractPresenter {
+
+    @Provides
+    fun provideSettingFragment(activity: PreferenceFragmentCompat): SettingsFragment {
+        return activity as SettingsFragment
+    }
 
     @Provides
     fun provideConsoleFragment(activity: Fragment): ConsoleFragment {

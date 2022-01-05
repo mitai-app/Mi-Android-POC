@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         super.onResume()
         // Before setting full screen flags, we must wait a bit to let UI settle; otherwise, we may
         // be trying to set app to immersive mode before it's ready and the flags do not stick
-        binding.contentMain.fragmentContainer.postDelayed({
+        binding.fragmentContainer.postDelayed({
             hideSystemUI()
         }, IMMERSIVE_FLAG_TIMEOUT)
     }
@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     private fun hideSystemUI() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        WindowInsetsControllerCompat(window, binding.contentMain.fragmentContainer).let { controller ->
+        WindowInsetsControllerCompat(window, binding.fragmentContainer).let { controller ->
             controller.hide(WindowInsetsCompat.Type.systemBars())
             controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
@@ -125,6 +125,14 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     override fun onConsolesFound(consoles: List<Console>) {
 
+    }
+
+    override fun setTitle(title: String?) {
+        binding.fakeToolbarTitle.text = title?: return
+    }
+
+    override fun setSummary(summary: String?) {
+        binding.fakeToolbarSummary.text = summary?: return
     }
 
     override fun onError(e: Throwable) {

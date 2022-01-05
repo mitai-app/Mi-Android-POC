@@ -4,15 +4,20 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.32864583333333336" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.24604075426222477" />
+        <entry key="app/src/main/res/drawable/icon_svg_folder.xml" value="0.396875" />
+        <entry key="app/src/main/res/drawable/icon_svg_monitor.xml" value="0.396875" />
+        <entry key="app/src/main/res/drawable/icon_svg_settings.xml" value="0.396875" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.375" />
         <entry key="app/src/main/res/layout/content_main.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/layout/fragment_console.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_f_t_p.xml" value="0.28802083333333334" />
+        <entry key="app/src/main/res/layout/fragment_f_t_p.xml" value="0.347893920091838" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_payload.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/layout/vh_console.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/menu/bottom_menu.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.3020833333333333" />
+        <entry key="app/src/main/res/xml/network_security_config.xml" value="0.335" />
+        <entry key="app/src/main/res/xml/preferences_mi.xml" value="0.22141119221411193" />
       </map>
     </option>
   </component>

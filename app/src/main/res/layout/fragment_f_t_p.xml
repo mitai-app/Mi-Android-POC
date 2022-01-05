@@ -3,12 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.permissions.FTPFragment">
+    tools:context=".ui.main.ftp.FTPFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:gravity="center"
+        android:text="eta s0n"
+        android:textAlignment="center"
+        android:textSize="24sp" />
 
 </FrameLayout>

@@ -6,18 +6,18 @@ import android.net.wifi.WifiInfo
 import android.text.format.Formatter
 import kotlinx.coroutines.CoroutineScope
 import nyc.vonley.mi.di.network.handlers.ClientHandler
+import nyc.vonley.mi.di.network.listeners.OnConsoleListener
+import nyc.vonley.mi.models.Client
 
 interface ClientSync: CoroutineScope {
 
+    val target: Client?
+
     val activeNetworkInfo: NetworkInfo?
-
     val activeNetwork: Network?
-
     val connectionInfo: WifiInfo
-
     val ipAddr: Int
         get() = connectionInfo.ipAddress
-
     val ip: String
         get() = Formatter.formatIpAddress(ipAddr)
 
@@ -29,4 +29,7 @@ interface ClientSync: CoroutineScope {
     val isConnected: Boolean
     fun isNetworkAvailable(): Boolean
     fun isWifiAvailable(): Boolean
+    fun getClients()
+    fun setTarget(client: Client)
+    fun addConsoleListener(console: OnConsoleListener)
 }
