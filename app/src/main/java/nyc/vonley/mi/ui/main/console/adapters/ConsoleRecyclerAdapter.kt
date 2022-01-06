@@ -4,43 +4,23 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import nyc.vonley.mi.R
 import nyc.vonley.mi.databinding.VhConsoleBinding
-
 import nyc.vonley.mi.di.network.ClientSync
 import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console
-import nyc.vonley.mi.models.enums.Features
-import nyc.vonley.mi.persistence.ConsoleDao
+import nyc.vonley.mi.models.activeFeatures
+import nyc.vonley.mi.models.featureString
+import nyc.vonley.mi.ui.main.MainContract
 import javax.inject.Inject
 
 class ConsoleRecyclerAdapter @Inject constructor(
-    consoleDao: ConsoleDao,
+    val view: MainContract.View,
     val sync: ClientSync
-) :
-    RecyclerView.Adapter<ConsoleRecyclerAdapter.ConsoleViewHolder>() {
+) : RecyclerView.Adapter<ConsoleRecyclerAdapter.ConsoleViewHolder>() {
 
     private var consoles = emptyList<Console>()
-
-    inner class ConsoleViewHolder(val binding: VhConsoleBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        fun setConsole(console: Client) {
-            val headers = "${console.name} - ${console.ip}"
-            binding.vhConsoleNickname.text = headers
-            val features =
-                "Features: ${if (console.features.size > 1) console.features.filter { f -> f.port > 0 } else console.features} "
-            binding.vhConsoleIp.text = features
-            binding.root.setOnClickListener {
-                sync.setTarget(console)
-                Toast.makeText(it.context, "Target set!", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    fun setData(consoles: List<Console>) {
-        this.consoles = consoles
-        notifyDataSetChanged()
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConsoleViewHolder {
         return ConsoleViewHolder(
@@ -60,5 +40,40 @@ class ConsoleRecyclerAdapter @Inject constructor(
         return this.consoles.size
     }
 
+    fun setData(consoles: List<Console>) {
+        this.consoles = consoles
+        notifyDataSetChanged()
+    }
+
+    inner class ConsoleViewHolder(val binding: VhConsoleBinding) : RecyclerView.ViewHolder(binding.root) {
+
+        fun setTarget(console: Client) {
+            sync.setTarget(console)
+            view.setSummary("Connected Target: ${console.name}, w/ ${console.featureString}")
+            Toast.makeText(itemView.context, "Target set!", Toast.LENGTH_SHORT).show()
+        }
+
+        fun setConsole(console: Client) {
+            val headers = "${console.name} - ${console.ip}"
+            binding.vhConsoleNickname.text = headers
+            binding.vhConsoleIp.text = console.featureString.takeIf { it.isNotEmpty() } ?: "Incompatible"
+            binding.root.setOnClickListener {
+                if (console.activeFeatures.isNotEmpty()) {
+                    setTarget(console)
+                } else {
+                    MaterialAlertDialogBuilder(it.context)
+                        .setTitle("Warning")
+                        .setMessage("This device does not have any port opens it seems, would you still like to connect?")
+                        .setPositiveButton("Connect") { dialog, which ->
+                            setTarget(console)
+                            dialog.dismiss()
+                        }
+                        .setNegativeButton("Cancel") { dialog, which ->
+                            dialog.dismiss()
+                        }.show()
+                }
+            }
+        }
+    }
 
 }

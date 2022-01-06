@@ -139,9 +139,6 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     }
 
-    override fun onConsoleFound(console: Console) {
-
-    }
 
     companion object {
 

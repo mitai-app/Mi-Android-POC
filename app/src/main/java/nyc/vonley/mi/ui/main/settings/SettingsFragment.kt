@@ -106,9 +106,5 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
 
     }
 
-    override fun onConsoleFound(console: Console) {
-
-    }
-
 
 }

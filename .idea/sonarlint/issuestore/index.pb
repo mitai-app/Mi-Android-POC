@@ -1,7 +1,5 @@
 
 r
-Bapp/src/main/java/nyc/vonley/mi/ui/main/console/ConsoleFragment.kt,0/f/0f77747d2594f738f5f57ae13ba3ad4b713f074d
-r
 Bapp/src/main/java/nyc/vonley/mi/ui/main/console/ConsoleContract.kt,a/9/a98b2467a37f436eea76460c2aef85e1bac85ade
 t
 Dapp/src/main/java/nyc/vonley/mi/ui/main/settings/SettingsContract.kt,9/d/9df91099bfa33fc4dbe0cee0ef7481007f8d73ea
@@ -9,8 +7,6 @@ u
 Eapp/src/main/java/nyc/vonley/mi/di/modules/FragmentPresenterModule.kt,6/f/6f2593821e2b95c23470c4cbecfc7bf8ce50cf35
 u
 Eapp/src/main/java/nyc/vonley/mi/ui/main/settings/SettingsPresenter.kt,a/0/a032507720deffed6473020776c3b9117cb90fe5
-t
-Dapp/src/main/java/nyc/vonley/mi/ui/main/settings/SettingsFragment.kt,a/a/aa7e7be6542a2fe87f3bbf43fef802c2e8843dcf
 w
 Gapp/src/main/java/nyc/vonley/mi/di/modules/FragmentContractPresenter.kt,5/c/5c4271887b9d73a042b96aca8fb7b567de6b3395
 g
@@ -19,13 +15,3 @@ h
 8app/src/main/java/nyc/vonley/mi/ui/main/MainPresenter.kt,4/d/4d717b0ddae35bac7cbac8e315faa56f53f679ad
 `
 0app/src/main/java/nyc/vonley/mi/MiApplication.kt,2/8/28f26ab94ae24f849a65857110b1c04de65abcac
-‚
-Rapp/src/main/java/nyc/vonley/mi/ui/main/console/adapters/ConsoleRecyclerAdapter.kt,2/4/243f72b56b11608f73fa071e7e5b0f9476ed862c
-g
-7app/src/main/java/nyc/vonley/mi/ui/main/MainActivity.kt,a/3/a3f9321cb8117b6af3abb48401f86299834e1e55
-r
-Bapp/src/main/java/nyc/vonley/mi/ui/main/payload/PayloadContract.kt,9/4/946d070390a3a3d3de0a6f74bb8d3ce63102d368
-r
-Bapp/src/main/java/nyc/vonley/mi/ui/main/payload/PayloadFragment.kt,4/2/429fb362cf802602db60b67e70da814405e96c73
-s
-Capp/src/main/java/nyc/vonley/mi/di/network/impl/PS4ClientService.kt,d/0/d07c85830ab8de37fb83d23d1260a0acf464eaea

@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -20,13 +21,9 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import nyc.vonley.mi.databinding.FragmentPayloadBinding
 import nyc.vonley.mi.models.Console
+import okhttp3.Response
 import java.io.DataInputStream
 import javax.inject.Inject
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -36,10 +33,8 @@ private const val ARG_PARAM2 = "param2"
 @AndroidEntryPoint
 class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, PayloadContract.View {
 
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
+    private val assets get() = requireContext().assets
 
     @Inject
     lateinit var presenter: PayloadContract.Presenter
@@ -52,10 +47,6 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
         startForResult =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult(), this)
     }
@@ -99,27 +90,6 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         presenter.init()
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment PayloadFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            PayloadFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
-
-    val assets get() = requireContext().assets
 
     override fun onActivityResult(result: ActivityResult) {
         if (result.resultCode == RESULT_OK) {
@@ -136,7 +106,6 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
                 val question = "Click confirm if this is the correct payload."
                 val action = Snackbar.make(requireView(), question, Snackbar.LENGTH_INDEFINITE);
                 val yes: (v: View) -> Unit = { view ->
-                    Log.e("TAG", "IM HERE BITCH")
                     presenter.sendPayload(bytes)
                     action.dismiss()
                 }
@@ -149,11 +118,12 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         }
     }
 
-    override fun onConsoleFound(console: Console) {
+    override fun onPayloadSent(response: Response) {
+        Toast.makeText(requireContext(), "CODE: ${response.code}, ${response.message}", Toast.LENGTH_LONG).show()
 
     }
 
     override fun onError(e: Throwable) {
-
+        Toast.makeText(requireContext(), "We couldn't send the payload. \nError Message: ${e.message}", Toast.LENGTH_LONG).show()
     }
 }

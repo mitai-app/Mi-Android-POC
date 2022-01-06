@@ -8,7 +8,6 @@ interface BaseContract {
 
     interface View {
         fun onError(e: Throwable)
-        fun onConsoleFound(console: Console)
     }
 
     interface Presenter : CoroutineScope, OnClientListener {

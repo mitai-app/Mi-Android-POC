@@ -21,27 +21,12 @@ class PS4ClientService @Inject constructor(
     val ip get() = target?.ip
 
 
-    val callback = object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            Log.e("RESPONSE", e.message ?: "Something happened", e)
-        }
-
-        override fun onResponse(call: Call, response: Response) {
-            Log.e("RESPONSE", response.message)
-        }
-
-    }
-
     /**
      * Uploads file to web
      */
-    fun uploadBin(file: ByteArray) {
+    fun uploadBin(file: ByteArray, callback: Callback) {
+        if (target == null) return
         val url = "http://$ip:9090"
-        Log.e("ERROR","TARGET IS $url")
-        if (target == null) {
-            Log.e("ERROR","TARGET IS NULL")
-            return
-        }
         val body: RequestBody = file.toRequestBody()
         Log.e("URL", url)
         post(url, body, Headers.headersOf(), callback)
@@ -50,7 +35,7 @@ class PS4ClientService @Inject constructor(
     /**
      * Uploads file to web
      */
-    fun uploadBin(file: File) {
+    fun uploadBin(file: File, callback: Callback) {
         if (target == null) return
         val body: RequestBody = file.asRequestBody()
         val url = "$ip:9090"

@@ -15,8 +15,15 @@ enum class ConsoleType : Parcelable {
 
 @Entity
 @Parcelize
-enum class Features(val port: Int) : Parcelable {
-    NONE(-1), GOLDENHEN(9090), ORBISTOOLBOX(0), FTP(2121)
+enum class Features(val title: String, vararg val ports: Int) : Parcelable {
+    NONE("None", 0),
+    GOLDENHEN("Golden Hen", 9090),
+    ORBISAPI("Orbis API", 6023),
+    FTP(
+        "FTP",
+        21,
+        2121
+    )
 }
 
 

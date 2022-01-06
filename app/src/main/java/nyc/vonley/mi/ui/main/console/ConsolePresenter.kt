@@ -23,7 +23,6 @@ class ConsolePresenter @Inject constructor(
         sync.getClients()
     }
 
-
     override val TAG: String
         get() = ConsolePresenter::class.java.name
 

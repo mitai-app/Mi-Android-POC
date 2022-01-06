@@ -64,7 +64,7 @@ fun Client.console(): Console? {
     if (actives.isNotEmpty()) {
         val features = actives.map { port ->
             val values = Features.values()
-            val value = values.find { f -> f.port == port }
+            val value = values.find { f -> f.ports.find { p -> p == port } == port }
             return@map if (value != null) Features.valueOf(value.name) else Features.NONE
         }
         val type = if (features.contains(Features.GOLDENHEN)) {

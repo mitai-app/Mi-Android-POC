@@ -40,7 +40,8 @@ interface Client {
     }
 
     fun getActivePorts(): List<Int> {
-        val ports = Features.values().map { f -> f.port }.filter { f -> f > 0 }.toTypedArray()
+        val ports = Features.values().map { f -> f.ports }.flatMap { it.iterator().asSequence() }
+            .filter { f -> f > 0 }.toTypedArray()
         val result = ports.map { port ->
             try {
                 Log.i("[Client:CheckPort]", "Checking ${ip}:$port")
@@ -55,7 +56,7 @@ interface Client {
             } catch (e: Throwable) {
                 Log.e("[Client:FailedToConnect]", "${ip}:$port ")
             }
-            return@map Features.NONE.port
+            return@map 0
         }.distinct()
         return result
     }
@@ -68,3 +69,8 @@ interface Client {
                 """.trimIndent()
         }
 }
+
+val Client.activeFeatures
+    get() = features.filter { p -> p != Features.NONE }
+val Client.featureString
+    get() = activeFeatures.joinToString { f -> f.title }

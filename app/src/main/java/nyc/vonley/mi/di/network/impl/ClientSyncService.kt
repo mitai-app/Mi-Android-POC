@@ -11,6 +11,7 @@ import android.text.format.Formatter
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
+import nyc.vonley.mi.BuildConfig
 import nyc.vonley.mi.di.network.ClientSync
 import nyc.vonley.mi.di.network.handlers.ClientHandler
 import nyc.vonley.mi.di.network.handlers.impl.ConsoleClientHandler
@@ -51,6 +52,8 @@ class ClientSyncService constructor(
     private lateinit var activeJob: Job
 
 
+    override val isConnected: Boolean get() = isWifiAvailable()
+
     //region Override
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
@@ -82,7 +85,6 @@ class ClientSyncService constructor(
         if (con != null) {
             cm = con.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             wm = con.getSystemService(Context.WIFI_SERVICE) as WifiManager
-
         }
     }
 
@@ -106,9 +108,6 @@ class ClientSyncService constructor(
             else -> false
         }
     }
-
-    override val isConnected: Boolean get() = isWifiAvailable()
-
 
     override fun initialize() {
 

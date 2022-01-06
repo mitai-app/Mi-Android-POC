@@ -55,11 +55,6 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
         Log.e("ERROR", "You are shit", e)
     }
 
-
-    override fun onConsoleFound(console: Console) {
-
-    }
-
     override fun onEmptyDataReceived() {
 
     }
