@@ -51,8 +51,4 @@ class ConsoleClientHandler constructor(
         }
     }
 
-
-    override fun onClientFound(client: Client) {
-
-    }
 }

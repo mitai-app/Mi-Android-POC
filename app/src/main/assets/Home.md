@@ -2,9 +2,9 @@
 PS4 remote tool「ミが待っている」
 
 - [X] Create android Server in the background
-  - [X] Load bin when jb finished
+    - [X] Load bin when jb finished
 - [X] Load Bin Payloads From Phone using Goldhen 2.0+ :9090
-  - [X] Android
+    - [X] Android
 
 Current UI (ConsoleFragment)
 ![UI](http://github.com/Mr-Smithy-x/Mi/screenshot.png?raw=true "UI")

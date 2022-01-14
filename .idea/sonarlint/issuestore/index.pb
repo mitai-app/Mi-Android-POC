@@ -13,8 +13,6 @@ g
 7app/src/main/java/nyc/vonley/mi/ui/main/MainContract.kt,e/f/efa58bbe2e723be04a2a7258ec256ab3c6b4c543
 h
 8app/src/main/java/nyc/vonley/mi/ui/main/MainPresenter.kt,4/d/4d717b0ddae35bac7cbac8e315faa56f53f679ad
-`
-0app/src/main/java/nyc/vonley/mi/MiApplication.kt,2/8/28f26ab94ae24f849a65857110b1c04de65abcac
 k
 ;app/src/main/java/nyc/vonley/mi/intents/PSXServiceBinder.kt,1/a/1a4f2fbf8133c4c0518451073725176b8c9b77db
 s
@@ -29,8 +27,6 @@ r
 Bapp/src/main/java/nyc/vonley/mi/ui/main/payload/PayloadContract.kt,9/4/946d070390a3a3d3de0a6f74bb8d3ce63102d368
 g
 7app/src/main/java/nyc/vonley/mi/ui/main/MainActivity.kt,a/3/a3f9321cb8117b6af3abb48401f86299834e1e55
-r
-Bapp/src/main/java/nyc/vonley/mi/ui/main/console/ConsoleFragment.kt,0/f/0f77747d2594f738f5f57ae13ba3ad4b713f074d
 t
 Dapp/src/main/java/nyc/vonley/mi/ui/main/settings/SettingsFragment.kt,a/a/aa7e7be6542a2fe87f3bbf43fef802c2e8843dcf
 d

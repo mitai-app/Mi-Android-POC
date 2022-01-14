@@ -5,56 +5,63 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import nyc.vonley.mi.R
+import dagger.hilt.android.AndroidEntryPoint
+import io.noties.markwon.Markwon
+import nyc.vonley.mi.databinding.FragmentHomeBinding
+import nyc.vonley.mi.di.network.MiJBServer
+import javax.inject.Inject
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+@AndroidEntryPoint
+class HomeFragment : Fragment(), MiJBServer.MiJbServerListener {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var binding: FragmentHomeBinding
+
+    @Inject
+    lateinit var jb: MiJBServer
+
+    private lateinit var md: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        md = resources.assets.open("Home.md").readBytes().decodeToString()
+        val markwon = Markwon.create(requireContext())
+        binding.device.text = "Visit: http://${jb.service.sync.ipAddress}:8080"
+        markwon.setMarkdown(binding.logs, md)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        jb.add(this)
+    }
+
+
+    override fun onDeviceConnected(device: MiJBServer.Device) {
+        binding.device.text = device.ip
+        binding.server.text = device.device
+    }
+
+    override fun onLog(string: String) {
+        "${binding.logs.text}\n$string\n".also { binding.logs.text = it }
+    }
+
+    override fun onFinishedJb() {
+
+    }
+
+    override fun onPayloadSent() {
+
+    }
+
+    override fun onUnsupported(s: String) {
+        "${binding.logs.text}\n$s\n".also { binding.logs.text = it }
     }
 }
