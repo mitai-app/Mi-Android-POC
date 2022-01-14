@@ -1,13 +1,13 @@
 package nyc.vonley.mi.ui.main
 
 import nyc.vonley.mi.base.BasePresenter
-import nyc.vonley.mi.di.network.ClientSync
+import nyc.vonley.mi.di.network.SyncService
 import nyc.vonley.mi.models.enums.ConsoleType
 import javax.inject.Inject
 
 class MainPresenter @Inject constructor(
     val view: MainContract.View,
-    val sync: ClientSync
+    val sync: SyncService
 ) : BasePresenter(),
     MainContract.Presenter {
 
@@ -16,8 +16,8 @@ class MainPresenter @Inject constructor(
     }
 
     override fun init() {
-        view.setTitle(sync.connectionInfo.ssid)
-        view.setSummary(sync.ip)
+        view.setTitle(sync.wifiInfo.ssid)
+        view.setSummary(sync.ipAddress)
     }
 
     override fun cleanup() {

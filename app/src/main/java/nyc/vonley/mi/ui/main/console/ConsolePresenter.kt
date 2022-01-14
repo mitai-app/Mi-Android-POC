@@ -1,9 +1,8 @@
 package nyc.vonley.mi.ui.main.console
 
 import nyc.vonley.mi.base.BasePresenter
-import nyc.vonley.mi.di.network.ClientSync
+import nyc.vonley.mi.di.network.SyncService
 
-import nyc.vonley.mi.di.network.impl.ClientSyncService
 import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console
 
@@ -11,7 +10,7 @@ import javax.inject.Inject
 
 class ConsolePresenter @Inject constructor(
     val view: ConsoleContract.View,
-    val sync: ClientSync
+    val sync: SyncService
 ) : BasePresenter(), ConsoleContract.Presenter {
 
     override fun getConsoles(): List<Console> {

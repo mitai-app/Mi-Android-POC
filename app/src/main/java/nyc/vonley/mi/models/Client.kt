@@ -2,7 +2,7 @@ package nyc.vonley.mi.models
 
 import android.util.Log
 import nyc.vonley.mi.models.enums.ConsoleType
-import nyc.vonley.mi.models.enums.Features
+import nyc.vonley.mi.models.enums.Feature
 import okhttp3.internal.closeQuietly
 import java.net.InetAddress
 import java.net.InetSocketAddress
@@ -13,7 +13,7 @@ interface Client {
     val ip: String
     var name: String
     var type: ConsoleType
-    var features: List<Features>
+    var features: List<Feature>
     var wifi: String
     var lastKnownReachable: Boolean
 
@@ -40,7 +40,7 @@ interface Client {
     }
 
     fun getActivePorts(): List<Int> {
-        val ports = Features.values().map { f -> f.ports }.flatMap { it.iterator().asSequence() }
+        val ports = Feature.values().map { f -> f.ports }.flatMap { it.iterator().asSequence() }
             .filter { f -> f > 0 }.toTypedArray()
         val result = ports.map { port ->
             try {
@@ -71,6 +71,6 @@ interface Client {
 }
 
 val Client.activeFeatures
-    get() = features.filter { p -> p != Features.NONE }
+    get() = features.filter { p -> p != Feature.NONE }
 val Client.featureString
     get() = activeFeatures.joinToString { f -> f.title }

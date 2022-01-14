@@ -12,7 +12,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import nyc.vonley.mi.models.enums.ConsoleType
 import nyc.vonley.mi.models.enums.ConsoleTypeConverter
-import nyc.vonley.mi.models.enums.Features
+import nyc.vonley.mi.models.enums.Feature
 import nyc.vonley.mi.models.enums.FeaturesConverter
 import java.net.Socket
 import kotlin.coroutines.CoroutineContext
@@ -24,7 +24,7 @@ data class Console(
     @PrimaryKey override val ip: String,
     override var name: String,
     override var type: ConsoleType,
-    override var features: List<Features> = emptyList(),
+    override var features: List<Feature> = emptyList(),
     override var lastKnownReachable: Boolean,
     override var wifi: String
 ) : Client, Parcelable, CoroutineScope {

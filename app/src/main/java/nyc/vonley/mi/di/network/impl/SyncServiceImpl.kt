@@ -9,10 +9,8 @@ import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.text.format.Formatter
 import android.util.Log
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
-import nyc.vonley.mi.BuildConfig
-import nyc.vonley.mi.di.network.ClientSync
+import nyc.vonley.mi.di.network.SyncService
 import nyc.vonley.mi.di.network.handlers.ClientHandler
 import nyc.vonley.mi.di.network.handlers.impl.ConsoleClientHandler
 import nyc.vonley.mi.di.network.listeners.OnConsoleListener
@@ -22,28 +20,28 @@ import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console
 import nyc.vonley.mi.persistence.AppDatabase
 import java.lang.ref.WeakReference
-import java.net.InetAddress
-import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 
-////////////////////////////////////////
-///   Author: Mr-Smithy-x (Vonley)   ///
-///     Purpose: Fetch Consoles      ///
-///        Project Mi: 1.2.22		 ///
-////////////////////////////////////////
-///TODO: Consider using a view model ///
-////////////////////////////////////////
-
 /**
+ * ////////////////////////////////////////
+ * ///   Author: Mr-Smithy-x (Vonley)   ///
+ * ///     Purpose: Fetch Consoles      ///
+ * ///        Project Mi: 1.2.22		///
+ * ////////////////////////////////////////
  *
+ * Sync Service is a class that meant to manage
+ *
+ * clients through the android process
+ * It is injected as a singleton and runs 1
+ * sync job at a time.
  */
-class ClientSyncService constructor(
+class SyncServiceImpl constructor(
     context: Context,
     database: AppDatabase
-) : ClientSync, CoroutineScope {
+) : SyncService, CoroutineScope {
 
-    override val TAG = ClientSyncService::class.java.name
+    override val TAG = SyncServiceImpl::class.java.name
     override val handlers: HashMap<Class<*>, ClientHandler> = hashMapOf()
     private val mContextRef: WeakReference<Context> = WeakReference<Context>(context)
     private lateinit var cm: ConnectivityManager
@@ -69,14 +67,14 @@ class ClientSyncService constructor(
     override val activeNetwork: Network?
         get() = cm.activeNetwork
 
-    override val connectionInfo: WifiInfo
+    override val wifiInfo: WifiInfo
         get() = wm.connectionInfo
 
-    override val ipAddr: Int
-        get() = connectionInfo.ipAddress
+    override val ipAddressInt: Int
+        get() = wifiInfo.ipAddress
 
-    override val ip: String
-        get() = Formatter.formatIpAddress(ipAddr)
+    override val ipAddress: String
+        get() = Formatter.formatIpAddress(ipAddressInt)
     //endregion
 
     init {
@@ -150,15 +148,15 @@ class ClientSyncService constructor(
     private fun fetchConsoles(clients: List<Client>): List<Console> {
         try {
             Log.i(TAG, "[FetchConsoles::Start] Active Network: $activeNetworkInfo")
-            Log.i(TAG, "[Device Local IP] $ip")
-            val prefix = ip.substring(0, ip.lastIndexOf(".") + 1)
+            Log.i(TAG, "[Device Local IP] $ipAddress")
+            val prefix = ipAddress.substring(0, ipAddress.lastIndexOf(".") + 1)
             Log.i(TAG, "[Local IP Prefix] $prefix")
             val consoles = clients
                 .mapNotNull { client -> client.console() }
                 .filter { client -> client.features.isNotEmpty() }
             launch {
                 withContext(Dispatchers.Main) {
-                    this@ClientSyncService[ConsoleClientHandler::class.java].handle(consoles)
+                    this@SyncServiceImpl[ConsoleClientHandler::class.java].handle(consoles)
                 }
             }
             Log.v(TAG, "[FetchConsoles::End] End of Scan #: ${consoles.size}")
@@ -177,8 +175,8 @@ class ClientSyncService constructor(
     private fun fetchClients(): List<Client> {
         try {
             Log.i(TAG, "[FetchClients::Start] Active Network: $activeNetworkInfo")
-            Log.i(TAG, "[Device Local IP] $ip")
-            val prefix = ip.substring(0, ip.lastIndexOf(".") + 1)
+            Log.i(TAG, "[Device Local IP] $ipAddress")
+            val prefix = ipAddress.substring(0, ipAddress.lastIndexOf(".") + 1)
             Log.i(TAG, "[Local IP Prefix] $prefix")
             val clients = ArrayList<Client>()
             for (i in 1 until 256) {
@@ -190,7 +188,7 @@ class ClientSyncService constructor(
                             TAG,
                             "[Client IP] (${byName.hostAddress ?: byName.canonicalHostName}) is reachable"
                         )
-                        val client = byName.client(wi = connectionInfo)
+                        val client = byName.client(wi = wifiInfo)
                         client.lastKnownReachable = true
                         clients.add(client)
                     } else {
@@ -227,10 +225,10 @@ class ClientSyncService constructor(
 }
 
 
-operator fun <T : ClientHandler> ClientSync.set(clazz: Class<T>, data: T) {
+operator fun <T : ClientHandler> SyncService.set(clazz: Class<T>, data: T) {
     handlers[clazz] = data
 }
 
-operator fun <T : ClientHandler> ClientSync.get(clazz: Class<T>): T {
+operator fun <T : ClientHandler> SyncService.get(clazz: Class<T>): T {
     return handlers[clazz] as T
 }

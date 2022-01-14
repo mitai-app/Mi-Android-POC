@@ -2,9 +2,9 @@ package nyc.vonley.mi.base
 
 import okhttp3.*
 
-abstract class BaseClient(
-    protected val http: OkHttpClient
-) {
+interface BaseClient {
+
+    val http: OkHttpClient
 
     fun post(url: String, body: RequestBody, headers: Headers, response: Callback) {
         val req = Request.Builder()
@@ -15,6 +15,5 @@ abstract class BaseClient(
         val execute = http.newCall(req);
         execute.enqueue(response)
     }
-
 
 }

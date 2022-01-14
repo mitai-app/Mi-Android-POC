@@ -4,12 +4,11 @@ import android.os.Binder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import nyc.vonley.mi.di.network.ClientSync
-import nyc.vonley.mi.di.network.impl.ClientSyncService
+import nyc.vonley.mi.di.network.SyncService
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-class PSXServiceBinder @Inject constructor(val clientSync: ClientSync) : Binder(), CoroutineScope {
+class PSXServiceBinder @Inject constructor(val clientSync: SyncService) : Binder(), CoroutineScope {
 
     protected val job = Job()
 

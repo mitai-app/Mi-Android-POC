@@ -9,24 +9,20 @@ import nyc.vonley.mi.di.network.handlers.ClientHandler
 import nyc.vonley.mi.di.network.listeners.OnConsoleListener
 import nyc.vonley.mi.models.Client
 
-interface ClientSync: CoroutineScope {
+interface SyncService: CoroutineScope {
 
     val target: Client?
-
+    val wifiInfo: WifiInfo
     val activeNetworkInfo: NetworkInfo?
     val activeNetwork: Network?
-    val connectionInfo: WifiInfo
-    val ipAddr: Int
-        get() = connectionInfo.ipAddress
-    val ip: String
-        get() = Formatter.formatIpAddress(ipAddr)
-
+    val ipAddressInt: Int get() = wifiInfo.ipAddress
+    val ipAddress: String get() = Formatter.formatIpAddress(ipAddressInt)
+    val isConnected: Boolean
     val handlers: HashMap<Class<*>, ClientHandler>
     val TAG: String
 
     fun cleanup()
     fun initialize()
-    val isConnected: Boolean
     fun isNetworkAvailable(): Boolean
     fun isWifiAvailable(): Boolean
     fun getClients()

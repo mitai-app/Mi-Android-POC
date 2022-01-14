@@ -12,8 +12,10 @@ import nyc.vonley.mi.di.annotations.AuthInterceptorOkHttpClient
 import nyc.vonley.mi.di.annotations.AuthRetrofitClient
 import nyc.vonley.mi.di.annotations.GuestRetrofitClient
 import nyc.vonley.mi.di.annotations.SharedPreferenceStorage
+import nyc.vonley.mi.di.network.SyncService
 import nyc.vonley.mi.di.network.auth.OAuth2Authenticator
-import nyc.vonley.mi.di.network.impl.ClientSyncService
+import nyc.vonley.mi.di.network.impl.SyncServiceImpl
+import nyc.vonley.mi.di.network.impl.PSXServiceImpl
 import nyc.vonley.mi.persistence.AppDatabase
 import nyc.vonley.mi.utils.SharedPreferenceManager
 import okhttp3.Cache
@@ -36,8 +38,21 @@ object NetworkModule {
     fun provideClientSyncService(
         @ApplicationContext context: Context,
         database: AppDatabase
-    ): ClientSyncService {
-        return ClientSyncService(context, database)
+    ): SyncServiceImpl {
+        return SyncServiceImpl(context, database)
+    }
+
+
+
+    @Provides
+    @Singleton
+    fun providePS4Service(
+        @ApplicationContext context: Context,
+        database: AppDatabase,
+        @GuestInterceptorOkHttpClient http: OkHttpClient,
+        sync: SyncService
+    ): PSXServiceImpl {
+        return PSXServiceImpl(sync, http)
     }
 
 

@@ -8,10 +8,8 @@ import nyc.vonley.mi.R
 import android.content.Context
 import androidx.preference.*
 import dagger.hilt.android.AndroidEntryPoint
-import nyc.vonley.mi.databinding.FragmentSettingsBinding
 import nyc.vonley.mi.di.modules.LocalStorageModule
-import nyc.vonley.mi.di.network.ClientSync
-import nyc.vonley.mi.models.Console
+import nyc.vonley.mi.di.network.SyncService
 import nyc.vonley.mi.ui.main.MainContract
 import javax.inject.Inject
 
@@ -59,7 +57,7 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
         }
 
     @Inject
-    lateinit var sync: ClientSync
+    lateinit var sync: SyncService
 
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -85,7 +83,7 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
         version.onPreferenceClickListener = change
         wifi.title = "Wifi Info"
         wifi.summary = if (sync.isConnected)
-            sync.connectionInfo.ssid
+            sync.wifiInfo.ssid
         else
             "Not connected"
 

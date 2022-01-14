@@ -15,7 +15,7 @@ enum class ConsoleType : Parcelable {
 
 @Entity
 @Parcelize
-enum class Features(val title: String, vararg val ports: Int) : Parcelable {
+enum class Feature(val title: String, vararg val ports: Int) : Parcelable {
     NONE("None", 0),
     GOLDENHEN("Golden Hen", 9090),
     ORBISAPI("Orbis API", 6023),
@@ -40,14 +40,14 @@ class ConsoleTypeConverter {
 class FeaturesConverter {
 
     @TypeConverter
-    fun toType(features: String): List<Features> {
+    fun toType(features: String): List<Feature> {
         return GsonBuilder().create().fromJson<List<Int>>(features)
-            .map { enumValues<Features>()[it] }
+            .map { enumValues<Feature>()[it] }
     }
 
     @TypeConverter
-    fun fromType(values: List<Features>): String {
-        val transform: (Features) -> Int = { it.ordinal }
+    fun fromType(values: List<Feature>): String {
+        val transform: (Feature) -> Int = { it.ordinal }
         val map = values.map(transform)
         return GsonBuilder().create().toJson(map)
     }

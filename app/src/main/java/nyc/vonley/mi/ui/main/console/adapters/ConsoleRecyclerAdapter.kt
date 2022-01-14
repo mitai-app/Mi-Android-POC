@@ -5,9 +5,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import nyc.vonley.mi.R
 import nyc.vonley.mi.databinding.VhConsoleBinding
-import nyc.vonley.mi.di.network.ClientSync
+import nyc.vonley.mi.di.network.SyncService
 import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console
 import nyc.vonley.mi.models.activeFeatures
@@ -17,7 +16,7 @@ import javax.inject.Inject
 
 class ConsoleRecyclerAdapter @Inject constructor(
     val view: MainContract.View,
-    val sync: ClientSync
+    val sync: SyncService
 ) : RecyclerView.Adapter<ConsoleRecyclerAdapter.ConsoleViewHolder>() {
 
     private var consoles = emptyList<Console>()

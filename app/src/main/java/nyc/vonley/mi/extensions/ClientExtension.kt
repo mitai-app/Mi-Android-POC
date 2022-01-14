@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken
 import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console
 import nyc.vonley.mi.models.enums.ConsoleType
-import nyc.vonley.mi.models.enums.Features
+import nyc.vonley.mi.models.enums.Feature
 import java.net.InetAddress
 
 inline fun <reified T> Gson.fromJson(json: String) =
@@ -19,7 +19,7 @@ fun InetAddress.client(wi: WifiInfo): Client {
         private var isReachable = false
         private var consoleType: ConsoleType = ConsoleType.UNKNOWN
         private var wifiInfo: String = wi.ssid ?: "not connected?"
-        private var feats: List<Features> = emptyList()
+        private var feats: List<Feature> = emptyList()
 
 
         override val ip: String
@@ -37,7 +37,7 @@ fun InetAddress.client(wi: WifiInfo): Client {
                 consoleType = value
             }
 
-        override var features: List<Features>
+        override var features: List<Feature>
             get() = feats
             set(value) {
                 feats = value
@@ -63,11 +63,11 @@ fun Client.console(): Console? {
     val actives = getActivePorts()
     if (actives.isNotEmpty()) {
         val features = actives.map { port ->
-            val values = Features.values()
+            val values = Feature.values()
             val value = values.find { f -> f.ports.find { p -> p == port } == port }
-            return@map if (value != null) Features.valueOf(value.name) else Features.NONE
+            return@map if (value != null) Feature.valueOf(value.name) else Feature.NONE
         }
-        val type = if (features.contains(Features.GOLDENHEN)) {
+        val type = if (features.contains(Feature.GOLDENHEN)) {
             ConsoleType.PS4
         } else {
             ConsoleType.UNKNOWN
