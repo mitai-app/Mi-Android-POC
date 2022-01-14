@@ -97,12 +97,11 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
             val uri = intent?.data
             if (uri != null) {
                 //val bytes = file.readBytes()
-                val openInputStream = assets.open("payloads/orbis/755.bin")
-                //val openInputStream = contentResolver.openInputStream(uri)
+                //val openInputStream = assets.open("payloads/orbis/755.bin")
+                val openInputStream = contentResolver.openInputStream(uri)
                 val dis = DataInputStream(openInputStream)
                 val bytes = dis.readBytes()
                 dis.close()
-
                 val question = "Click confirm if this is the correct payload."
                 val action = Snackbar.make(requireView(), question, Snackbar.LENGTH_INDEFINITE);
                 val yes: (v: View) -> Unit = { view ->

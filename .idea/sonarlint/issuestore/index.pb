@@ -35,8 +35,6 @@ t
 Dapp/src/main/java/nyc/vonley/mi/ui/main/settings/SettingsFragment.kt,a/a/aa7e7be6542a2fe87f3bbf43fef802c2e8843dcf
 d
 4app/src/main/java/nyc/vonley/mi/base/BaseContract.kt,1/e/1e7cb5150835f9be4b1f094145d0b9b022de8227
-r
-Bapp/src/main/java/nyc/vonley/mi/ui/main/payload/PayloadFragment.kt,4/2/429fb362cf802602db60b67e70da814405e96c73
 g
 7app/src/main/java/nyc/vonley/mi/models/enums/Payload.kt,7/f/7f027462b075b061824330f7069b9cafcc46e29e
 a
