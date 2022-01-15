@@ -1,0 +1,6 @@
+[submodule "app/src/main/assets/jb/ps4jb2"]
+	path = app/src/main/assets/jb/ps4jb2
+	url = https://github.com/sleirsgoevy/ps4jb2.git
+[submodule "app/src/main/assets/jb/trusted"]
+	path = app/src/main/assets/jb/trusted
+	url = https://github.com/sleirsgoevy/ps4jb2.git
