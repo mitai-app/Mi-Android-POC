@@ -1,6 +1,13 @@
+/**
+ * These functions are only meant for calling back to the android app.
+ * In no way are they meant to inhibit the performance of the jailbreak
+ * as the calls will be asynchronous. AKA Helper functions to let the android
+ * app know what is going on.
+ */
+
 function sendPrq(path, data) {
      var xhr = new XMLHttpRequest();
-     xhr.open('POST', path, false);
+     xhr.open('POST', path, true);
      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
      var data = JSON.stringify(data);
      xhr.send(data);
@@ -8,13 +15,13 @@ function sendPrq(path, data) {
 
 function sendHrq(path) {
      var xhr = new XMLHttpRequest();
-     xhr.open('HEAD', path, false);
+     xhr.open('HEAD', path, true);
      xhr.send('');
 }
 
 function sendGrq(path) {
      var xhr = new XMLHttpRequest();
-     xhr.open('GET', path, false);
+     xhr.open('GET', path, true);
      xhr.send('');
 }
 
@@ -64,10 +71,12 @@ function sendMiSuccess(){
      var message = "You're all set! Special thanks to the special players in the JB Community!"
      var cmd = "jb.success"
      sendCommand(message, cmd)
+     alert(message)
 }
 
 function sendMiFailed(){
     var message = "Jailbreak failed. Please reboot your PS4 and try again"
     var cmd = "jb.failed"
     sendCommand(message, cmd)
+    alert(message)
 }

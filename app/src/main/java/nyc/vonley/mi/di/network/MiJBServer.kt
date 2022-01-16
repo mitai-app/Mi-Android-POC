@@ -215,10 +215,9 @@ class MiJBServer constructor(
                         }
                         "/jb/cmd" -> {
                             Log.e(TAG, "Method: ${session.method.name}")
-
                             val map = HashMap<String, String>()
                             session.parseBody(map)
-                            val body = map["postData"] ?: ""
+                            val body = session.queryParameterString
                             Log.e(TAG, body)
                             val mi: Mi<Mi.Cmd> = body.fromJson() ?: return Response(
                                 Response.Status.INTERNAL_ERROR,
