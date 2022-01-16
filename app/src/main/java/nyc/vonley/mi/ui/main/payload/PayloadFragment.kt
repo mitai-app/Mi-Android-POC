@@ -97,7 +97,7 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
             val uri = intent?.data
             if (uri != null) {
                 //val bytes = file.readBytes()
-                //val openInputStream = assets.open("payloads/orbis/755.bin")
+                //val openInputStream = assets.open("payloads/orbis/75x.bin")
                 val openInputStream = contentResolver.openInputStream(uri)
                 val dis = DataInputStream(openInputStream)
                 val bytes = dis.readBytes()

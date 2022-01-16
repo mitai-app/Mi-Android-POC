@@ -1,14 +1,20 @@
 package nyc.vonley.mi.ui.main.home
 
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import io.noties.markwon.Markwon
 import nyc.vonley.mi.databinding.FragmentHomeBinding
 import nyc.vonley.mi.di.network.MiJBServer
+import nyc.vonley.mi.helpers.Voice
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -18,6 +24,9 @@ class HomeFragment : Fragment(), MiJBServer.MiJbServerListener {
 
     @Inject
     lateinit var jb: MiJBServer
+
+    @Inject
+    lateinit var voice: Voice
 
     private lateinit var md: String
 
@@ -53,15 +62,37 @@ class HomeFragment : Fragment(), MiJBServer.MiJbServerListener {
         "${binding.logs.text}\n$string\n".also { binding.logs.text = it }
     }
 
-    override fun onFinishedJb() {
+    fun dialog(message: String, dialog: DialogInterface.OnClickListener): AlertDialog {
+        return MaterialAlertDialogBuilder(requireContext())
+            .setTitle("ミ (mi)")
+            .setMessage(message)
+            .setPositiveButton("OK", dialog).create()
+    }
 
+    override fun onJailbreakSucceeded(message: String) {
+        dialog(message) { dialog, i ->
+            voice.say("BITCH WE OUT HERE")
+            dialog.dismiss()
+        }.show()
+    }
+
+    override fun onJailbreakFailed(message: String) {
+        dialog(message) { dialog, i ->
+            voice.say("Nah bro, reboot your shit")
+            dialog.dismiss()
+        }.show()
     }
 
     override fun onPayloadSent() {
-
+        Snackbar.make(requireView(), "Sending payload... please wait....", Snackbar.LENGTH_LONG)
+            .show()
     }
 
     override fun onUnsupported(s: String) {
         "${binding.logs.text}\n$s\n".also { binding.logs.text = it }
+    }
+
+    override fun onCommand(mi: MiJBServer.Mi<MiJBServer.Mi.Cmd>) {
+
     }
 }

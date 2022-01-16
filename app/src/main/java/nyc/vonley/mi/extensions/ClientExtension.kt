@@ -2,6 +2,7 @@ package nyc.vonley.mi.extensions
 
 import android.net.wifi.WifiInfo
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console
@@ -11,6 +12,9 @@ import java.net.InetAddress
 
 inline fun <reified T> Gson.fromJson(json: String) =
     fromJson<T>(json, object : TypeToken<T>() {}.type)
+
+inline fun <reified T> String.fromJson(): T? =
+    GsonBuilder().create().fromJson<T>(this, object : TypeToken<T>() {}.type)
 
 fun InetAddress.client(wi: WifiInfo): Client {
     return object : Client {

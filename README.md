@@ -5,9 +5,19 @@ PS4 remote tool「ミが待っている」
   - [X] Load bin when jb finished
 - [X] Load Bin Payloads From Phone using Goldhen 2.0+ :9090
   - [X] Android
+- [X] Add 6.72, 7.02 7.5X, 9.00 jb hosts (thanks sleirsgoevy)
+  Android App Developed by [Mr Smithy x](https://github.com/Mr-Smithyx)
 
-Current UI (ConsoleFragment)
-![UI](http://github.com/Mr-Smithy-x/Mi/screenshot.png?raw=true "UI")
+Current UI (Home)
+![UI](https://github.com/Mr-Smithy-x/Mi/raw/main/home.png "UI")
+Current UI (Console)
+![UI](https://github.com/Mr-Smithy-x/Mi/raw/main/console.png "UI")
+Current UI (Payload)
+![UI](https://github.com/Mr-Smithy-x/Mi/raw/main/payload.png "UI")
+Current UI (FTP) -- Coming Soon
+![UI](https://github.com/Mr-Smithy-x/Mi/raw/main/ftp.png "UI")
+Current UI (Settings) -- Fixing Soon
+![UI](https://github.com/Mr-Smithy-x/Mi/raw/main/setting.png "UI")
 
 # Automatically Includes
 
@@ -31,8 +41,6 @@ Current UI (ConsoleFragment)
 - CE-30391-6 Error CMOS Fix
 
 ### Credits
-
-Android App Developed by [Mr Smithy x](https://github.com/Mr-Smithyx)
 
 Special thanks to ps4 dev scene:
 - [Specter](https://github.com/Cryptogenic) - research

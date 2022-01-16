@@ -1,32 +1,64 @@
 package nyc.vonley.mi.di.network
 
 import android.content.Context
+import android.os.Parcelable
 import android.util.Log
 import android.webkit.MimeTypeMap
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fi.iki.elonen.NanoHTTPD
+import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.*
 import nyc.vonley.mi.BuildConfig
+import nyc.vonley.mi.extensions.fromJson
 import java.io.File
+import java.io.InputStream
+import java.lang.Exception
+import java.net.InetSocketAddress
 import java.net.Socket
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import kotlin.coroutines.CoroutineContext
 
 class MiJBServer constructor(
-    @ApplicationContext context: Context,
+    @ApplicationContext val context: Context,
     val service: PSXService
 ) : NanoHTTPD(8080),
     CoroutineScope {
 
+    data class Mi<T>(val message: String, val data: T) {
+        data class Cmd(val cmd: String)
+    }
+
+    val Device.jbPath: String
+        get() {
+            return when (version) {
+                "5.05" -> "jb/505/"
+                "6.72" -> "jb/672/"
+                "7.02" -> "jb/702/"
+                "7.50",
+                "7.51",
+                "7.55" -> "jb/75x/"
+                "9.00" -> "jb/900/"
+                else -> "pages/fail.html"
+            }
+        }
+
+    val Device.supported
+        get() = when (version) {
+            "6.72", "7.02", "7.50", "7.51", "7.55", "9.00" -> true
+            else -> false
+        }
+
+    private val miJs: ByteArray = context.assets.open("jb/mi.js").readBytes()
+    private val failHtml: ByteArray = context.assets.open("pages/fail.html").readBytes()
+
     private val routes: HashMap<String, ByteArray> = hashMapOf()
     private val payloads: HashMap<String, ByteArray> = hashMapOf()
 
-    private val failHtml: ByteArray = context.assets.open("pages/fail.html").readBytes()
 
     private val root: String
         get() {
-            return "root/"
+            return console!!.jbPath
         }
 
     private var ready: Boolean = false
@@ -42,46 +74,49 @@ class MiJBServer constructor(
         const val TAG = "MiJbServer"
     }
 
-    fun init(context: Context) {
-        val open = context.assets.open("jb/ps4.zip")
-        payloads["6.72"] to context.assets.open("payloads/gh2/672.bin").readBytes()
-        payloads["7.02"] to context.assets.open("payloads/gh2/702.bin").readBytes()
-        payloads["7.50"] to context.assets.open("payloads/gh2/750.bin").readBytes()
-        payloads["7.51"] to context.assets.open("payloads/gh2/751.bin").readBytes()
-        payloads["7.55"] to context.assets.open("payloads/gh2/755.bin").readBytes()
-        payloads["9.00"] to context.assets.open("payloads/gh2/900.bin").readBytes()
-        launch {
-            ZipInputStream(open).use { zip ->
-                with(zip) {
-                    var stub: ZipEntry? = null
-                    while (nextEntry.also { stub = it } != null) {
-                        val ze: ZipEntry = stub!!
-                        Log.d(TAG, "Decompressing + ${ze.name}")
-                        if (ze.isDirectory) {
-                            createDir(ze.name)
-                        } else {
-                            val name = ze.name
-                            if (name.contains("__MACOSX")) continue
-                            //val file = File(path, name)
-                            Log.e(TAG, "Extracting: $name")
-                            try {
-                                routes[name] = readBytes()
+
+    fun extract(open: InputStream) {
+        ZipInputStream(open).use { zip ->
+            with(zip) {
+                var stub: ZipEntry? = null
+                while (nextEntry.also { stub = it } != null) {
+                    val ze: ZipEntry = stub!!
+                    Log.d(TAG, "Decompressing + ${ze.name}")
+                    if (ze.isDirectory) {
+                        createDir(ze.name)
+                    } else {
+                        val name = ze.name
+                        if (name.contains("__MACOSX")) continue
+                        //val file = File(path, name)
+                        Log.e(TAG, "Extracting: $name")
+                        try {
+                            routes[name] = readBytes()
+                            closeEntry()
+                            /*
+                            file.outputStream().use { fos ->
+                                with(fos) {
+                                    write(readBytes())
+                                }
                                 closeEntry()
-                                /*
-                                file.outputStream().use { fos ->
-                                    with(fos) {
-                                        write(readBytes())
-                                    }
-                                    closeEntry()
-                                }*/
-                            } catch (e: Throwable) {
-                                Log.e(TAG, e.message ?: "Unable to extract")
-                                closeEntry()
-                            }
+                            }*/
+                        } catch (e: Throwable) {
+                            Log.e(TAG, e.message ?: "Unable to extract")
+                            closeEntry()
                         }
                     }
                 }
             }
+        }
+    }
+
+    fun init(context: Context) {
+        payloads["6.72"] = context.assets.open("payloads/goldenhen/672.bin").readBytes()
+        payloads["7.02"] = context.assets.open("payloads/goldenhen/702.bin").readBytes()
+        payloads["7.50"] = context.assets.open("payloads/goldenhen/750.bin").readBytes()
+        payloads["7.51"] = context.assets.open("payloads/goldenhen/751.bin").readBytes()
+        payloads["7.55"] = context.assets.open("payloads/goldenhen/755.bin").readBytes()
+        payloads["9.00"] = context.assets.open("payloads/goldenhen/900.bin").readBytes()
+        launch {
             start()
         }
     }
@@ -104,7 +139,7 @@ class MiJBServer constructor(
     private fun readBytes(path: String): ByteArray {
         val s = root + path
         Log.e(TAG, "Fetching: $s")
-        return routes[s] ?: ByteArray(0)
+        return context.assets.open(s).readBytes()
     }
 
     private fun createDir(name: String?) {
@@ -114,11 +149,12 @@ class MiJBServer constructor(
         }
     }
 
+    @Parcelize
     data class Device(
         val device: String,
         val version: String,
         var ip: String? = null
-    )
+    ) : Parcelable
 
     fun parse(string: String): Device? {
         val extractPlaystation = """\(([^()]*)\)""".toRegex()
@@ -151,19 +187,16 @@ class MiJBServer constructor(
         return type;
     }
 
+
     override fun serve(s: IHTTPSession?): Response {
         s?.let { session ->
             val uri = session.uri.toString()
             val console = parse(session)
             console?.let {
                 callback.onDeviceConnected(it)
-                val supported = when (it.version) {
-                    "6.72", "7.02", "7.50", "7.51", "7.55", "9.00" -> true
-                    else -> it.version.contains("7.5")
-                }
-                if (supported) {
+                if (it.supported) {
                     if (this.console?.ip != it.ip) this.console = it
-                    callback.onLog("This device is supported")
+                    val mime = getMimeType(uri) ?: "text/*"
                     callback.onLog("PS4 -> $uri")
                     when (uri) {
                         "/" -> {
@@ -173,23 +206,51 @@ class MiJBServer constructor(
                                 read("index.html")
                             )
                         }
-                        "/log/done" -> {
-                            callback.onLog("Jailbreak completed!")
-                            callback.onFinishedJb()
-                            val outSock = Socket(it.ip, 9020)
-                            outSock.getOutputStream().use { sock ->
-                                with(sock) {
-                                    val payloads = payloads[it.version]
-                                    callback.onLog("Sending GoldenHen 2.0b2 payload for ${it.version}")
-                                    write(payloads)
-                                    flush()
-                                    callback.onPayloadSent()
+                        "/mi.js" -> {
+                            return Response(
+                                Response.Status.OK,
+                                "text/javascript",
+                                miJs.decodeToString()
+                            )
+                        }
+                        "/jb/cmd" -> {
+                            Log.e(TAG, "Method: ${session.method.name}")
+
+                            val map = HashMap<String, String>()
+                            session.parseBody(map)
+                            val body = map["postData"] ?: ""
+                            Log.e(TAG, body)
+                            val mi: Mi<Mi.Cmd> = body.fromJson() ?: return Response(
+                                Response.Status.INTERNAL_ERROR,
+                                "text/*",
+                                "unable to parse body"
+                            )
+                            callback.onCommand(mi)
+                            val cmd = mi.data.cmd
+                            val message = mi.message
+                            when (cmd) {
+                                "jb.success" -> {
+                                    callback.onLog("Jailbreak Completed")
+                                    callback.onJailbreakSucceeded(message)
                                 }
+                                "jb.failed" -> {
+                                    callback.onLog("Jailbreak Failed")
+                                    callback.onJailbreakFailed(message)
+                                }
+                                "send.payload" -> {
+                                    callback.onLog("Sending Payload")
+                                    sendPayload(it)
+                                }
+                                else -> return Response(
+                                    Response.Status.NOT_FOUND,
+                                    "text/*",
+                                    "invalid cmd"
+                                )
                             }
+                            return Response(Response.Status.OK, "text/*", "received")
                         }
                         else -> {
                             val path = uri.drop(1)
-                            val mime = getMimeType(uri) ?: "text/*"
                             return Response(
                                 Response.Status.OK,
                                 mime,
@@ -210,12 +271,48 @@ class MiJBServer constructor(
         return super.serve(s)
     }
 
+
+    lateinit var port9021: Job
+
+    private fun sendPayload(device: Device) {
+        val payload = payloads[device.version]
+        if (!this::port9021.isInitialized) {
+            val block: suspend CoroutineScope.() -> Unit = {
+                while (true) {
+                    try {
+                        Log.e(TAG, "Attempting to connect to ${device.ip}:9021")
+                        val outSock = Socket()
+                        val inetSocketAddress = InetSocketAddress(device.ip!!, 9021)
+                        outSock.connect(inetSocketAddress, 10000)
+                        val outputStream = outSock.getOutputStream()
+                        callback.onLog("Sending GoldenHen 2.0b2 payload for PS4 ${device.version}")
+                        outputStream.write(payload)
+                        outputStream.flush()
+                        outputStream.close()
+                        callback.onPayloadSent()
+                        outSock.close()
+                        break
+                    } catch (ex: Exception) {
+                        Log.e(TAG, "Port not open, ${ex.message}")
+                        Log.e(TAG, "Retrying in 5 seconds")
+                        delay(5000)
+                    }
+                }
+            }
+            this.port9021 = launch(block = block)
+        } else {
+
+        }
+    }
+
     interface MiJbServerListener {
         fun onDeviceConnected(device: Device)
         fun onLog(string: String)
-        fun onFinishedJb()
+        fun onJailbreakSucceeded(message: String)
+        fun onJailbreakFailed(message: String)
         fun onPayloadSent()
         fun onUnsupported(s: String)
+        fun onCommand(mi: Mi<Mi.Cmd>)
     }
 
     private val callbacks: HashMap<Class<*>, MiJbServerListener> = hashMapOf()
@@ -253,15 +350,29 @@ class MiJBServer constructor(
             }
         }
 
-        override fun onFinishedJb() {
-            val name = "onFinishedJb"
+        override fun onJailbreakSucceeded(message: String) {
+            val name = "onJailbreakSucceeded"
             launch {
                 withContext(Dispatchers.Main) {
                     callbacks.onEach { a ->
                         if (BuildConfig.DEBUG) {
-                            Log.e(TAG, "Calling ${a.key.name}::${name}()")
+                            Log.e(TAG, "Calling ${a.key.name}::${name}(message)")
                         }
-                        a.value.onFinishedJb()
+                        a.value.onJailbreakSucceeded(message)
+                    }
+                }
+            }
+        }
+
+        override fun onJailbreakFailed(message: String) {
+            val name = "onJailbreakFailed"
+            launch {
+                withContext(Dispatchers.Main) {
+                    callbacks.onEach { a ->
+                        if (BuildConfig.DEBUG) {
+                            Log.e(TAG, "Calling ${a.key.name}::${name}(message)")
+                        }
+                        a.value.onJailbreakFailed(message)
                     }
                 }
             }
@@ -290,6 +401,20 @@ class MiJBServer constructor(
                             Log.e(TAG, "Calling ${a.key.name}::${name}(string)")
                         }
                         a.value.onUnsupported(s)
+                    }
+                }
+            }
+        }
+
+        override fun onCommand(mi: Mi<Mi.Cmd>) {
+            val name = "onCommand"
+            launch {
+                withContext(Dispatchers.Main) {
+                    callbacks.onEach { a ->
+                        if (BuildConfig.DEBUG) {
+                            Log.e(TAG, "Calling ${a.key.name}::${name}(Mi<Mi.Cmd>())")
+                        }
+                        a.value.onCommand(mi)
                     }
                 }
             }
