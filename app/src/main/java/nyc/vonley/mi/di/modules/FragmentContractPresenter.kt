@@ -13,6 +13,7 @@ import dagger.hilt.android.scopes.FragmentScoped
 import nyc.vonley.mi.di.repository.ConsoleRepository
 import nyc.vonley.mi.ui.main.console.ConsoleFragment
 import nyc.vonley.mi.ui.main.console.ConsoleViewModel
+import nyc.vonley.mi.ui.main.home.HomeFragment
 import nyc.vonley.mi.ui.main.payload.PayloadFragment
 import nyc.vonley.mi.ui.main.settings.SettingsFragment
 
@@ -33,6 +34,11 @@ object FragmentContractPresenter {
     @Provides
     fun providePayloadFragment(activity: Fragment): PayloadFragment {
         return activity as PayloadFragment
+    }
+
+    @Provides
+    fun provideHomeFragment(activity: Fragment): HomeFragment {
+        return activity as HomeFragment
     }
 
     @Provides

@@ -10,6 +10,9 @@ import dagger.hilt.android.scopes.FragmentScoped
 import nyc.vonley.mi.ui.main.console.ConsoleContract
 import nyc.vonley.mi.ui.main.console.ConsoleFragment
 import nyc.vonley.mi.ui.main.console.ConsolePresenter
+import nyc.vonley.mi.ui.main.home.HomeContract
+import nyc.vonley.mi.ui.main.home.HomeFragment
+import nyc.vonley.mi.ui.main.home.HomePresenter
 import nyc.vonley.mi.ui.main.payload.PayloadContract
 import nyc.vonley.mi.ui.main.payload.PayloadFragment
 import nyc.vonley.mi.ui.main.payload.PayloadPresenter
@@ -44,6 +47,14 @@ abstract class FragmentPresenterModule {
     @Binds
     @FragmentScoped
     abstract fun bindPayloadPresenter(impl: PayloadPresenter): PayloadContract.Presenter
+
+    @Binds
+    @FragmentScoped
+    abstract fun bindHomeFragment(impl: HomeFragment): HomeContract.View
+
+    @Binds
+    @FragmentScoped
+    abstract fun bindHomePresenter(impl: HomePresenter): HomeContract.Presenter
 
     @Binds
     @FragmentScoped

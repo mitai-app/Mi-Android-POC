@@ -11,8 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
+        android:textFontWeight="700"
+        android:textColor="?attr/colorPrimary"
         android:text="How To JB"
-        android:textSize="36sp" />
+        android:textSize="28sp" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/device"
@@ -20,46 +22,79 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/server"
         android:paddingStart="16dp"
+        android:textColor="?attr/colorOnSurface"
+        android:textFontWeight="500"
         android:paddingEnd="16dp"
         android:paddingBottom="16dp"
-        android:textSize="24sp"
+        android:textSize="18sp"
         tools:text="Visit: http://192.168.1.248:8080" />
 
-    <ScrollView
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/logs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/device"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="14sp"
+        android:text="Logs" />
+
+    <View
+        android:id="@+id/sep"
+        android:layout_below="@id/logs"
+        android:background="?attr/colorPrimaryVariant"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/device"
-        android:isScrollContainer="true"
-        android:overScrollMode="always"
-        android:scrollbarSize="0dp"
-        android:scrollbars="vertical">
+        android:layout_below="@id/sep">
 
 
-        <RelativeLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/log_recycler"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="200dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/text_view" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/logs"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:padding="16dp"
-                android:scrollbars="vertical"
-                tools:text="Some logs...." />
+
+
+        <View
+            android:id="@+id/sep_2"
+            android:layout_below="@id/log_recycler"
+            android:background="?attr/colorPrimaryVariant"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/sep_2"
+            android:isScrollContainer="true"
+            android:overScrollMode="always"
+            android:scrollbarSize="0dp"
+            android:scrollbars="vertical">
 
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/md"
-                android:padding="16dp"
                 android:layout_width="match_parent"
+                android:textColor="?attr/colorOnSurface"
                 android:layout_height="match_parent"
-                android:layout_below="@id/logs"
+                android:padding="16dp"
                 tools:text="Some logs...." />
 
-        </RelativeLayout>
+        </ScrollView>
 
 
-    </ScrollView>
+    </RelativeLayout>
 
 
 </RelativeLayout>

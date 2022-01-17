@@ -5,15 +5,18 @@ import android.os.Parcelable
 import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.room.Entity
+import com.google.gson.annotations.SerializedName
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.*
 import nyc.vonley.mi.BuildConfig
 import nyc.vonley.mi.extensions.fromJson
+import nyc.vonley.mi.models.Device
+import nyc.vonley.mi.models.Mi
+import nyc.vonley.mi.ui.main.home.HomeContract
 import java.io.File
 import java.io.InputStream
-import java.lang.Exception
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.util.zip.ZipEntry
@@ -26,9 +29,6 @@ class MiJBServer constructor(
 ) : NanoHTTPD(8080),
     CoroutineScope {
 
-    data class Mi<T>(val message: String, val data: T) {
-        data class Cmd(val cmd: String)
-    }
 
     val Device.jbPath: String
         get() {
@@ -159,13 +159,6 @@ class MiJBServer constructor(
     }
 
 
-    @Entity
-    @Parcelize
-    data class Device(
-        val device: String,
-        val version: String,
-        val ip: String
-    ) : Parcelable
 
     private fun parse(session: IHTTPSession): Device? {
         val string = session.headers["user-agent"].toString()
@@ -234,7 +227,7 @@ class MiJBServer constructor(
                             )
                             callback.onCommand(mi)
                             val cmd = mi.data.cmd
-                            val message = mi.message
+                            val message = mi.response
                             when (cmd) {
                                 "jb.success" -> {
                                     callback.onLog("Jailbreak Completed")
@@ -284,6 +277,7 @@ class MiJBServer constructor(
     private fun sendPayload(device: Device) {
         val payload = payloads[device.version]
         val block: suspend CoroutineScope.() -> Unit = {
+            delay(10000)
             while (true) {
                 try {
                     if (BuildConfig.DEBUG) {
@@ -305,7 +299,7 @@ class MiJBServer constructor(
                         Log.e(TAG, "Port not open, ${ex.message}")
                         Log.e(TAG, "Retrying in 5 seconds")
                     }
-                    delay(5000)
+                    delay(10000)
                 }
             }
         }
@@ -337,6 +331,12 @@ class MiJBServer constructor(
             stop()
         } catch (e: Throwable) {
             Log.e(TAG, e.message ?: "Hmmm idk")
+        }
+    }
+
+    fun remove(jb: MiJbServerListener) {
+        if(callbacks.containsKey(jb.javaClass)){
+            callbacks.remove(jb.javaClass)
         }
     }
 

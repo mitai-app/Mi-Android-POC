@@ -12,49 +12,49 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import io.noties.markwon.Markwon
 import nyc.vonley.mi.databinding.FragmentHomeBinding
-import nyc.vonley.mi.di.network.MiJBServer
-import nyc.vonley.mi.helpers.Voice
+import nyc.vonley.mi.models.Device
+import nyc.vonley.mi.models.Mi
+import nyc.vonley.mi.ui.main.home.adapters.TextViewAdapter
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), MiJBServer.MiJbServerListener {
+class HomeFragment : Fragment(), HomeContract.View {
 
     private lateinit var binding: FragmentHomeBinding
 
-    @Inject
-    lateinit var jb: MiJBServer
-
-    @Inject
-    lateinit var voice: Voice
-
     private lateinit var md: String
 
+    @Inject
+    lateinit var presenter: HomeContract.Presenter
+
+    lateinit var adapter: TextViewAdapter
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         md = resources.assets.open("Home.md").readBytes().decodeToString()
         val markwon = Markwon.create(requireContext())
-        binding.device.text = "http://${jb.service.sync.ipAddress}:8080"
         markwon.setMarkdown(binding.md, md)
+        adapter = TextViewAdapter()
+        binding.logRecycler.adapter = adapter
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        jb.add(this)
+        presenter.init()
     }
 
-    override fun onDeviceConnected(device: MiJBServer.Device) {
+    override fun onDeviceConnected(device: Device) {
         binding.device.text = device.ip
         binding.server.text = device.device
     }
 
     override fun onLog(string: String) {
-        "${binding.logs.text}\n$string\n".also { binding.logs.text = it }
-        binding.logs.scrollTo(0, binding.logs.bottom)
+        adapter.add(string)
     }
 
     fun dialog(message: String, dialog: DialogInterface.OnClickListener): AlertDialog {
@@ -76,18 +76,31 @@ class HomeFragment : Fragment(), MiJBServer.MiJbServerListener {
         }.show()
     }
 
+    override fun onDestroy() {
+        presenter.cleanup()
+        super.onDestroy()
+    }
+
     override fun onPayloadSent() {
         Snackbar.make(requireView(), "Sending payload... please wait....", Snackbar.LENGTH_LONG)
             .show()
     }
 
     override fun onUnsupported(s: String) {
-        "${binding.logs.text}\n$s\n".also { binding.logs.text = it }
-        binding.logs.scrollTo(0, binding.logs.bottom)
+        adapter.add(s)
     }
 
-    override fun onCommand(mi: MiJBServer.Mi<MiJBServer.Mi.Cmd>) {
-        "${binding.logs.text}\n${mi.message}\n".also { binding.logs.text = it }
-        binding.logs.scrollTo(0, binding.logs.bottom)
+    override fun onCommand(mi: Mi<Mi.Cmd>) {
+        adapter.add(mi.response)
     }
+
+    override fun init(ip: String) {
+        binding.device.text = "http://$ip:8080"
+    }
+
+    override fun onError(e: Throwable) {
+
+    }
+
+
 }

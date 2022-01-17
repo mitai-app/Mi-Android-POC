@@ -1,5 +1,8 @@
 # ミ Mi - PS4 Remote Tool　
 
+Jailbreak Complete UI
+![UI](success.png "UI")
+
 ## 「ミがここにいる」
 Android App Developed by Mr-Smithy-x
 
@@ -75,13 +78,15 @@ Special thanks to ps4 dev scene:
 
 Screenshots
 
-Current UI (Home)
-![UI](https://github.com/Mr-Smithy-x/Mi/raw/main/home.png "UI")
-Current UI (Console)
-![UI](https://github.com/Mr-Smithy-x/Mi/raw/main/console.png "UI")
-Current UI (Payload)
-![UI](https://github.com/Mr-Smithy-x/Mi/raw/main/payload.png "UI")
-Current UI (FTP) -- Coming Soon
-![UI](https://github.com/Mr-Smithy-x/Mi/raw/main/ftp.png "UI")
-Current UI (Settings) -- Fixing Soon
-![UI](https://github.com/Mr-Smithy-x/Mi/raw/main/setting.png "UI")
+Home
+![UI](home.png "UI")
+Console
+![UI](console.png "UI")
+Payload
+![UI](payload.png "UI")
+FTP: -- Coming Soon
+![UI](ftp.png "UI")
+Settings: -- Fixing Soon
+![UI](setting.png "UI")
+FailBreak Failed Screen:
+![UI](failed.png "UI")

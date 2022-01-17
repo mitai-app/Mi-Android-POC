@@ -14,16 +14,17 @@ Android App Developed by Mr-Smithy-x
 - Setting Features, undecided
 - mi.js, just an extension for the android app to help send status updates to the android app
 
-## Alpha Roadmap
+# Alpha Roadmap
 - [X] Create Android JB Server in the background
 - [X] Load bin when jb finished
 - [X] Load Bin Payloads From Phone using Goldhen 2.0+ 9090
 - [X] Add 6.72, 7.02 7.5X, 9.00 jb hosts (thanks to sleirsgoevy repos)
   
-Beta Roadmap
-# Automatically Includes
+# Beta Roadmap
 - [ ] FTP Manager
 - [ ] FTP Settings / Configurations
+
+# Automatically Includes
 
 ## GoldHEN - PS4 Homebrew Enabler
 ## Features

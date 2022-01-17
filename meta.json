@@ -1,15 +1,19 @@
 {
-  "name": "MI + PS4 Remote Tool",
+  "name": "Mi - PS4 Management App",
   "author": "Mr-Smithy-x",
-  "version": "1.0.0-alpha",
+  "version": "1.0.0-alpha.1",
   "contributors": [
       "@Mr-Smithy-x"
   ],
-  "file": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.0.0-alpha",
+  "file": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.0.0-alpha.1",
   "changelogs": {
+    "1.0.0-alpha.1": {
+      "changes": "Added proguard rules for production build to fix minor error upon compilation. Delay payload execution from server side. Makes sending payload a bit more stable.",
+      "build": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.0.0-alpha.1"
+    },
     "1.0.0-alpha": {
       "changes": "Initial release",
-      "build": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.0.0-alpha",
+      "build": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.0.0-alpha"
     }
   },
   "thanks": [
@@ -17,6 +21,7 @@
     "Sleirsgoevy",
     "flatz",
     "SiSTR0",
+    "Al Azif",
     "Many others not mentioned"
   ]
 }

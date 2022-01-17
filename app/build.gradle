@@ -14,8 +14,8 @@ android {
         applicationId "nyc.vonley.mi"
         minSdk 25
         targetSdk 31
-        versionCode 1
-        versionName "1.0.0-alpha"
+        versionCode 2
+        versionName "1.0.0-alpha.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -32,6 +32,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
@@ -66,7 +67,6 @@ dependencies {
     implementation "commons-net:commons-net:3.6"
 
     implementation "com.google.code.gson:gson:2.8.6"
-    implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     kapt 'com.github.bumptech.glide:compiler:4.12.0'
