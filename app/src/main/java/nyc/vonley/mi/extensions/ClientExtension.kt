@@ -67,10 +67,11 @@ fun Client.console(): Console? {
     val actives = getActivePorts()
     if (actives.isNotEmpty()) {
         val features = actives.map { port ->
-            val values = Feature.values()
+            val values = Feature.values().filter { f -> f != Feature.NETCAT }
             val value = values.find { f -> f.ports.find { p -> p == port } == port }
             return@map if (value != null) Feature.valueOf(value.name) else Feature.NONE
         }
+        // TODO: For now we only recognize goldenhen ports, when stable it should perform
         val type = if (features.contains(Feature.GOLDENHEN)) {
             ConsoleType.PS4
         } else {

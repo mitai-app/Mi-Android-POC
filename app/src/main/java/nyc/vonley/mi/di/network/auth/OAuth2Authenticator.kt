@@ -19,7 +19,4 @@ class OAuth2Authenticator constructor(val manager: SharedPreferenceManager) : Au
         return response.request
     }
 
-
-
-
 }

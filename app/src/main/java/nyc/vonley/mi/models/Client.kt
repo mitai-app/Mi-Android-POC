@@ -40,7 +40,7 @@ interface Client {
     }
 
     fun getActivePorts(): List<Int> {
-        val ports = Feature.values().map { f -> f.ports }.flatMap { it.iterator().asSequence() }
+        val ports = Feature.values().filter { f -> f != Feature.NETCAT }.map { f -> f.ports }.flatMap { it.iterator().asSequence() }
             .filter { f -> f > 0 }.toTypedArray()
         val result = ports.map { port ->
             try {

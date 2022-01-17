@@ -13,10 +13,16 @@ enum class ConsoleType : Parcelable {
     UNKNOWN, PS3, PS4
 }
 
+/**
+ * We wont scan for netcat, this port will be ignored since its a
+ * oneshot jb exploit. Our MiJbServer class will handle the netcat
+ * payload
+ */
 @Entity
 @Parcelize
 enum class Feature(val title: String, vararg val ports: Int) : Parcelable {
     NONE("None", 0),
+    NETCAT("Netcat", 9021, 9020),
     GOLDENHEN("Golden Hen", 9090),
     ORBISAPI("Orbis API", 6023),
     FTP(
@@ -25,7 +31,6 @@ enum class Feature(val title: String, vararg val ports: Int) : Parcelable {
         2121
     )
 }
-
 
 class ConsoleTypeConverter {
 

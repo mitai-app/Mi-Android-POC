@@ -30,9 +30,12 @@ import kotlin.coroutines.CoroutineContext
  * ///        Project Mi: 1.2.22		///
  * ////////////////////////////////////////
  *
- * Sync Service is a class that meant to manage
+ * Sync Service is a class that meant to scan
+ * the network for connect clients. whether
+ * console or not, only to then to be further
+ * analyzed and converted to be stored in
+ * ConsoleDao Sqlite
  *
- * clients through the android process
  * It is injected as a singleton and runs 1
  * sync job at a time.
  */
@@ -107,9 +110,7 @@ class SyncServiceImpl constructor(
         }
     }
 
-    override fun initialize() {
-
-    }
+    override fun initialize() = Unit
 
     /**
      * Gets Active Clients & Gets Consoles
@@ -136,10 +137,11 @@ class SyncServiceImpl constructor(
         this[ConsoleClientHandler::class.java].listeners[console.javaClass] = console
     }
 
-    override fun cleanup() {
-
-    }
-
+    /**
+     * TODO: Clean up all listeners so there no
+     * memory leak1
+     */
+    override fun cleanup() = Unit
 
     /**
      * Fetch PS4 & PS3 Consoles on the current
@@ -170,7 +172,7 @@ class SyncServiceImpl constructor(
     /**
      * Fetch All Connected Clients on the network
      * for potential match (IPV4 Clients Only)
-     * TODO: Accomodate for IPV6 Clients
+     * TODO: Accommodate for IPV6 Clients
      */
     private fun fetchClients(): List<Client> {
         try {

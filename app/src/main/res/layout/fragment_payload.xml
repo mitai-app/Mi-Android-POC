@@ -8,7 +8,6 @@
 
 
     <RelativeLayout
-        android:background="@color/grey"
         android:layout_above="@id/seperator"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -32,7 +31,7 @@
         android:padding="8dp"
         android:text="Send a custom payload"
         android:textAlignment="center"
-        android:textColor="@color/teal_700"
+        android:textColor="?attr/colorPrimary"
         android:textStyle="bold"
         app:textAllCaps="true" />
 
@@ -42,8 +41,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
-        android:backgroundTint="@color/teal_700"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="?attr/colorPrimary"
         android:padding="20dp"
         android:text="Browse"
         android:textColor="@color/white"

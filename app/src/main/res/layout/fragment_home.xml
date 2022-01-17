@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:text="How To JB"
-        android:textColor="@color/black"
         android:textSize="36sp" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -23,7 +22,6 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingBottom="16dp"
-        android:textColor="@color/black"
         android:textSize="24sp"
         tools:text="Visit: http://192.168.1.248:8080" />
 

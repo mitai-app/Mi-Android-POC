@@ -1,6 +1,5 @@
 package nyc.vonley.mi.di.network.handlers.impl
 
-import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -11,6 +10,14 @@ import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console
 import nyc.vonley.mi.persistence.ConsoleDao
 
+/**
+ * If you made it here congratulations. What is this ConsoleClientHandler?
+ * Well *Slaps top of the class* this bad boy here is the overall global
+ * listeners updates the entire app, who listens for these newly found consoles.
+ * However the best part about this is that we are able to save the consoles into
+ * our sqlite console dao.
+ * So there isn't really much to do here.
+ */
 class ConsoleClientHandler constructor(
     val consoleDao: ConsoleDao
 ) : BaseClientHandler<OnConsoleListener, List<Console>>(), OnConsoleListener {
@@ -22,18 +29,13 @@ class ConsoleClientHandler constructor(
         }
     }
 
-    override fun onEmptyDataReceived() {
+    override fun onEmptyDataReceived() = Unit
 
-    }
-
-    override fun onAlreadyStored() {
-
-    }
+    override fun onAlreadyStored() = Unit
 
     override val TAG: String = ConsoleClientHandler::class.java.name
 
     public override fun handle(event: List<Console>): Job {
-        Log.e(TAG, "OK")
         return launch {
             try {
                 consoleDao.insert(event)

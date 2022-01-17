@@ -44,7 +44,7 @@
                     android:id="@+id/fake_toolbar_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/teal_700"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     tools:text="Welcome" />
@@ -76,6 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/sep"
+            android:layout_marginTop="0dp"
             android:background="@android:color/transparent"
             android:keepScreenOn="true"
             app:defaultNavHost="true"
@@ -121,7 +122,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:contentDescription="Commands"
-        app:backgroundTint="@color/teal_700"
+        app:backgroundTint="?attr/colorPrimary"
         app:elevation="2dp"
         app:layout_anchor="@id/bottomAppBar"
         app:srcCompat="@drawable/icon_svg_command" />
