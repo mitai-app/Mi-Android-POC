@@ -318,6 +318,14 @@ class MiJBServer constructor(
         callbacks[jb.javaClass] = jb
     }
 
+    fun stopService() {
+        try {
+            stop()
+        }catch (e: Throwable) {
+            Log.e(TAG, e.message?:"Hmmm idk")
+        }
+    }
+
     private val callback: MiJbServerListener = object : MiJbServerListener {
         override fun onDeviceConnected(device: Device) {
             val name = "onDeviceConnected"

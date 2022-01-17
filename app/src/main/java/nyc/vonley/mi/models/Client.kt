@@ -25,7 +25,6 @@ interface Client {
         }
     }
 
-
     fun getReachable(): Boolean {
         return try {
             val address = getInetAddress()

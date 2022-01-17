@@ -10,6 +10,7 @@ import android.net.wifi.WifiManager
 import android.text.format.Formatter
 import android.util.Log
 import kotlinx.coroutines.*
+import nyc.vonley.mi.BuildConfig
 import nyc.vonley.mi.di.network.SyncService
 import nyc.vonley.mi.di.network.handlers.ClientHandler
 import nyc.vonley.mi.di.network.handlers.impl.ConsoleClientHandler
@@ -115,15 +116,43 @@ class SyncServiceImpl constructor(
     /**
      * Gets Active Clients & Gets Consoles
      */
-    override fun getClients() {
+    override fun getClients(loop: Boolean, delaySeconds: Int) {
         val block: suspend CoroutineScope.() -> Unit = {
-            fetchConsolesListAsync(fetchClientListAsync())
+            do {
+                if(BuildConfig.DEBUG){
+                    Log.e(TAG, "[Finding Clients]")
+                }
+                val clients = fetchClientListAsync()
+                if(BuildConfig.DEBUG){
+                    Log.e(TAG, "[Finding Consoles]")
+                }
+                fetchConsolesListAsync(clients)
+
+                if(BuildConfig.DEBUG){
+                    if(loop) {
+                        Log.e(TAG, "[fetching again in $delaySeconds seconds]")
+                    } else {
+                        Log.e(TAG, "[ran only once]")
+                    }
+                }
+                val ms = (delaySeconds * 1000L) // can every 1500
+                delay(ms)
+            } while (loop)
         }
         if (!this::activeJob.isInitialized) activeJob = launch(block = block)
         if (this.activeJob.isActive) return
         if (this.activeJob.isCompleted) {
             if (!activeJob.start()) {
                 activeJob = launch(block = block)
+            }
+        }
+    }
+
+
+    override fun stop() {
+        if (this::activeJob.isInitialized) {
+            if (this.activeJob.isActive) {
+                this.activeJob.cancel()
             }
         }
     }
@@ -212,11 +241,22 @@ class SyncServiceImpl constructor(
     }
 
     private suspend fun fetchClientListAsync(): List<Client> {
-        return coroutineScope { async { return@async fetchClients() }.await() }
+        val coroutineScope = coroutineScope {
+            val async = async {
+                return@async fetchClients()
+            }
+            async.await()
+        }
+        return coroutineScope
     }
 
     private suspend fun fetchConsolesListAsync(clients: List<Client>) {
-        return coroutineScope { async { return@async fetchConsoles(clients) }.await() }
+        return coroutineScope {
+            val async = async {
+                return@async fetchConsoles(clients)
+            }
+            async.await()
+        }
     }
 
 

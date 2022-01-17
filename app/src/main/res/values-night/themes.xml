@@ -13,6 +13,7 @@
         <item name="colorError">@color/material_red</item>
         <item name="colorOnError">@color/white</item>
 
+        <item name="android:fontFamily">@font/montserrat</item>
         <item name="background">@color/dark_grey</item>
         <item name="colorSurface">@color/white</item>
         <item name="colorOnSurface">@color/white</item>

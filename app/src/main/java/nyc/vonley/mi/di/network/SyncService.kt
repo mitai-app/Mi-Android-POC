@@ -25,7 +25,8 @@ interface SyncService: CoroutineScope {
     fun initialize()
     fun isNetworkAvailable(): Boolean
     fun isWifiAvailable(): Boolean
-    fun getClients()
+    fun getClients(loop: Boolean = false, delaySeconds: Int = 15)
     fun setTarget(client: Client)
     fun addConsoleListener(console: OnConsoleListener)
+    fun stop()
 }

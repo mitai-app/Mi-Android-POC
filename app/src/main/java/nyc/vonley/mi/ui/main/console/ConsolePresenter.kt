@@ -19,7 +19,6 @@ class ConsolePresenter @Inject constructor(
 
     override fun init() {
         sync.addConsoleListener(this)
-        sync.getClients()
     }
 
     override val TAG: String

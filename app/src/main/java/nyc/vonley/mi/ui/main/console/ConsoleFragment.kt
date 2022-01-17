@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 import nyc.vonley.mi.databinding.FragmentConsoleBinding
 import nyc.vonley.mi.models.Client
-import nyc.vonley.mi.models.Console
 import nyc.vonley.mi.ui.main.console.adapters.ConsoleRecyclerAdapter
 import javax.inject.Inject
 
@@ -36,6 +35,8 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
         vm.consoles.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
                 adapter.setData(it)
+            } else {
+
             }
         })
         inflate.consoleRecycler.adapter = adapter
@@ -47,9 +48,7 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
         presenter.init()
     }
 
-    override fun onClientsFound(clients: List<Client>) {
-
-    }
+    override fun onClientsFound(clients: List<Client>) = Unit
 
     override fun onError(e: Throwable) {
         Log.e("ERROR", "You are shit", e)
