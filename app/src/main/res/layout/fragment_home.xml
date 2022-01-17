@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.home.HomeFragment">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/server"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="How To JB"
+        android:textSize="36sp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/device"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/server"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
+        android:textSize="24sp"
+        tools:text="Visit: http://192.168.1.248:8080" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/device"
+        android:isScrollContainer="true"
+        android:overScrollMode="always"
+        android:scrollbarSize="0dp"
+        android:scrollbars="vertical">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/logs"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:padding="16dp"
+                android:scrollbars="vertical"
+                tools:text="Some logs...." />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/md"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/logs"
+                tools:text="Some logs...." />
+
+        </RelativeLayout>
+
+
+    </ScrollView>
+
+
+</RelativeLayout>

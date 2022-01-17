@@ -1,0 +1,22 @@
+{
+  "name": "MI + PS4 Remote Tool",
+  "author": "Mr-Smithy-x",
+  "version": "1.0.0-alpha",
+  "contributors": [
+      "@Mr-Smithy-x"
+  ],
+  "file": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.0.0-alpha",
+  "changelogs": {
+    "1.0.0-alpha": {
+      "changes": "Initial release",
+      "build": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.0.0-alpha",
+    }
+  },
+  "thanks": [
+    "Specter",
+    "Sleirsgoevy",
+    "flatz",
+    "SiSTR0",
+    "Many others not mentioned"
+  ]
+}

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fragment_permissions">
+
+    <fragment
+        android:id="@+id/fragment_home"
+        android:name="nyc.vonley.mi.ui.main.home.HomeFragment"
+        android:label="Consoles"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_home_to_console"
+            app:destination="@id/fragment_home" />
+
+        <action
+            android:id="@+id/action_permissions"
+            app:destination="@id/fragment_permissions"
+            app:popUpTo="@id/fragment_home"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_console"
+        android:name="nyc.vonley.mi.ui.main.console.ConsoleFragment"
+        android:label="Consoles"
+        tools:layout="@layout/fragment_console">
+
+        <action
+            android:id="@+id/action_payload_to_console"
+            app:destination="@id/fragment_payload" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_permissions"
+        android:name="nyc.vonley.mi.ui.main.permissions.PermissionsFragment"
+        android:label="PermissionsFragment">
+        <action
+            android:id="@+id/action_permissions_to_home"
+            app:destination="@id/fragment_home"
+            app:popUpTo="@id/fragment_permissions"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_payload"
+        android:name="nyc.vonley.mi.ui.main.payload.PayloadFragment"
+        android:label="Payload"
+        tools:layout="@layout/fragment_payload">
+        <argument
+            android:name="root_directory"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_ftp"
+        android:name="nyc.vonley.mi.ui.main.ftp.FTPFragment"
+        android:label="FTP"
+        tools:layout="@layout/fragment_f_t_p">
+
+        <argument
+            android:name="remote_root_directory"
+            app:argType="string" />
+
+        <argument
+            android:name="root_directory"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_settings"
+        android:name="nyc.vonley.mi.ui.main.settings.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings">
+
+        <argument
+            android:name="remote_root_directory"
+            app:argType="string" />
+    </fragment>
+
+
+</navigation>

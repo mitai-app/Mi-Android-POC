@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/vh_console_img"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        app:srcCompat="@drawable/icon_svg_monitor"
+        app:tint="?attr/colorPrimary" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/vh_console_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/vh_console_img"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/vh_console_nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+
+            android:textColor="?attr/colorPrimary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="Nickname" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/vh_console_ip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:textColor="@color/grey_darker"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="192.168.1.45" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</RelativeLayout>

@@ -1,0 +1,45 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Lambda" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/material_red</item>
+        <item name="colorPrimaryVariant">@color/grey</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/black</item>
+        <item name="colorSecondaryVariant">@color/grey_darker</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <item name="colorError">@color/material_red</item>
+        <item name="colorOnError">@color/white</item>
+
+        <item name="background">@color/white</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">@color/white</item>
+        <!-- Customize your theme here. -->
+    </style>
+
+
+    <style name="Theme.Lambda.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Lambda.Dialog" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.App</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.App.Title.Text</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.App.Button</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.App.Button</item>
+    </style>
+
+    <style name="Theme.Lambda.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.Lambda.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <color name="material_red">#B00020</color>
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.console.ConsoleFragment">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/console_recycler"
+        android:layout_width="match_parent"
+        tools:visibility="gone"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/vh_console" />
+
+    <RelativeLayout
+        android:id="@+id/back"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary"
+            android:text="No consoles found" />
+    </RelativeLayout>
+
+</RelativeLayout>

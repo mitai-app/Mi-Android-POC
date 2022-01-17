@@ -1,0 +1,50 @@
+<html>
+<body onload="go()">
+<script>
+if(document.cookie.indexOf('kex=0') >= 0)
+    document.location.href = 'index.html';
+</script>
+<script src="/mi.js"></script>
+<script>
+function print(){}
+
+var scriptCode = '';
+
+function preloadScripts(lst)
+{
+    for(var i = 0; i < lst.length; i++)
+    {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', lst[i], false);
+        xhr.send('');
+        scriptCode += xhr.responseText + '\n';
+    }
+}
+
+window.midExploit = function()
+{
+    preloadScripts(['702.js', 'jb/c-code.js', 'mira/c-code.js'], go);
+}
+
+window.postExploit = function()
+{
+    document.cookie = 'kex=0';
+    setTimeout(function() //update the screen one last time...
+    {
+        predone();
+        eval.call(window, scriptCode);
+        done();
+    }, 100);
+};
+</script>
+<script src="webkit-7.02/utils.js"></script>
+<script src="webkit-7.02/int64.js"></script>
+<script src="webkit-7.02/ps4.js"></script>
+<button id="input1" onfocus="handle2()"></button>
+<button id="input2"></button>
+<button id="input3" onfocus="handle2()"></button>
+<select id="select1">
+<option value="value1">Value1</option>
+</select>
+</body>
+</html>
