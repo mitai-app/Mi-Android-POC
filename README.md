@@ -11,8 +11,8 @@ Android App Developed by Mr-Smithy-x
 - Open App
 - Clear PS4 cache, and all that jazz, Enter: http://{android_ip_here}:8080/ (on PS4)
 - Click that only hyperlink at the bottom (on PS4 ofc)
+- exploit will do exploity things, just wait as the app loads the payload (may take a while depending on connection)  
 - Profit (on PS4)
-
 
 ## Features:
 - sleirsgoevy JB Host Server + mi.js helper, loads goldenhen 2.0b2
