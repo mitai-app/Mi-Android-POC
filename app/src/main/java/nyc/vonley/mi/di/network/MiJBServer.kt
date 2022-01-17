@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Parcelable
 import android.util.Log
 import android.webkit.MimeTypeMap
+import androidx.room.Entity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.android.parcel.Parcelize
@@ -149,14 +150,17 @@ class MiJBServer constructor(
         }
     }
 
+
+    @Entity
     @Parcelize
     data class Device(
         val device: String,
         val version: String,
-        var ip: String? = null
+        val ip: String
     ) : Parcelable
 
-    fun parse(string: String): Device? {
+    private fun parse(session: IHTTPSession): Device? {
+        val string = session.headers["user-agent"].toString()
         val extractPlaystation = """\(([^()]*)\)""".toRegex()
         val extractVersion = "([0-9]+(?:\\.[0-9]+)?)".toRegex()
         val matchEntire = extractPlaystation.findAll(string).flatMap { it.groupValues }.distinct()
@@ -166,17 +170,11 @@ class MiJBServer constructor(
             val extracted =
                 extractVersion.findAll(matchEntire).flatMap { it.groupValues }.distinct().toList()
             val version = extracted.last()
-            return Device(matchEntire, version)
+            return Device(matchEntire, version, session.headers["http-client-ip"] ?: "0.0.0.0")
         }
         return null
     }
 
-    fun parse(session: IHTTPSession): Device? {
-        val s = session.headers["user-agent"]
-        return parse(s.toString())?.apply {
-            this.ip = session.headers["http-client-ip"]
-        }
-    }
 
     private fun getMimeType(url: String): String? {
         var type: String? = null

@@ -27,7 +27,5 @@ d
 4app/src/main/java/nyc/vonley/mi/base/BaseContract.kt,1/e/1e7cb5150835f9be4b1f094145d0b9b022de8227
 g
 7app/src/main/java/nyc/vonley/mi/models/enums/Payload.kt,7/f/7f027462b075b061824330f7069b9cafcc46e29e
-`
-0app/src/main/java/nyc/vonley/mi/models/Client.kt,5/5/55b73d5b2e706e002ae8b33977518965ed8e210a
 ‚
 Rapp/src/main/java/nyc/vonley/mi/ui/main/console/adapters/ConsoleRecyclerAdapter.kt,2/4/243f72b56b11608f73fa071e7e5b0f9476ed862c

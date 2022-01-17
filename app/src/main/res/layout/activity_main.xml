@@ -10,6 +10,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_marginTop="24dp"
         android:layout_height="match_parent"
         android:layout_marginBottom="?attr/actionBarSize">
 
@@ -23,40 +24,40 @@
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
-                android:layout_weight="10"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_weight="10">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_launcher" />
+                    android:src="@mipmap/orb" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginStart="8dp"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/fake_toolbar_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="Welcome"
                     android:textColor="@color/teal_700"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:text="Welcome" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/fake_toolbar_summary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/fake_toolbar_title"
-                    tools:text="Welcome"
-                    android:textStyle="bold"
                     android:textColor="@color/grey_darker"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    tools:text="Welcome" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -68,6 +69,7 @@
             android:background="@color/grey"
             android:layout_width="match_parent"
             android:layout_height="1dp"/>
+
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_container"
             android:name="androidx.navigation.fragment.NavHostFragment"

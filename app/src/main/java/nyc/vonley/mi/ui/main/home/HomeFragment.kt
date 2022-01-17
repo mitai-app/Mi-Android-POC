@@ -2,12 +2,11 @@ package nyc.vonley.mi.ui.main.home
 
 import android.content.DialogInterface
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,7 +42,7 @@ class HomeFragment : Fragment(), MiJBServer.MiJbServerListener {
         md = resources.assets.open("Home.md").readBytes().decodeToString()
         val markwon = Markwon.create(requireContext())
         binding.device.text = "Visit: http://${jb.service.sync.ipAddress}:8080"
-        markwon.setMarkdown(binding.logs, md)
+        markwon.setMarkdown(binding.md, md)
         return binding.root
     }
 
@@ -84,6 +83,7 @@ class HomeFragment : Fragment(), MiJBServer.MiJbServerListener {
     }
 
     override fun onPayloadSent() {
+        voice.say("Mate, i just send a fucking payload")
         Snackbar.make(requireView(), "Sending payload... please wait....", Snackbar.LENGTH_LONG)
             .show()
     }

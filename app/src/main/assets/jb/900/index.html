@@ -37,15 +37,10 @@ window.applicationCache.oncached = window.applicationCache.onupdateready = funct
     </script>
     <p>
         <a href="#" onclick="changeLanguage('english'); return false">English</a>
-        <a href="#" onclick="changeLanguage('russian'); return false">Русский</a>
     </p>
     <div id="english" class="language" style="display: block">
-        <h3>READ THIS CAREFULLY BEFORE PROCEEDING</h3>
-        <p><b>In case you're dumb: this ONLY works on FW 9.0<u>0</u>. If you are on 6.72 or lower, go
-                <a href="https://sleirsgoevy.github.io/ps4jb/">here</a>. If you are on 7.00-7.02, go
-                <a href="https://sleirsgoevy.github.io/ps4jb/index702.html">here</a>. If you are on 7.50-7.55, 
-                go <a href="https://sleirsgoevy.github/ps4jb2/75x/">here</a>. If you are on a
-                higher firmware (e.g. 9.03), your console CAN'T BE HACKED yet.</b></p>
+        <h3>Read this carefully</h3>
+        <p><b>This ONLY works on FW 9.00</b></p>
         <ol>
             <li>Flash <a href="https://github.com/ChendoChap/pOOBs4/raw/master/exfathax.img">this image</a> onto a USB drive. You can
                 use the "Etcher" program (download <a href="https://www.balena.io/etcher/">here</a>) to perform the flashing.
@@ -75,67 +70,31 @@ window.applicationCache.oncached = window.applicationCache.onupdateready = funct
                 jailbreak.</i></p>
         <p><i>Credits: @ChendoChap for kernel exploit (both the vulnerability and the implementation), Google Project Zero for WebKit vulnerability.</i></p>
     </div>
-    <div id="russian" class="language" style="display: none">
-        <h3>ВНИМАТЕЛЬНО ПРОЧИТАЙТЕ ИНСТРУКЦИЮ ПРЕЖДЕ ЧЕМ ПРОДОЛЖАТЬ</h3>
-        <p><b>Для даунов: этот взлом работает ТОЛЬКО на прошивке 9.0<u>0</u>. Если у вас прошивка 6.72 или ниже, вам
-                <a href="https://sleirsgoevy.github.io/ps4jb/">сюда</a>. Если у вас прошивка с 7.00 по 7.02, вам
-                <a href="https://sleirsgoevy.github.io/ps4jb/index702.html">сюда</a>. Если у вас прошивка с 7.50 по 7.55,
-                вам <a href="https://sleirsgoevy.github.io/ps4jb2/75x/">сюда</a>. Если прошивка выше, эту консоль
-                взломать НЕ ПОЛУЧИТСЯ (9.03 уже так не ломается, нужно именно 9.00).</b></p>
-        <ol>
-            <li>Вам нужно прошить на USB-флешку (или жёсткий диск, но это расточительно)
-                <a href="https://github.com/ChendoChap/pOOBs4/raw/master/exfathax.img">специальный образ</a>, вызывающий
-                повреждение памяти PS4. Это можно сделать с помощью программы Etcher (скачать можно <a href="https://www.balena.io/etcher/">здесь</a>).
-                <b>Обратите внимание: все данные будут удалены, и эту флешку нельзя будет использовать ни для чего больше.</b></li>
-            <li>Нажмите на ссылку &laquo;JB+MIRA&raquo;<s> (или &laquo;JB+HEN&raquo;, что вам больше нравится)</s>. В течение приблизительно минуты
-                появится всплывающее окно &laquo;Insert USB now. do not close the dialog until notification pops, remove usb after closing it.&raquo;.
-                Не закрывая его, вставьте флешку и дождитесь системного сообщения &laquo;Формат файловой системы не поддерживается&raquo;, после чего
-                вытащите флешку и нажмите OK. <b>Внимание: ни в коем случае не оставляйте флешку в приставке, втыкайте её только для активации!</b></li>
-            <li>Вылетит сообщение "Недостаточно свободной оперативной памяти". Это нормально, просто нажмите OK.</li>
-            <li>Примерно через 20 секунд появится всплывающее окно &laquo;You're all set&raquo;, после чего вылетит ошибка нехватки памяти. При использовании Mira экран также
-                может ненадолго погаснуть. Если все произошло именно так, взлом сработал.<br />
-                Если что-то пошло не так, может вылететь сообщение об ошибке. В этом случае необходимо, не закрывая окно, перезагрузить консоль.<br />
-                Если взлом занимает больше минуты, и у вас адекватное интернет-соединение, скорее всего он повис.
-                Перезагрузите приставку и попробуйте еще раз.<br />
-                Если система крашится (выглядит как мгновенное выключение), нажимайте кнопку включения на ПРИСТАВКЕ (НЕ
-                НА КОНТРОЛЛЕРЕ), пока она не включится, после чего повторите взлом.
-            </li>
-            <li>Если вместо успешного взлома появляется ошибка нехватки памяти без каких-либо еще сообщений, это означает,
-                что эксплойт WebKit не сработал. <b>Эта ошибка вылезает в 90% случаях и НЕ ВРЕДИТ СИСТЕМЕ, просто повторите попытку.</b>
-            </li>
-            <li>Также доступны ссылки, содержащие только пейлоады. Используйте их, если jailbreak уже активирован.</li>
-            <li><b>Для продвинутых пользователей:</b> чтобы отправить пейлоад по сети (NetCat), выберите JB+NETCAT,
-                и отправьте пейлоад на TCP-порт 9021 (9020 для Legacy-версии).</li>
-        </ol>
-        <p><i>Эксплойт <b>будет</b> крашиться и виснуть, иногда вообще только с 10 попытки заводится. Тут пока что
-                никуда не денешься, разве что и дальше ждать взлом от @SpecterDev.</i></p>
-        <p><i>Credits: @ChendoChap &mdash; эксплоит ядра (уязвимость и реализация), Google Project Zero &mdash; уязвимость WebKit</i></p>
-    </div>
     <div id="progress"></div>
 
 <p>
-<a href="jb.html#p0=mira/mira.js&p1=mira/mira2.js">JB+MIRA</a>
+<a hidden href="jb.html#p0=mira/mira.js&p1=mira/mira2.js">JB+MIRA</a>
 <!-- not yet -->
 <!--<a href="jb.html#p0=mira/mira.js&p1=ps4-hen-vtx.js">JB+HEN</a>-->
 <!--<a href="jb.html#p0=mira/mira.js&p1=linux/1gb.js">JB+LINUX (VRAM 1GB)</a>-->
 <!--<a href="jb.html#p0=mira/mira.js&p1=linux/3gb.js">JB+LINUX (VRAM 3GB)</a>-->
 <!-- /not yet -->
-<a href="jb.html#p0=mira/mira.js&p1=ftp.js">JB+FTP</a>
-<a href="jb.html#p0=mira/mira.js&p1=fakeusb.js">JB+FAKEUSB</a>
-<a href="jb.html">JB+NETCAT (LEGACY)</a>
-<a href="jb.html#p0=mira/mira.js">JB+NETCAT</a>
+<a hidden href="jb.html#p0=mira/mira.js&p1=ftp.js">JB+FTP</a>
+<a hidden href="jb.html#p0=mira/mira.js&p1=fakeusb.js">JB+FAKEUSB</a>
+<a hidden href="jb.html">JB+NETCAT (LEGACY)</a>
+<a hidden href="jb.html#p0=mira/mira.js">JB+NETCAT</a>
 </p>
 <p>
-<a href="payload.html#p0=mira/mira.js&p1=mira/mira2.js">MIRA</a>
+<a hidden href="payload.html#p0=mira/mira.js&p1=mira/mira2.js">MIRA</a>
 <!-- not yet -->
 <!--<a href="payload.html#p0=mira/mira.js&p1=ps4-hen-vtx.js">HEN</a>-->
 <!--<a href="payload.html#p0=mira/mira.js&p1=linux/1gb.js">LINUX (VRAM 1GB)</a>-->
 <!--<a href="payload.html#p0=mira/mira.js&p1=linux/3gb.js">LINUX (VRAM 3GB)</a>-->
 <!-- /not yet -->
-<a href="payload.html#p0=mira/mira.js&p1=ftp.js">FTP</a>
-<a href="payload.html#p0=mira/mira.js&p1=fakeusb.js">FAKEUSB</a>
-<a href="payload.html">NETCAT (LEGACY)</a>
-<a href="payload.html#p0=mira/mira.js">NETCAT w/ ミ.js</a>
+<a hidden href="payload.html#p0=mira/mira.js&p1=ftp.js">FTP</a>
+<a hidden href="payload.html#p0=mira/mira.js&p1=fakeusb.js">FAKEUSB</a>
+<a hidden href="payload.html">NETCAT (LEGACY)</a>
+<a href="payload.html#p0=mira/mira.js">NETCAT w/ ミ.js helper</a>
 </p>
 </body>
 
