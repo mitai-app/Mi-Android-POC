@@ -16,6 +16,7 @@ import nyc.vonley.mi.di.network.MiJBServer
 import nyc.vonley.mi.di.network.PSXService
 import nyc.vonley.mi.di.network.SyncService
 import nyc.vonley.mi.di.network.auth.OAuth2Authenticator
+import nyc.vonley.mi.di.network.impl.MiFTPClientImpl
 import nyc.vonley.mi.di.network.impl.SyncServiceImpl
 import nyc.vonley.mi.di.network.impl.PSXServiceImpl
 import nyc.vonley.mi.persistence.AppDatabase
@@ -64,6 +65,14 @@ object NetworkModule {
         sync: SyncService
     ): PSXServiceImpl {
         return PSXServiceImpl(sync, http)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFTPService(
+        @SharedPreferenceStorage manager: SharedPreferenceManager
+    ): MiFTPClientImpl {
+        return MiFTPClientImpl(manager)
     }
 
 

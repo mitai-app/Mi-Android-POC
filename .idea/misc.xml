@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.32864583333333336" />
+        <entry key="app/src/main/res/drawable/icon_svg_file.xml" value="0.3182291666666667" />
         <entry key="app/src/main/res/drawable/icon_svg_folder.xml" value="0.396875" />
         <entry key="app/src/main/res/drawable/icon_svg_monitor.xml" value="0.396875" />
         <entry key="app/src/main/res/drawable/icon_svg_settings.xml" value="0.396875" />
@@ -18,7 +19,9 @@
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.31927083333333334" />
         <entry key="app/src/main/res/layout/text_view.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/layout/vh_console.xml" value="0.3020833333333333" />
+        <entry key="app/src/main/res/layout/vh_ftp.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/menu/bottom_menu.xml" value="0.3020833333333333" />
+        <entry key="app/src/main/res/menu/ftp_long_click.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/xml/network_security_config.xml" value="0.335" />
         <entry key="app/src/main/res/xml/preferences_mi.xml" value="0.22141119221411193" />

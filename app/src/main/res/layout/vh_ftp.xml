@@ -3,28 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
+    android:layout_height="wrap_content"
     android:padding="12dp">
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/vh_console_img"
+        android:id="@+id/vh_ftp_img"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_centerVertical="true"
         android:layout_marginEnd="16dp"
-        app:srcCompat="@drawable/icon_svg_monitor"
+        app:srcCompat="@drawable/icon_svg_folder"
         app:tint="?attr/colorPrimary" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/vh_console_container"
+        android:id="@+id/vh_ftp_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/vh_console_img"
+        android:layout_toEndOf="@id/vh_ftp_img"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/vh_console_nickname"
+            android:id="@+id/vh_ftp_file"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="2dp"
@@ -35,7 +35,7 @@
             tools:text="Nickname" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/vh_console_ip"
+            android:id="@+id/vh_ftp_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="2dp"

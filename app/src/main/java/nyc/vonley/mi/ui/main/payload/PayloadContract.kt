@@ -1,10 +1,9 @@
 package nyc.vonley.mi.ui.main.payload
 
 import nyc.vonley.mi.base.BaseContract
-import nyc.vonley.mi.models.Client
-import nyc.vonley.mi.models.Console
-import nyc.vonley.mi.models.enums.ConsoleType
 import okhttp3.Response
+import java.io.DataInputStream
+import java.io.InputStream
 
 interface PayloadContract {
 
@@ -15,6 +14,12 @@ interface PayloadContract {
 
     interface Presenter : BaseContract.Presenter {
         fun sendPayload(bytes: ByteArray)
+        fun sendPayload(stream: InputStream) {
+            val bytes = DataInputStream(stream).use {
+                it.readBytes()
+            }
+            return sendPayload(bytes)
+        }
     }
 
 }

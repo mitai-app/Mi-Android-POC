@@ -119,17 +119,17 @@ class SyncServiceImpl constructor(
     override fun getClients(loop: Boolean, delaySeconds: Int) {
         val block: suspend CoroutineScope.() -> Unit = {
             do {
-                if(BuildConfig.DEBUG){
+                if (BuildConfig.DEBUG) {
                     Log.e(TAG, "[Finding Clients]")
                 }
                 val clients = fetchClientListAsync()
-                if(BuildConfig.DEBUG){
+                if (BuildConfig.DEBUG) {
                     Log.e(TAG, "[Finding Consoles]")
                 }
                 fetchConsolesListAsync(clients)
 
-                if(BuildConfig.DEBUG){
-                    if(loop) {
+                if (BuildConfig.DEBUG) {
+                    if (loop) {
                         Log.e(TAG, "[fetching again in $delaySeconds seconds]")
                     } else {
                         Log.e(TAG, "[ran only once]")
@@ -223,13 +223,14 @@ class SyncServiceImpl constructor(
                         client.lastKnownReachable = true
                         clients.add(client)
                     } else {
-                        Log.e(
-                            TAG,
-                            "[Client IP] ${byName.hostAddress ?: byName.canonicalHostName} is unreachable"
-                        )
+                        if (BuildConfig.DEBUG) {
+                            //Log.e(TAG, "[Client IP] ${byName.hostAddress ?: byName.canonicalHostName} is unreachable")
+                        }
                     }
                 } catch (e: Throwable) {
-                    Log.e(TAG, "[Error] ${e.message}")
+                    if (BuildConfig.DEBUG) {
+                        Log.e(TAG, "[Error] ${e.message}")
+                    }
                 }
             }
             Log.v(TAG, "[FetchClients::End] End of scan, #: ${clients.size}")
