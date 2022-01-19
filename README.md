@@ -17,15 +17,15 @@ Android App Developed by Mr-Smithy-x
 - exploit will do exploity things, just wait as the app loads the payload (may take a while depending on connection)  
 - Profit (on PS4)
 
+## How to load consoles (as of beta)
+Once you jailbreak, and goldenhen is loaded, turn on ftp in goldenhen and click the target
+
 ## Features:
 - sleirsgoevy JB Host Server + mi.js helper, loads goldenhen 2.0b2
 - Ability to send payload to goldenhen binloader port 9090
 - FTP Features coming soon
 - Setting Features, undecided
 - mi.js, just an extension for the android app to help send status updates to the android app
-
-# How to load consoles (as of beta)
-Once you jailbreak, and goldenhen is loaded, turn on ftp in goldenhen and click the target
 
 ## Alpha Roadmap
 - [X] Create Android JB Server in the background
