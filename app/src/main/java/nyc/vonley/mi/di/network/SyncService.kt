@@ -29,4 +29,5 @@ interface SyncService: CoroutineScope {
     fun setTarget(client: Client)
     fun addConsoleListener(console: OnConsoleListener)
     fun stop()
+    fun removeConsoleListener(console: OnConsoleListener)
 }

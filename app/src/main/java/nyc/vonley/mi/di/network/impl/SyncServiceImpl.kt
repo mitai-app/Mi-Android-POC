@@ -13,6 +13,7 @@ import kotlinx.coroutines.*
 import nyc.vonley.mi.BuildConfig
 import nyc.vonley.mi.di.network.SyncService
 import nyc.vonley.mi.di.network.handlers.ClientHandler
+import nyc.vonley.mi.di.network.handlers.base.BaseClientHandler
 import nyc.vonley.mi.di.network.handlers.impl.ConsoleClientHandler
 import nyc.vonley.mi.di.network.listeners.OnConsoleListener
 import nyc.vonley.mi.extensions.client
@@ -166,11 +167,22 @@ class SyncServiceImpl constructor(
         this[ConsoleClientHandler::class.java].listeners[console.javaClass] = console
     }
 
+    override fun removeConsoleListener(console: OnConsoleListener) {
+        this[ConsoleClientHandler::class.java].listeners.remove(console.javaClass)
+    }
+
     /**
      * TODO: Clean up all listeners so there no
-     * memory leak1
+     * memory leak
      */
-    override fun cleanup() = Unit
+    override fun cleanup() {
+        this.handlers.onEach {
+            val handler = it.value
+            if (handler is BaseClientHandler<*, *>) {
+                handler.listeners.clear()
+            }
+        }
+    }
 
     /**
      * Fetch PS4 & PS3 Consoles on the current

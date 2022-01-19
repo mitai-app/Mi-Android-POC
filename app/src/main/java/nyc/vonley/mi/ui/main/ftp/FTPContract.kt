@@ -13,9 +13,9 @@ interface FTPContract {
     interface Presenter : BaseContract.Presenter, Observer<Array<out FTPFile>> {
         fun navigateTo(ftpFile: FTPFile)
         fun navigateTo(path: String)
-        fun delete(ftpFile: FTPFile): Boolean
-        fun download(ftpFile: FTPFile, location: String): Boolean
-        fun replace(ftpFile: FTPFile, file: File): Boolean
+        fun delete(ftpFile: FTPFile)
+        fun download(ftpFile: FTPFile, location: String)
+        fun replace(ftpFile: FTPFile, file: File)
         fun upload(filename: String, stream: InputStream)
         fun upload(filename: String, bytes: ByteArray) = upload(filename, ByteArrayInputStream(bytes))
         fun upload(file: File) = upload(file.name, FileInputStream(file))
@@ -29,6 +29,8 @@ interface FTPContract {
         fun onFTPLongClickFile(view: android.view.View, ftpFile: FTPFile)
         fun onFileUpload(filename: String)
         fun onFileFailed(filename: String)
+        fun onFTPFileDeleted(ftpFile: FTPFile)
+        fun onFTPFailedToDelete(ftpFile: FTPFile)
     }
 
 }

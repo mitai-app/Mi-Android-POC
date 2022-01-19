@@ -8,6 +8,7 @@ import nyc.vonley.mi.R
 import nyc.vonley.mi.databinding.VhFtpBinding
 import nyc.vonley.mi.ui.main.ftp.FTPContract
 import org.apache.commons.net.ftp.FTPFile
+import java.util.*
 import javax.inject.Inject
 
 class FTPRecyclerAdapter @Inject constructor(
@@ -29,10 +30,16 @@ class FTPRecyclerAdapter @Inject constructor(
 
         fun setInfo(ftpFile: FTPFile) {
             binding.vhFtpFile.text = if (ftpFile.name == ".") "/" else ftpFile.name
-            binding.vhFtpInfo.text = ftpFile.size.toFileSize()
+            binding.vhFtpInfo.text = ftpFile.timestamp.time.toString()
             val img = if (ftpFile.isDirectory) {
+                binding.vhFtpImg.imageTintList = ContextCompat.getColorStateList(itemView.context, R.color.ftpFolderColor)
+                binding.vhFtpFile.setTextColor(ContextCompat.getColor(itemView.context, R.color.ftpFolderTitleColor))
+                binding.vhFtpInfo.setTextColor(ContextCompat.getColor(itemView.context, R.color.ftpFolderSubtitleColor))
                 R.drawable.icon_svg_folder
             } else {
+                binding.vhFtpImg.imageTintList = ContextCompat.getColorStateList(itemView.context, R.color.ftpFileColor)
+                binding.vhFtpFile.setTextColor(ContextCompat.getColor(itemView.context, R.color.ftpFileTitleColor))
+                binding.vhFtpInfo.setTextColor(ContextCompat.getColor(itemView.context, R.color.ftpFileSubtitleColor))
                 R.drawable.icon_svg_file
             }
             val drawable = ContextCompat.getDrawable(itemView.context, img)?.let {

@@ -8,16 +8,12 @@ import nyc.vonley.mi.BuildConfig
 import nyc.vonley.mi.di.annotations.SharedPreferenceStorage
 import nyc.vonley.mi.di.network.MiFTPClient
 import nyc.vonley.mi.utils.SharedPreferenceManager
-import nyc.vonley.mi.utils.get
-import okhttp3.internal.notify
+import nyc.vonley.mi.utils.set
 import okhttp3.internal.notifyAll
 import org.apache.commons.net.ProtocolCommandEvent
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPFile
-import java.io.ByteArrayInputStream
-import java.io.File
-import java.io.FileInputStream
 import java.io.InputStream
 import javax.inject.Inject
 
@@ -29,6 +25,8 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
     private val ftpPath get() = manager.ftpPath
     private val ftpUser get() = manager.ftpUser
     private val ftpPass get() = manager.ftpPass
+    private var _ip: String? = null
+    private var _port: Int? = null
 
     private val _cwd: MutableLiveData<Array<out FTPFile>> = MutableLiveData<Array<out FTPFile>>()
 
@@ -39,16 +37,34 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
 
     private val callback = object : MiFTPEventListener {
 
-        override fun onLoggedIn() {
+        override fun onFailedToConnect() {
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Unable to connect")
+            }
+        }
 
+        override fun onLoggedIn() {
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "User is logged in")
+            }
         }
 
         override fun onInvalidCredentials() {
-
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "User entered invalid credentials")
+            }
         }
 
         override fun onDirChanged() {
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Directory Changed")
+            }
+        }
 
+        override fun isLoggedInAlready() {
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "User is already logged in")
+            }
         }
 
     }
@@ -57,28 +73,53 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
         fun onLoggedIn()
         fun onInvalidCredentials()
         fun onDirChanged()
+        fun isLoggedInAlready()
+        fun onFailedToConnect()
+    }
+
+    private suspend fun _connect(ip: String, port: Int) {
+        try {
+            client.connect(ip, port)
+            client.addProtocolCommandListener(this@MiFTPClientImpl)
+            val login = client.login(ftpUser, ftpPass)
+            if (login) {
+                setWorkingDir(ftpPath)
+                client.setFileType(FTP.BINARY_FILE_TYPE)
+                callback.onLoggedIn()
+            } else {
+                callback.onInvalidCredentials()
+            }
+        } catch (e: Throwable) {
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, e.message ?: "Something went wrong")
+            }
+            callback.onFailedToConnect()
+        }
     }
 
     override fun connect(ip: String, port: Int) {
-        if (!this::client.isInitialized) client = FTPClient()
+        if (!this::client.isInitialized) {
+            client = FTPClient()
+            _ip = ip
+            _port = port
+        }
         if (this::client.isInitialized) {
             if (client.isConnected) {
                 client.disconnect()
             }
-            client.addProtocolCommandListener(this)
             val block: suspend CoroutineScope.() -> Unit = {
-                client.connect(ip, port)
-                val login = client.login(ftpUser, ftpPass)
-                if (login) {
-                    setWorkingDir(ftpPath)
-                    client.setFileType(FTP.BINARY_FILE_TYPE)
-                    withContext(Dispatchers.Main) {
-                        callback.onLoggedIn()
+                if (client.isConnected) {
+                    if (_ip != ip || _port != port) {
+                        _ip = ip
+                        _port = port
+                        client.logout()
+                        client.disconnect()
+                        _connect(ip, port)
+                    } else {
+                        callback.isLoggedInAlready()
                     }
                 } else {
-                    withContext(Dispatchers.Main) {
-                        callback.onInvalidCredentials()
-                    }
+                    _connect(ip, port)
                 }
             }
             launch(block = block)
@@ -94,12 +135,13 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
     }
 
     override fun setWorkingDir(dir: String?) {
-        if(BuildConfig.DEBUG){
+        if (BuildConfig.DEBUG) {
             Log.e(TAG, "dir: $dir")
         }
         launch {
             val changed = client.changeWorkingDirectory(dir)
-            if(changed){
+            manager[SharedPreferenceManager.FTPPATH] = client.printWorkingDirectory()
+            if (changed) {
                 getGWD()
                 callback.onDirChanged()
             }
@@ -107,15 +149,14 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
     }
 
     private suspend fun getGWD() {
-
+        if (BuildConfig.DEBUG) {
+            val cwm = client.printWorkingDirectory()
+            Log.e("CWD", "CWD: $cwm")
+        }
         val dir: Array<out FTPFile> = if (client.isConnected) {
-
-            if(BuildConfig.DEBUG) {
-                val cwm = client.printWorkingDirectory()
-                Log.e("CWD", "CWD: $cwm")
-            }
-
-            client.listFiles()
+            val listFiles = client.listFiles()
+            listFiles.sortByDescending { it.isDirectory }
+            listFiles
         } else arrayOf()
         withContext(Dispatchers.Main) {
             synchronized(_cwd) {
@@ -125,32 +166,45 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
         }
     }
 
-    override fun up() {
-        launch {
-            client.cdup()
-            getGWD()
-        }
-    }
-
-    override suspend fun upload(file: String, byteArray: ByteArray): Boolean {
-        val stream = ByteArrayInputStream(byteArray)
-        return upload(file, stream)
-    }
 
     override suspend fun upload(file: String, stream: InputStream): Boolean {
-        client.enterLocalPassiveMode()
-        val file = client.storeFile(file, stream)
-        stream.close()
-        return file
+        if (client.isConnected) {
+            client.enterLocalPassiveMode()
+            val file = client.storeFile(file, stream)
+            stream.close()
+            if (file) {
+                getGWD()
+            }
+            return file
+        }
+        return false
     }
 
     override fun disconnect() {
         launch {
-            client.logout()
-            client.disconnect()
+            try {
+                client.removeProtocolCommandListener(this@MiFTPClientImpl)
+                client.logout()
+                client.disconnect()
+            } catch (e: Throwable) {
+                if (BuildConfig.DEBUG) {
+                    Log.e(TAG, e.message ?: "Something went wrong")
+                }
+            }
         }
     }
 
+    override suspend fun delete(file: FTPFile): Boolean {
+        if (client.isConnected) {
+            if (file.isFile) {
+                //TODO: WTF is this a bug?
+                val deleteFile = client.deleteFile("${ftpPath}/${file.name}")
+                getGWD()
+                return deleteFile
+            }
+        }
+        return false
+    }
 
     override fun protocolCommandSent(event: ProtocolCommandEvent?) {
         if (BuildConfig.DEBUG) {

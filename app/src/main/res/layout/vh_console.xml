@@ -14,7 +14,7 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="16dp"
         app:srcCompat="@drawable/icon_svg_monitor"
-        app:tint="?attr/colorPrimary" />
+        app:tint="@color/ftpFolderTitleColor" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/vh_console_container"
@@ -28,8 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="2dp"
-
-            android:textColor="?attr/colorPrimary"
+            android:textColor="@color/ftpFolderTitleColor"
             android:textSize="14sp"
             android:textStyle="bold"
             tools:text="Nickname" />
@@ -39,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="2dp"
-            android:textColor="@color/grey_darker"
+            android:textColor="@color/ftpFolderSubtitleColor"
             android:textSize="12sp"
             android:textStyle="bold"
             tools:text="192.168.1.45" />

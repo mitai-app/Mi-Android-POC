@@ -25,24 +25,31 @@ class FTPPresenter @Inject constructor(
         ftp.setWorkingDir(path)
     }
 
-    override fun delete(ftpFile: FTPFile): Boolean {
-        return false
+    override fun delete(ftpFile: FTPFile) {
+        launch {
+            val delete = ftp.delete(ftpFile)
+            if (delete) {
+                view.onFTPFileDeleted(ftpFile)
+            } else {
+                view.onFTPFailedToDelete(ftpFile)
+            }
+        }
     }
 
-    override fun download(ftpFile: FTPFile, location: String): Boolean {
-        return false
+    override fun download(ftpFile: FTPFile, location: String) {
+
     }
 
-    override fun replace(ftpFile: FTPFile, file: File): Boolean {
-        return false
+    override fun replace(ftpFile: FTPFile, file: File) {
+
     }
 
     override fun upload(filename: String, stream: InputStream) {
         launch {
             val upload = ftp.upload(filename, stream)
-            if(upload){
+            if (upload) {
                 view.onFileUpload(filename)
-            }else{
+            } else {
                 view.onFileFailed(filename)
             }
         }

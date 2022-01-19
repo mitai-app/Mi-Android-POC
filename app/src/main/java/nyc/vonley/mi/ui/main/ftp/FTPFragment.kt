@@ -21,6 +21,7 @@ import androidx.core.database.getStringOrNull
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_f_t_p.*
 import nyc.vonley.mi.BuildConfig
 import nyc.vonley.mi.R
 import nyc.vonley.mi.databinding.FragmentFTPBinding
@@ -28,6 +29,7 @@ import nyc.vonley.mi.ui.main.ftp.adapters.FTPChildAttachChangeListener
 import nyc.vonley.mi.ui.main.ftp.adapters.FTPFileTouchListener
 import nyc.vonley.mi.ui.main.ftp.adapters.FTPRecyclerAdapter
 import nyc.vonley.mi.ui.main.ftp.adapters.FTPScrollListener
+import nyc.vonley.mi.ui.main.home.dialog
 import org.apache.commons.net.ftp.FTPFile
 import java.io.File
 import javax.inject.Inject
@@ -91,6 +93,7 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
 
     override fun onFTPDirOpened(files: Array<out FTPFile>) {
         adapter.set(files)
+        recycler.scrollToPosition(0)
     }
 
     override fun onFTPDirClicked(ftpFile: FTPFile) {
@@ -109,6 +112,7 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
         Toast.makeText(requireContext(), "Feature not implemented yet", Toast.LENGTH_SHORT).show()
     }
 
+
     override fun onFTPLongClickFile(view: View, ftpFile: FTPFile) {
         val popup = PopupMenu(view.context, view)
         val inflater = popup.menuInflater
@@ -116,7 +120,12 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.ftp_delete -> {
-                    presenter.delete(ftpFile)
+                    dialog("Are you sure you want to delete ${ftpFile.name}", "OK") { d, i ->
+                        presenter.delete(ftpFile)
+                        d.dismiss()
+                    }.setNegativeButton("Cancel") { d, i ->
+                        d.dismiss()
+                    }.create().show()
                     true
                 }
                 R.id.ftp_download -> {
@@ -145,11 +154,20 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
     }
 
     override fun onFileUpload(filename: String) {
-        Snackbar.make(requireView(), "$filename upload successfully!", Snackbar.LENGTH_LONG).show()
+        Snackbar.make(requireView(), "$filename upload successful!", Snackbar.LENGTH_LONG).show()
     }
 
     override fun onFileFailed(filename: String) {
-        Snackbar.make(requireView(), "Failed to upload $filename", Snackbar.LENGTH_LONG).show()
+        Snackbar.make(requireView(), "Failed to upload $filename!", Snackbar.LENGTH_LONG).show()
+    }
+
+    override fun onFTPFileDeleted(ftpFile: FTPFile) {
+        Snackbar.make(requireView(), "${ftpFile.name} deleted!", Snackbar.LENGTH_LONG)
+            .show()
+    }
+
+    override fun onFTPFailedToDelete(ftpFile: FTPFile) {
+        Snackbar.make(requireView(), "Failed to delete $ftpFile!", Snackbar.LENGTH_LONG).show()
     }
 
     override fun onFTPFileClicked(ftpFile: FTPFile) {
