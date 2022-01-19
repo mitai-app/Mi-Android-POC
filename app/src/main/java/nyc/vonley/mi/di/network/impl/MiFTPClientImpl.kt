@@ -45,7 +45,7 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
         }
 
         override fun onClosed() {
-            if (BuildConfig.Debug) {
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "ftp connection closed")
             }
         }
