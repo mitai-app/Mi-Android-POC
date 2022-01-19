@@ -13,6 +13,7 @@ import okhttp3.internal.notifyAll
 import org.apache.commons.net.ProtocolCommandEvent
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
+import org.apache.commons.net.ftp.FTPConnectionClosedException
 import org.apache.commons.net.ftp.FTPFile
 import java.io.InputStream
 import javax.inject.Inject
@@ -40,6 +41,12 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
         override fun onFailedToConnect() {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Unable to connect")
+            }
+        }
+
+        override fun onClosed() {
+            if (BuildConfig.Debug) {
+                Log.e(TAG, "ftp connection closed")
             }
         }
 
@@ -75,6 +82,7 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
         fun onDirChanged()
         fun isLoggedInAlready()
         fun onFailedToConnect()
+        fun onClosed()
     }
 
     private suspend fun _connect(ip: String, port: Int) {
@@ -112,8 +120,14 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
                     if (_ip != ip || _port != port) {
                         _ip = ip
                         _port = port
-                        client.logout()
-                        client.disconnect()
+                        try {
+                            client.logout()
+                            client.disconnect()
+                        } catch (e: Throwable) {
+                            if(BuildConfig.DEBUG) {
+                                Log.e(TAG, e.message ?: "Something went wrong")
+                            }
+                        }
                         _connect(ip, port)
                     } else {
                         callback.isLoggedInAlready()
@@ -139,45 +153,68 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
             Log.e(TAG, "dir: $dir")
         }
         launch {
-            val changed = client.changeWorkingDirectory(dir)
-            client.printWorkingDirectory()?.let {
-                manager[SharedPreferenceManager.FTPPATH] = it
-            }
-            if (changed) {
-                getGWD()
-                callback.onDirChanged()
+            try {
+                val changed = client.changeWorkingDirectory(dir)
+                client.printWorkingDirectory()?.let {
+                    manager[SharedPreferenceManager.FTPPATH] = it
+                }
+                if (changed) {
+                    getGWD()
+                    callback.onDirChanged()
+                }
+            } catch (e: FTPConnectionClosedException) {
+                if (BuildConfig.DEBUG) {
+                    callback.onClosed()
+                }
+            } catch (e: Throwable) {
+                if (BuildConfig.DEBUG) {
+                    Log.e(TAG, e.message ?: "Something went wrong")
+                }
             }
         }
     }
 
     private suspend fun getGWD() {
-        if (BuildConfig.DEBUG) {
-            val cwm = client.printWorkingDirectory()
-            Log.e("CWD", "CWD: $cwm")
-        }
-        val dir: Array<out FTPFile> = if (client.isConnected) {
-            val listFiles = client.listFiles()
-            listFiles.sortByDescending { it.isDirectory }
-            listFiles
-        } else arrayOf()
-        withContext(Dispatchers.Main) {
-            synchronized(_cwd) {
-                _cwd.value = dir
-                _cwd.notifyAll()
+        try {
+            if (BuildConfig.DEBUG) {
+                val cwm = client.printWorkingDirectory()
+                Log.e("CWD", "CWD: $cwm")
+            }
+            val dir: Array<out FTPFile> = if (client.isConnected) {
+                val listFiles = client.listFiles()
+                listFiles.sortByDescending { it.isDirectory }
+                listFiles
+            } else arrayOf()
+            withContext(Dispatchers.Main) {
+                synchronized(_cwd) {
+                    _cwd.value = dir
+                    _cwd.notifyAll()
+                }
+            }
+        } catch (e: Throwable) {
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, e.message ?: "Something went wrong")
             }
         }
     }
 
 
     override suspend fun upload(file: String, stream: InputStream): Boolean {
-        if (client.isConnected) {
-            client.enterLocalPassiveMode()
-            val file = client.storeFile(file, stream)
-            stream.close()
-            if (file) {
-                getGWD()
+        try {
+            if (client.isConnected) {
+                client.enterLocalPassiveMode()
+                val file = client.storeFile(file, stream)
+                stream.close()
+                if (file) {
+                    getGWD()
+                }
+                return file
             }
-            return file
+            return false
+        } catch (e: Throwable) {
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, e.message ?: "Something went wrong")
+            }
         }
         return false
     }
@@ -197,25 +234,32 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
     }
 
     override suspend fun delete(file: FTPFile): Boolean {
-        if (client.isConnected) {
-            if (file.isFile) {
-                //TODO: WTF is this a bug?
-                val deleteFile = client.deleteFile("${ftpPath}/${file.name}")
-                getGWD()
-                return deleteFile
+        try {
+            if (client.isConnected) {
+                if (file.isFile) {
+                    //TODO: WTF is this a bug?
+                    val deleteFile = client.deleteFile("${ftpPath}/${file.name}")
+                    getGWD()
+                    return deleteFile
+                }
             }
+            return false
+        } catch (e: Throwable) {
+
         }
         return false
     }
 
     override fun protocolCommandSent(event: ProtocolCommandEvent?) {
         if (BuildConfig.DEBUG) {
-            Log.e(TAG, event?.message ?: "Sent")
+            Log.e(TAG, "SENT: ${event?.message}" ?: "SENT")
         }
     }
 
     override fun protocolReplyReceived(event: ProtocolCommandEvent?) {
-
+        if (BuildConfig.DEBUG) {
+            Log.e(TAG, "RCV: ${event?.message}" ?: "RCV")
+        }
     }
 
 
