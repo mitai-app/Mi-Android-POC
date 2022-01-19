@@ -177,8 +177,8 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
     override fun onFTPFileClicked(ftpFile: FTPFile) {
         Snackbar.make(
             requireView(),
-            "File: '${ftpFile.name}' clicked",
-            Snackbar.LENGTH_INDEFINITE
+            "'${ftpFile.name}' clicked",
+            Snackbar.LENGTH_SHORT
         ).show()
     }
 
