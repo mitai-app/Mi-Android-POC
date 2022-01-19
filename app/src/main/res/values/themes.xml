@@ -6,13 +6,18 @@
         <item name="colorPrimaryVariant">@color/grey</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/black</item>
-        <item name="colorSecondaryVariant">@color/grey_darker</item>
+        <item name="colorSecondary">@color/material_red</item> <!-- This is for text -->
+        <item name="colorSecondaryVariant">@color/grey</item>
         <item name="colorOnSecondary">@color/white</item>
+
+        <item name="android:textColorPrimary">@color/material_red</item>
+        <item name="android:textColorSecondary">@color/black</item>
+        <item name="android:colorAccent">@color/material_red</item>
 
         <item name="colorError">@color/material_red</item>
         <item name="colorOnError">@color/white</item>
 
+        <item name="android:textColor">@color/black</item>
         <item name="background">@color/white</item>
         <item name="colorSurface">@color/white</item>
         <item name="colorOnSurface">@color/black</item>
@@ -25,6 +30,14 @@
     </style>
 
 
+
+    <style name="Theme.Lambda.Prefs" parent="Theme.Lambda">
+        <item name="android:textColorPrimary">@color/material_red</item>
+        <item name="android:textColorSecondary">@color/black</item>
+        <item name="colorAccent">@color/material_red</item>
+    </style>
+
+
     <style name="Theme.Lambda.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -32,7 +45,8 @@
 
     <style name="Theme.Lambda.Dialog" parent="Theme.MaterialComponents.Dialog.Alert">
         <item name="alertDialogStyle">@style/MaterialAlertDialog.App</item>
-        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.App.Title.Text</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.App.Title.Text
+        </item>
         <item name="buttonBarPositiveButtonStyle">@style/Widget.App.Button</item>
         <item name="buttonBarNeutralButtonStyle">@style/Widget.App.Button</item>
     </style>

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -57,23 +56,16 @@ class HomeFragment : Fragment(), HomeContract.View {
         adapter.add(string)
     }
 
-    fun dialog(message: String, dialog: DialogInterface.OnClickListener): AlertDialog {
-        return MaterialAlertDialogBuilder(requireContext())
-            .setTitle("ミ (mi)")
-            .setMessage(message)
-            .setPositiveButton("OK", dialog).create()
-    }
-
     override fun onJailbreakSucceeded(message: String) {
-        dialog(message) { dialog, i ->
+        dialog("$message\nPssst... Turn on FTP in GoldenHen to auto detect the PS4!", "OK") { dialog, i ->
             dialog.dismiss()
-        }.show()
+        }.create().show()
     }
 
     override fun onJailbreakFailed(message: String) {
-        dialog(message) { dialog, i ->
+        dialog(message, "OK") { dialog, i ->
             dialog.dismiss()
-        }.show()
+        }.create().show()
     }
 
     override fun onDestroy() {
@@ -103,4 +95,16 @@ class HomeFragment : Fragment(), HomeContract.View {
     }
 
 
+}
+
+
+fun Fragment.dialog(
+    message: String,
+    positive: String,
+    dialog: DialogInterface.OnClickListener
+): MaterialAlertDialogBuilder {
+    return MaterialAlertDialogBuilder(requireContext())
+        .setTitle("ミ (mi)")
+        .setMessage(message)
+        .setPositiveButton(positive, dialog)
 }

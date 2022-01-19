@@ -37,19 +37,32 @@ interface SharedPreferenceManager {
             return sharedPreferences.getInt(this[PITCH], 75) / 100f
         }
 
+    val ftpPath: String?
+        get() {
+            return sharedPreferences.getString(this[FTPPATH], "/")
+        }
+    val ftpUser: String?
+        get() {
+            return sharedPreferences.getString(this[FTPUSER], "")
+        }
+    val ftpPass: String?
+        get() {
+            return sharedPreferences.getString(this[FTPPASS], "")
+        }
+
     val speed: Float
         get() {
             return sharedPreferences.getInt(this[SPEED], 100) / 100f
         }
 
     companion object {
-
-
         const val UUID: Int = R.string.preference_uuid
         const val VOICE: Int = R.string.preference_voices
         const val SPEED: Int = R.string.preference_speed
         const val PITCH: Int = R.string.preference_pitch
-
+        const val FTPPATH: Int = R.string.preference_ftp_loc
+        const val FTPUSER: Int = R.string.preference_ftp_user
+        const val FTPPASS: Int = R.string.preference_ftp_pass
     }
 }
 

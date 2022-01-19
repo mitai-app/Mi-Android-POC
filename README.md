@@ -17,6 +17,9 @@ Android App Developed by Mr-Smithy-x
 - exploit will do exploity things, just wait as the app loads the payload (may take a while depending on connection)  
 - Profit (on PS4)
 
+## How to load consoles (as of beta)
+Once you jailbreak, and goldenhen is loaded, turn on ftp in goldenhen and click the target
+
 ## Features:
 - sleirsgoevy JB Host Server + mi.js helper, loads goldenhen 2.0b2
 - Ability to send payload to goldenhen binloader port 9090
@@ -30,10 +33,11 @@ Android App Developed by Mr-Smithy-x
 - [X] Load Bin Payloads From Phone using Goldhen 2.0+ 9090
 - [X] Add 6.72, 7.02 7.5X, 9.00 jb hosts (thanks to sleirsgoevy repos)
 
-Beta Roadmap
+## Beta Roadmap
+- [X] FTP Manager
+- [] FTP Settings / Configurations
+
 # Automatically Includes
-- [ ] FTP Manager
-- [ ] FTP Settings / Configurations
 
 ## GoldHEN - PS4 Homebrew Enabler
 ## Features

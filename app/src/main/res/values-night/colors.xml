@@ -11,4 +11,14 @@
     <color name="grey_darker">#FF666666</color>
     <color name="dark_grey">#FF222222</color>
     <color name="colorPrimary">#222222</color>
+
+
+    <color name="ftpFolderColor">@color/material_red</color>
+    <color name="ftpFileColor">@color/white</color>
+
+    <color name="ftpFolderTitleColor">@color/material_red</color>
+    <color name="ftpFolderSubtitleColor">@color/grey_darker</color>
+
+    <color name="ftpFileTitleColor">@color/white</color>
+    <color name="ftpFileSubtitleColor">@color/grey_darker</color>
 </resources>

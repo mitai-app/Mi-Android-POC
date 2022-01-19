@@ -7,9 +7,10 @@
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/material_red</item>
-        <item name="colorSecondaryVariant">@color/dark_grey</item>
+        <item name="colorSecondaryVariant">@color/grey</item>
         <item name="colorOnSecondary">@color/white</item>
 
+        <item name="android:textColor">@color/white</item>
         <item name="colorError">@color/material_red</item>
         <item name="colorOnError">@color/white</item>
 
@@ -22,5 +23,15 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/dark_grey</item>
         <!-- Customize your theme here. -->
+
+        <item name="android:textColorPrimary">@color/material_red</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="colorAccent">@color/material_red</item>
+    </style>
+
+    <style name="Theme.Lambda.Prefs" parent="Theme.Lambda">
+        <item name="android:textColorPrimary">@color/material_red</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="colorAccent">@color/material_red</item>
     </style>
 </resources>

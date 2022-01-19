@@ -7,6 +7,16 @@ Android App Developed by Mr-Smithy-x
 - [Twitter: @MrSmithyx](https://twitter.com/MrSmithyx)
 - [Patreon: @MrSmithyx](https://patreon.com/MrSmithyx)
 
+## Steps:
+- Open App
+- Clear PS4 cache, and all that jazz, Enter: http://{android_ip_here}:8080/ (on PS4)
+- Click that only hyperlink at the bottom (on PS4 ofc)
+- exploit will do exploity things, just wait as the app loads the payload (may take a while depending on connection)
+- Profit (on PS4)
+
+# How to load consoles (as of beta)
+Once you jailbreak, and goldenhen is loaded, turn on ftp in goldenhen and click the target
+
 ## Features:
 - sleirsgoevy JB Host Server + mi.js helper, loads goldenhen 2.0b2
 - Ability to send payload to goldenhen binloader port 9090
@@ -21,7 +31,7 @@ Android App Developed by Mr-Smithy-x
 - [X] Add 6.72, 7.02 7.5X, 9.00 jb hosts (thanks to sleirsgoevy repos)
   
 # Beta Roadmap
-- [ ] FTP Manager
+- [X] FTP Manager
 - [ ] FTP Settings / Configurations
 
 # Automatically Includes

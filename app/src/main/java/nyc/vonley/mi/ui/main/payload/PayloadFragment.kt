@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,10 +20,9 @@ import androidx.core.database.getStringOrNull
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import nyc.vonley.mi.BuildConfig
 import nyc.vonley.mi.databinding.FragmentPayloadBinding
-import nyc.vonley.mi.models.Console
 import okhttp3.Response
-import java.io.DataInputStream
 import javax.inject.Inject
 
 /**
@@ -79,7 +79,6 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = FragmentPayloadBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -91,25 +90,53 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
     }
 
 
+    val Uri.name: String?
+        get() {
+            return if (this.toString().startsWith("content://")) {
+                val cursor = contentResolver.query(this, null, null, null, null)
+                cursor?.use {
+                    it.moveToFirst()
+                    val columnIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    it.getString(columnIndex)
+                }
+            } else this.pathSegments.last()
+        }
+
+
     override fun onActivityResult(result: ActivityResult) {
         if (result.resultCode == RESULT_OK) {
             val intent = result.data
             val uri = intent?.data
             if (uri != null) {
-                //val bytes = file.readBytes()
-                //val openInputStream = assets.open("payloads/orbis/75x.bin")
-                val openInputStream = contentResolver.openInputStream(uri)
-                val dis = DataInputStream(openInputStream)
-                val bytes = dis.readBytes()
-                dis.close()
-                val question = "Click confirm if this is the correct payload."
-                val action = Snackbar.make(requireView(), question, Snackbar.LENGTH_INDEFINITE);
-                val yes: (v: View) -> Unit = { view ->
-                    presenter.sendPayload(bytes)
-                    action.dismiss()
+                val filename = uri.name
+                filename?.let { name ->
+                    if (BuildConfig.DEBUG) {
+                        Log.e("TAG", "uri: ${uri.path}, name: $filename")
+                    }
+                    val stream = contentResolver.openInputStream(uri)
+                    if (stream != null) {
+                        val question = "Click confirm if \"${name}\" is the correct payload, otherwise swipe."
+                        val action = Snackbar.make(requireView(), question, Snackbar.LENGTH_INDEFINITE);
+                        val yes: (v: View) -> Unit = { view ->
+                            presenter.sendPayload(stream)
+                            action.dismiss()
+                        }
+                        action.setAction("Confirm", yes)
+                        action.show()
+                    } else {
+                        Snackbar.make(
+                            requireView(),
+                            "Couldn't fetch the filestream :(",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                } ?: run {
+                    Snackbar.make(
+                        requireView(),
+                        "Couldn't fetch the file :(",
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
-                action.setAction("Confirm", yes)
-                action.show()
             } else {
                 val question = "I have failed you :("
                 Snackbar.make(requireView(), question, Snackbar.LENGTH_SHORT).show()
@@ -118,11 +145,19 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
     }
 
     override fun onPayloadSent(response: Response) {
-        Toast.makeText(requireContext(), "CODE: ${response.code}, ${response.message}", Toast.LENGTH_LONG).show()
+        Toast.makeText(
+            requireContext(),
+            "CODE: ${response.code}, ${response.message}",
+            Toast.LENGTH_LONG
+        ).show()
 
     }
 
     override fun onError(e: Throwable) {
-        Toast.makeText(requireContext(), "We couldn't send the payload. \nError Message: ${e.message}", Toast.LENGTH_LONG).show()
+        Toast.makeText(
+            requireContext(),
+            "We couldn't send the payload. \nError Message: ${e.message}",
+            Toast.LENGTH_LONG
+        ).show()
     }
 }

@@ -14,6 +14,9 @@
     <string name="preference_clear">nyc.vonley.mi.prefs.clear</string>
     <string name="preference_version">nyc.vonley.mi.prefs.version</string>
     <string name="preference_dev">nyc.vonley.mi.prefs.dev</string>
+    <string name="preference_ftp_loc">nyc.vonley.mi.prefs.ftp.loc</string>
+    <string name="preference_ftp_user">nyc.vonley.mi.prefs.ftp.user</string>
+    <string name="preference_ftp_pass">nyc.vonley.mi.prefs.ftp.pass</string>
     <string name="preference_rest">nyc.vonley.mi.prefs.rest</string>
     <string name="preference_reboot">nyc.vonley.mi.prefs.reboot</string>
     <string name="preference_shutdown">nyc.vonley.mi.prefs.shutdown</string>

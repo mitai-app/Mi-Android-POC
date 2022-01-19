@@ -10,6 +10,9 @@ import dagger.hilt.android.scopes.FragmentScoped
 import nyc.vonley.mi.ui.main.console.ConsoleContract
 import nyc.vonley.mi.ui.main.console.ConsoleFragment
 import nyc.vonley.mi.ui.main.console.ConsolePresenter
+import nyc.vonley.mi.ui.main.ftp.FTPContract
+import nyc.vonley.mi.ui.main.ftp.FTPFragment
+import nyc.vonley.mi.ui.main.ftp.FTPPresenter
 import nyc.vonley.mi.ui.main.home.HomeContract
 import nyc.vonley.mi.ui.main.home.HomeFragment
 import nyc.vonley.mi.ui.main.home.HomePresenter
@@ -55,6 +58,14 @@ abstract class FragmentPresenterModule {
     @Binds
     @FragmentScoped
     abstract fun bindHomePresenter(impl: HomePresenter): HomeContract.Presenter
+
+    @Binds
+    @FragmentScoped
+    abstract fun bindFTPPresenter(impl: FTPPresenter): FTPContract.Presenter
+
+    @Binds
+    @FragmentScoped
+    abstract fun bindFTPFragment(impl: FTPFragment): FTPContract.View
 
     @Binds
     @FragmentScoped
