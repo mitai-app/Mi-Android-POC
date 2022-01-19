@@ -140,7 +140,9 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
         }
         launch {
             val changed = client.changeWorkingDirectory(dir)
-            manager[SharedPreferenceManager.FTPPATH] = client.printWorkingDirectory()
+            client.printWorkingDirectory()?.let {
+                manager[SharedPreferenceManager.FTPPATH] = it
+            }
             if (changed) {
                 getGWD()
                 callback.onDirChanged()

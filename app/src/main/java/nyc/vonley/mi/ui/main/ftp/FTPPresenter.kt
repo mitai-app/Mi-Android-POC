@@ -63,7 +63,7 @@ class FTPPresenter @Inject constructor(
         sync.target?.run {
             ftp.connect(ip)
         } ?: run {
-            view.onError(Throwable("No target set"))
+            view.noTarget()
         }
     }
 

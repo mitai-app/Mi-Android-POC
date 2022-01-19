@@ -31,6 +31,7 @@ interface FTPContract {
         fun onFileFailed(filename: String)
         fun onFTPFileDeleted(ftpFile: FTPFile)
         fun onFTPFailedToDelete(ftpFile: FTPFile)
+        fun noTarget()
     }
 
 }

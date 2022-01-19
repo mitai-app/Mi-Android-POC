@@ -170,6 +170,10 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
         Snackbar.make(requireView(), "Failed to delete $ftpFile!", Snackbar.LENGTH_LONG).show()
     }
 
+    override fun noTarget() {
+        // Snackbar.make(requireView(), "There's no target set...", Snackbar.LENGTH_LONG).show()
+    }
+
     override fun onFTPFileClicked(ftpFile: FTPFile) {
         Snackbar.make(
             requireView(),
