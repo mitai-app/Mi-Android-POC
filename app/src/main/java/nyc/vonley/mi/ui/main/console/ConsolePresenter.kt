@@ -9,6 +9,7 @@ import nyc.vonley.mi.di.network.SyncService
 import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console
 import nyc.vonley.mi.models.enums.ConsoleType
+import nyc.vonley.mi.models.enums.Feature
 import nyc.vonley.mi.persistence.ConsoleDao
 import nyc.vonley.mi.utils.SharedPreferenceManager
 import javax.inject.Inject
@@ -31,14 +32,14 @@ class ConsolePresenter @Inject constructor(
             if (dao.exists(input)) {
                 dao.updateNickName(input, "Playstation 4")
             } else {
-                dao.add(
+                dao.insert(Console(
                     input,
                     "Playstation 4",
                     ConsoleType.PS4,
-                    listOf(),
+                    listOf(Feature.FTP),
                     false,
                     sync.wifiInfo.ssid
-                )
+                ))
             }
             withContext(Dispatchers.Main) {
                 view.onConsoleAdded()

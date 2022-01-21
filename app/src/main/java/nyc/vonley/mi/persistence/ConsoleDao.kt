@@ -23,15 +23,6 @@ interface ConsoleDao : IDao<Console, String> {
     suspend fun updateNickName(ip_: String, name_: String)
 
 
-    @Query("INSERT INTO Console VALUES(:ip_, :name_, :type_, :features_, :lastKnown_, :wifi_)")
-    suspend fun add(
-        ip_: String,
-        name_: String,
-        type_: ConsoleType,
-        features_: List<Feature>,
-        lastKnown_: Boolean,
-        wifi_: String
-    )
 
 
     @Query("UPDATE Console SET type = :type_, features = :features_, lastKnownReachable = :lastKnown_, wifi = :wifi_ WHERE ip = :ip_")

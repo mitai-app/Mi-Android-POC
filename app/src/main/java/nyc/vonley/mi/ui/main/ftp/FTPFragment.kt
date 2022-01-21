@@ -287,19 +287,19 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
                     val stream = contentResolver.openInputStream(uri)
                     if (stream != null) {
                         val question = "Click confirm if \"${name}\" is the correct file."
-                        val action =
-                            Snackbar.make(requireView(), question, Snackbar.LENGTH_INDEFINITE);
-                        val yes: (v: View) -> Unit = { view ->
+                        dialog(question, "Confirm")
+                        { dialog, i ->
                             ftpFile?.let {
                                 presenter.replace(it, stream)
                                 ftpFile = null
                             } ?: run {
                                 presenter.upload(name, stream)
                             }
-                            action.dismiss()
-                        }
-                        action.setAction("Confirm", yes)
-                        action.show()
+                            dialog.dismiss()
+                        }.setNegativeButton("Cancel")
+                        { dialog, i ->
+                            dialog.dismiss()
+                        }.create().show()
                     } else {
                         Snackbar.make(
                             requireView(),

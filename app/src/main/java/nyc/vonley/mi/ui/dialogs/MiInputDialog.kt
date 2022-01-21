@@ -54,7 +54,6 @@ class MiInputDialog private constructor() : DialogFragment(), View.OnClickListen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.input.hint = hint
         binding.layout.hint = title
         value?.let {
             binding.input.setText(it)

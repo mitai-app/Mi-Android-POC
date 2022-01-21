@@ -10,23 +10,16 @@
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Title"
         android:textColorHint="@color/black"
         app:boxBackgroundColor="?attr/background"
         app:expandedHintEnabled="true"
-        app:hintAnimationEnabled="true"
-        app:hintEnabled="true"
-        app:hintTextAppearance="@color/black"
-        app:hintTextColor="@color/black"
-        app:placeholderText="Title">
+        app:hintTextColor="@color/material_red">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Title"
-            android:textColorHint="@color/black"
-            app:textInputLayoutFocusedRectEnabled="true" />
+            android:textColorHint="@color/grey_darker"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -53,8 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_toStartOf="@id/cancel"
             android:text="Submit"
-            android:textColor="@color/teal_700"
-            android:textStyle="bold" />
+            android:textColor="?attr/colorOnBackground" />
 
 
     </RelativeLayout>
