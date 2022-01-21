@@ -75,7 +75,6 @@ object NetworkModule {
         return MiFTPClientImpl(manager)
     }
 
-
     @AuthInterceptorOkHttpClient
     @Provides
     fun provideAuthInterceptor(

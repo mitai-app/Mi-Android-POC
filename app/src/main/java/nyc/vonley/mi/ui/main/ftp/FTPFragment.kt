@@ -347,5 +347,4 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
         super.onDialogCanceled()
         ftpFile = null
     }
-
 }
