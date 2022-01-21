@@ -286,7 +286,7 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
                     }
                     val stream = contentResolver.openInputStream(uri)
                     if (stream != null) {
-                        val question = "Click confirm if \"${name}\" is the correct file."
+                        val question = "Click confirm if \"${name}\" is the correct file to upload, otherwise press cancel."
                         dialog(question, "Confirm")
                         { dialog, i ->
                             ftpFile?.let {
