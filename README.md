@@ -2,13 +2,16 @@
 
 Jailbreak Complete UI
 <p float="left">
-  <img src="/success.png" width="100" />
-  <img src="/instructions.png" width="100" /> 
-  <img src="/home.png" width="100" /> 
-  <img src="/console.png" width="100" />
-  <img src="/payload.png" width="100" />
-  <img src="/ftp.png" width="100" />
-  <img src="/settings=.png" width="100" />
+  <img src="/success.png" width="300" />
+  <img src="/instructions.png" width="300" /> 
+  <img src="/home.png" width="300" /> 
+  <img src="/console.png" width="300" />
+</p>
+<p float="left">
+  <img src="/payload.png" width="300" />
+  <img src="/ftp.png" width="300" />
+  <img src="/setting.png" width="300" />
+  <img src="/failed.png" width="300" />
 </p>
 
 ## 「ミがここにいる」
@@ -87,18 +90,3 @@ Special thanks to ps4 dev scene:
 - [zecoxao](https://twitter.com/notzecoxao) - research
 - [Znullptr](https://github.com/dmiller423) - research
 -  and others not mentions
-
-Screenshots
-
-Home
-![UI](home.png "UI")
-Console
-![UI](console.png "UI")
-Payload
-![UI](payload.png "UI")
-FTP: -- Coming Soon
-![UI](ftp.png "UI")
-Settings: -- Fixing Soon
-![UI](setting.png "UI")
-FailBreak Failed Screen:
-![UI](failed.png "UI")
