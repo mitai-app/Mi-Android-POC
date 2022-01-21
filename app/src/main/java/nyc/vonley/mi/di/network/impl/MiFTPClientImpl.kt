@@ -15,7 +15,7 @@ import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPConnectionClosedException
 import org.apache.commons.net.ftp.FTPFile
-import java.io.InputStream
+import java.io.*
 import javax.inject.Inject
 
 class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val manager: SharedPreferenceManager) :
@@ -124,7 +124,7 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
                             client.logout()
                             client.disconnect()
                         } catch (e: Throwable) {
-                            if(BuildConfig.DEBUG) {
+                            if (BuildConfig.DEBUG) {
                                 Log.e(TAG, e.message ?: "Something went wrong")
                             }
                         }
@@ -198,7 +198,6 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
         }
     }
 
-
     override suspend fun upload(file: String, stream: InputStream): Boolean {
         try {
             if (client.isConnected) {
@@ -237,7 +236,6 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
         try {
             if (client.isConnected) {
                 if (file.isFile) {
-                    //TODO: WTF is this a bug?
                     val deleteFile = client.deleteFile("${ftpPath}/${file.name}")
                     getGWD()
                     return deleteFile
@@ -246,6 +244,39 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
             return false
         } catch (e: Throwable) {
 
+        }
+        return false
+    }
+
+    override suspend fun download(ftpFile: FTPFile): ByteArray? {
+        try {
+            if (client.isConnected) {
+                if (ftpFile.isFile) {
+                    val remoteFile = "$ftpPath/${ftpFile.name}"
+                    val stream = ByteArrayOutputStream()
+                    val success: Boolean = client.retrieveFile(remoteFile, stream)
+                    val bytes = stream.toByteArray()
+                    stream.close()
+                    if (success) {
+                        return bytes
+                    }
+                }
+            }
+        } catch (e: Throwable) {
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, e.message ?: "Something went wrong")
+            }
+        }
+        return null
+    }
+
+    override suspend fun rename(ftpFile: FTPFile, input: String): Boolean {
+        if (client.isConnected) {
+            if (ftpFile.isFile) {
+                val remoteFile = "$ftpPath/${ftpFile.name}"
+                val toRemoteFile = "$ftpPath/$input"
+                return client.rename(remoteFile, toRemoteFile)
+            }
         }
         return false
     }

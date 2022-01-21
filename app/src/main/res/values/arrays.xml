@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="feature_entry">
+        <item>@string/feature_goldhen</item>
+        <item>@string/feature_orbisapi</item>
+    </string-array>
+</resources>

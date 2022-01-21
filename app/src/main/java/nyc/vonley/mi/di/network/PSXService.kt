@@ -2,7 +2,7 @@ package nyc.vonley.mi.di.network
 
 import android.util.Log
 import nyc.vonley.mi.base.BaseClient
-import nyc.vonley.mi.models.enums.Feature
+import nyc.vonley.mi.utils.SharedPreferenceManager
 import okhttp3.Callback
 import okhttp3.Headers
 import okhttp3.RequestBody
@@ -14,6 +14,8 @@ interface PSXService : BaseClient {
 
     val sync: SyncService
 
+    val manager: SharedPreferenceManager
+
     val target get() = sync.target
 
     val ip get() = target?.ip
@@ -23,6 +25,11 @@ interface PSXService : BaseClient {
      */
     fun uploadBin(file: ByteArray, callback: Callback) {
         if (target == null) return
+        val url = "$ip:${manager.featurePort.ports.first()}"
+        val body: RequestBody = file.toRequestBody()
+        Log.e("URL", url)
+        post(url, body, Headers.headersOf(), callback)
+        /*
         if (target!!.features.contains(Feature.GOLDENHEN)) {
             Feature.GOLDENHEN.ports.map { "$ip:$it" }.onEach { url ->
                 val body: RequestBody = file.toRequestBody()
@@ -35,7 +42,7 @@ interface PSXService : BaseClient {
                 Log.e("URL", url)
                 post(url, body, Headers.headersOf(), callback)
             }
-        }
+        }*/
     }
 
     /**
@@ -43,6 +50,11 @@ interface PSXService : BaseClient {
      */
     fun uploadBin(file: File, callback: Callback) {
         if (target == null) return
+        val url = "$ip:${manager.featurePort.ports.first()}"
+        val body: RequestBody = file.asRequestBody()
+        Log.e("URL", url)
+        post(url, body, Headers.headersOf(), callback)
+        /*
         if (target!!.features.contains(Feature.GOLDENHEN)) {
             Feature.GOLDENHEN.ports.map { "$ip:$it" }.onEach { url ->
                 val body: RequestBody = file.asRequestBody()
@@ -55,6 +67,6 @@ interface PSXService : BaseClient {
                 Log.e("URL", url)
                 post(url, body, Headers.headersOf(), callback)
             }
-        }
+        }*/
     }
 }

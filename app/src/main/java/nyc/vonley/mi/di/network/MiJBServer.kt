@@ -1,20 +1,17 @@
 package nyc.vonley.mi.di.network
 
 import android.content.Context
-import android.os.Parcelable
 import android.util.Log
 import android.webkit.MimeTypeMap
-import androidx.room.Entity
-import com.google.gson.annotations.SerializedName
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fi.iki.elonen.NanoHTTPD
-import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.*
 import nyc.vonley.mi.BuildConfig
+import nyc.vonley.mi.di.annotations.SharedPreferenceStorage
 import nyc.vonley.mi.extensions.fromJson
 import nyc.vonley.mi.models.Device
 import nyc.vonley.mi.models.Mi
-import nyc.vonley.mi.ui.main.home.HomeContract
+import nyc.vonley.mi.utils.SharedPreferenceManager
 import java.io.File
 import java.io.InputStream
 import java.net.InetSocketAddress
@@ -25,8 +22,9 @@ import kotlin.coroutines.CoroutineContext
 
 class MiJBServer constructor(
     @ApplicationContext val context: Context,
+    @SharedPreferenceStorage val manager: SharedPreferenceManager,
     val service: PSXService
-) : NanoHTTPD(8080),
+) : NanoHTTPD(manager.jbPort),
     CoroutineScope {
 
 
@@ -134,6 +132,7 @@ class MiJBServer constructor(
         super.start()
     }
 
+
     override fun stop() {
         ready = false
         super.stop()
@@ -192,7 +191,10 @@ class MiJBServer constructor(
             val uri = session.uri.toString()
             val console = parse(session)
             console?.let {
+                manager.ftpPass
                 callback.onDeviceConnected(it)
+                manager.targetVersion = it.version
+                manager.targetName = it.ip
                 if (it.supported) {
                     if (this.console?.ip != it.ip) this.console = it
                     val mime = getMimeType(uri) ?: "text/*"

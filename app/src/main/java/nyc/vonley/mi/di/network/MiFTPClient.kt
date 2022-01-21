@@ -25,6 +25,8 @@ interface MiFTPClient : CoroutineScope, ProtocolCommandListener {
     suspend fun upload(file: String, byteArray: ByteArray): Boolean = upload(file, ByteArrayInputStream(byteArray))
     suspend fun upload(file: File): Boolean = upload(file.name, FileInputStream(file))
     suspend fun delete(file: FTPFile): Boolean
+    suspend fun download(ftpFile: FTPFile): ByteArray?
+    suspend fun rename(ftpFile: FTPFile, input: String): Boolean
     fun disconnect()
 
 }

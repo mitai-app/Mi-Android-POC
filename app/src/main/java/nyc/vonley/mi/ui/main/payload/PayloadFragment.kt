@@ -68,7 +68,7 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         } ?: emptyList()
     }
 
-    private fun open(view: View) {
+    override fun open() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.data = Uri.parse("/")
         intent.type = "*/*"
@@ -85,7 +85,6 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.browseBtn.setOnClickListener(this@PayloadFragment::open)
         presenter.init()
     }
 
@@ -115,7 +114,8 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
                     }
                     val stream = contentResolver.openInputStream(uri)
                     if (stream != null) {
-                        val question = "Click confirm if \"${name}\" is the correct payload, otherwise swipe."
+                        val jbPort = presenter.manager.featurePort
+                        val question = "Click confirm if \"${name}\" is the correct payload, and we are sending it to the right plugin, \"${jbPort.name}\" (Port ${jbPort.ports.first()}) otherwise press cancel."
                         val action = Snackbar.make(requireView(), question, Snackbar.LENGTH_INDEFINITE);
                         val yes: (v: View) -> Unit = { view ->
                             presenter.sendPayload(stream)

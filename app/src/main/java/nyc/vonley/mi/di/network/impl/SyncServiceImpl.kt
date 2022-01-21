@@ -11,6 +11,7 @@ import android.text.format.Formatter
 import android.util.Log
 import kotlinx.coroutines.*
 import nyc.vonley.mi.BuildConfig
+import nyc.vonley.mi.di.annotations.SharedPreferenceStorage
 import nyc.vonley.mi.di.network.SyncService
 import nyc.vonley.mi.di.network.handlers.ClientHandler
 import nyc.vonley.mi.di.network.handlers.base.BaseClientHandler
@@ -21,6 +22,7 @@ import nyc.vonley.mi.extensions.console
 import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.models.Console
 import nyc.vonley.mi.persistence.AppDatabase
+import nyc.vonley.mi.utils.SharedPreferenceManager
 import java.lang.ref.WeakReference
 import kotlin.coroutines.CoroutineContext
 
@@ -43,7 +45,8 @@ import kotlin.coroutines.CoroutineContext
  */
 class SyncServiceImpl constructor(
     context: Context,
-    database: AppDatabase
+    database: AppDatabase,
+    @SharedPreferenceStorage val manager: SharedPreferenceManager
 ) : SyncService, CoroutineScope {
 
     override val TAG = SyncServiceImpl::class.java.name
@@ -62,6 +65,12 @@ class SyncServiceImpl constructor(
         get() = Dispatchers.IO + job
 
     var _target: Client? = null
+        set(value) {
+            field =  value
+            if(value != null) {
+                manager.targetName = value.ip
+            }
+        }
 
     override val target: Client?
         get() = _target

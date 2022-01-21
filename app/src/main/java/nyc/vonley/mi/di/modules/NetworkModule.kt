@@ -17,8 +17,8 @@ import nyc.vonley.mi.di.network.PSXService
 import nyc.vonley.mi.di.network.SyncService
 import nyc.vonley.mi.di.network.auth.OAuth2Authenticator
 import nyc.vonley.mi.di.network.impl.MiFTPClientImpl
-import nyc.vonley.mi.di.network.impl.SyncServiceImpl
 import nyc.vonley.mi.di.network.impl.PSXServiceImpl
+import nyc.vonley.mi.di.network.impl.SyncServiceImpl
 import nyc.vonley.mi.persistence.AppDatabase
 import nyc.vonley.mi.utils.SharedPreferenceManager
 import okhttp3.Cache
@@ -40,31 +40,31 @@ object NetworkModule {
     @Singleton
     fun provideClientSyncService(
         @ApplicationContext context: Context,
-        database: AppDatabase
+        database: AppDatabase,
+        @SharedPreferenceStorage manager: SharedPreferenceManager
     ): SyncServiceImpl {
-        return SyncServiceImpl(context, database)
+        return SyncServiceImpl(context, database, manager)
     }
 
     @Provides
     @Singleton
     fun provideMiJbServer(
         @ApplicationContext context: Context,
+        @SharedPreferenceStorage manager: SharedPreferenceManager,
         service: PSXService
     ): MiJBServer {
-        return MiJBServer(context, service)
+        return MiJBServer(context, manager, service)
     }
-
 
 
     @Provides
     @Singleton
     fun providePS4Service(
-        @ApplicationContext context: Context,
-        database: AppDatabase,
         @GuestInterceptorOkHttpClient http: OkHttpClient,
-        sync: SyncService
+        sync: SyncService,
+        @SharedPreferenceStorage manager: SharedPreferenceManager
     ): PSXServiceImpl {
-        return PSXServiceImpl(sync, http)
+        return PSXServiceImpl(sync, http, manager)
     }
 
     @Provides
@@ -74,7 +74,6 @@ object NetworkModule {
     ): MiFTPClientImpl {
         return MiFTPClientImpl(manager)
     }
-
 
 
     @AuthInterceptorOkHttpClient

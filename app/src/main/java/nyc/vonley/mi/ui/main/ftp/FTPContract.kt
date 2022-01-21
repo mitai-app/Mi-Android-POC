@@ -11,14 +11,19 @@ import java.io.FileInputStream
 interface FTPContract {
 
     interface Presenter : BaseContract.Presenter, Observer<Array<out FTPFile>> {
+        val currentPath: String
+
         fun navigateTo(ftpFile: FTPFile)
         fun navigateTo(path: String)
         fun delete(ftpFile: FTPFile)
-        fun download(ftpFile: FTPFile, location: String)
-        fun replace(ftpFile: FTPFile, file: File)
+        fun download(ftpFile: FTPFile)
+        fun replace(ftpFile: FTPFile, stream: InputStream)
+        fun replace(ftpFile: FTPFile, file: File) = replace(ftpFile, FileInputStream(file))
+        fun replace(ftpFile: FTPFile, bytes: ByteArray) = replace(ftpFile, ByteArrayInputStream(bytes))
         fun upload(filename: String, stream: InputStream)
         fun upload(filename: String, bytes: ByteArray) = upload(filename, ByteArrayInputStream(bytes))
         fun upload(file: File) = upload(file.name, FileInputStream(file))
+        fun rename(ftpFile: FTPFile, input: String)
     }
 
     interface View : BaseContract.View {
@@ -27,11 +32,10 @@ interface FTPContract {
         fun onFTPDirClicked(ftpFile: FTPFile)
         fun onFTPLongClickDir(view: android.view.View, ftpFile: FTPFile)
         fun onFTPLongClickFile(view: android.view.View, ftpFile: FTPFile)
-        fun onFileUpload(filename: String)
-        fun onFileFailed(filename: String)
-        fun onFTPFileDeleted(ftpFile: FTPFile)
-        fun onFTPFailedToDelete(ftpFile: FTPFile)
         fun noTarget()
+        fun onFTPEventCompleted(upload: FTPPresenter.Event)
+        fun onFTPEventFailed(upload: FTPPresenter.Event)
+        fun open()
     }
 
 }

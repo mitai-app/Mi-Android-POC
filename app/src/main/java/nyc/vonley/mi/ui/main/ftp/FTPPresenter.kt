@@ -1,19 +1,25 @@
 package nyc.vonley.mi.ui.main.ftp
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import nyc.vonley.mi.base.BasePresenter
+import nyc.vonley.mi.di.annotations.SharedPreferenceStorage
 import nyc.vonley.mi.di.network.MiFTPClient
 import nyc.vonley.mi.di.network.SyncService
+import nyc.vonley.mi.utils.SharedPreferenceManager
 import org.apache.commons.net.ftp.FTPFile
-import java.io.File
 import java.io.InputStream
 import javax.inject.Inject
 
 class FTPPresenter @Inject constructor(
     val sync: SyncService,
     val ftp: MiFTPClient,
-    val view: FTPContract.View
+    val view: FTPContract.View,
+    @SharedPreferenceStorage val manager: SharedPreferenceManager
 ) : BasePresenter(), FTPContract.Presenter {
+    override val currentPath: String
+        get() = manager.ftpPath ?:"/"
 
     override fun navigateTo(ftpFile: FTPFile) {
         if (ftpFile.isDirectory) {
@@ -28,29 +34,89 @@ class FTPPresenter @Inject constructor(
     override fun delete(ftpFile: FTPFile) {
         launch {
             val delete = ftp.delete(ftpFile)
-            if (delete) {
-                view.onFTPFileDeleted(ftpFile)
-            } else {
-                view.onFTPFailedToDelete(ftpFile)
+            val event = Event.DELETE.apply {
+                filename = ftpFile.name
+            }
+            withContext(Dispatchers.Main) {
+                if (delete) {
+                    view.onFTPEventCompleted(event)
+                } else {
+                    view.onFTPEventFailed(event)
+                }
             }
         }
     }
 
-    override fun download(ftpFile: FTPFile, location: String) {
-
+    override fun download(ftpFile: FTPFile) {
+        launch {
+            val event = Event.DOWNLOAD.apply {
+                filename = ftpFile.name
+            }
+            val download = ftp.download(ftpFile)
+            withContext(Dispatchers.Main) {
+                download?.let {
+                    event.data = it
+                    view.onFTPEventCompleted(event)
+                } ?: run {
+                    view.onFTPEventFailed(event)
+                }
+            }
+        }
     }
 
-    override fun replace(ftpFile: FTPFile, file: File) {
+    enum class Event(var filename: String, var data: Any? = null) {
+        DELETE(""),
+        DOWNLOAD(""),
+        RENAME(""),
+        REPLACE(""),
+        UPLOAD("")
+    }
 
+    override fun replace(ftpFile: FTPFile, stream: InputStream) {
+        launch {
+            val replaced = ftp.upload(ftpFile.name, stream)
+            val replaceEvent = Event.REPLACE.apply {
+                filename = ftpFile.name
+            }
+            withContext(Dispatchers.Main) {
+                if (replaced) {
+                    view.onFTPEventCompleted(replaceEvent)
+                } else {
+                    view.onFTPEventFailed(replaceEvent)
+                }
+            }
+        }
     }
 
     override fun upload(filename: String, stream: InputStream) {
         launch {
             val upload = ftp.upload(filename, stream)
-            if (upload) {
-                view.onFileUpload(filename)
-            } else {
-                view.onFileFailed(filename)
+            val event = Event.UPLOAD.apply {
+                this.filename = filename
+            }
+            withContext(Dispatchers.Main) {
+                if (upload) {
+                    view.onFTPEventCompleted(event)
+                } else {
+                    view.onFTPEventFailed(event)
+                }
+            }
+        }
+    }
+
+    override fun rename(ftpFile: FTPFile, input: String) {
+        launch {
+            val rename = ftp.rename(ftpFile, input)
+            val upload = Event.RENAME.apply {
+                filename = input
+                data = ftpFile
+            }
+            withContext(Dispatchers.Main) {
+                if (rename) {
+                    view.onFTPEventCompleted(upload)
+                } else {
+                    view.onFTPEventFailed(upload)
+                }
             }
         }
     }

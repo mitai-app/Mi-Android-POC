@@ -23,7 +23,7 @@ import nyc.vonley.mi.ui.main.settings.SettingsFragment
 object FragmentContractPresenter {
 
     @Provides
-    fun provideSettingFragment(activity: PreferenceFragmentCompat): SettingsFragment {
+    fun provideSettingFragment(activity: Fragment): SettingsFragment {
         return activity as SettingsFragment
     }
 

@@ -3,19 +3,47 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
-        app:icon="@drawable/icon_svg_folder"
-        app:title="Wifi Info">
+        app:icon="@drawable/icon_svg_wifi"
+        app:title="Info">
 
         <Preference
-            android:title="WIFI"
+            android:title="Wifi SSID"
             app:key="@string/preference_wifi"
             app:summary="@string/app_name" />
+
+        <Preference
+            android:title="Known Target"
+            app:key="@string/preference_target_name"
+            app:summary="@string/app_name" />
+
+        <Preference
+            android:title="Known Version"
+            app:key="@string/preference_target_version"
+            app:summary="@string/app_name" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:icon="@drawable/ic_svg_upload"
+        app:summary="You may not need to change these values"
+        app:title="FTP Settings">
+
+        <EditTextPreference
+            android:title="User"
+            app:key="@string/preference_ftp_user"
+            app:summary="Set ftp user" />
+
+        <EditTextPreference
+            android:title="Password"
+            app:key="@string/preference_ftp_pass"
+            app:summary="Set ftp password" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
         app:shouldDisableView="true"
         app:icon="@drawable/icon_svg_monitor"
+        app:isPreferenceVisible="false"
         app:title="@string/header_control">
 
         <Preference
@@ -40,6 +68,17 @@
         app:iconSpaceReserved="false"
         app:title="@string/data_header">
 
+        <EditTextPreference
+            android:title="Default JB Port"
+            app:key="@string/preference_jb_port"
+            app:summary="Select" />
+
+        <ListPreference
+            android:title="Default Payload Feature"
+            app:key="@string/preference_jb_feature"
+            android:entries="@array/feature_entry"
+            android:entryValues="@array/feature_entry"
+            app:summary="Select" />
 
         <Preference
             app:key="@string/preference_clear"
