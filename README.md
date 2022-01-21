@@ -14,7 +14,6 @@ Jailbreak Complete UI
   <img src="/failed.png" width="300" />
 </p>
 
-## 「ミがここにいる」
 Android App Developed by Mr-Smithy-x
 
 - [Github: @Mr-Smithy-x](https://github.com/Mr-Smithy-x)
