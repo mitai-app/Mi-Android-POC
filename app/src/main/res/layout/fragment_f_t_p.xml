@@ -13,6 +13,5 @@
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/vh_ftp" />
-
-
+  
 </RelativeLayout>

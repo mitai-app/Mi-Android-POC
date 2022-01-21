@@ -39,7 +39,7 @@ interface SharedPreferenceManager {
         get() {
             return sharedPreferences.getInt(this[PITCH], 75) / 100f
         }
-
+        
     var featurePort: Feature
         get() {
             val string = sharedPreferences.getString(
@@ -116,7 +116,6 @@ interface SharedPreferenceManager {
             edit.putString(this[TARGETVER], path)
             edit.apply()
         }
-
 
     val speed: Float
         get() {

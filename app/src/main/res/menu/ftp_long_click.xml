@@ -4,7 +4,7 @@
     <item android:id="@+id/ftp_rename"
         android:title="Rename"
         android:icon="@drawable/icon_svg_edit"/>
-
+  
     <item
         android:id="@+id/ftp_download"
         android:title="Download"

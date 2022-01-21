@@ -12,7 +12,6 @@ interface FTPContract {
 
     interface Presenter : BaseContract.Presenter, Observer<Array<out FTPFile>> {
         val currentPath: String
-
         fun navigateTo(ftpFile: FTPFile)
         fun navigateTo(path: String)
         fun delete(ftpFile: FTPFile)
