@@ -20,4 +20,13 @@
     <string name="preference_rest">nyc.vonley.mi.prefs.rest</string>
     <string name="preference_reboot">nyc.vonley.mi.prefs.reboot</string>
     <string name="preference_shutdown">nyc.vonley.mi.prefs.shutdown</string>
+    <string name="preference_target_name">nyc.vonley.mi.prefs.target.name</string>
+    <string name="preference_target_version">nyc.vonley.mi.prefs.target.version</string>
+    <string name="preference_jb_port">nyc.vonley.mi.prefs.jb.port</string>
+    <string name="preference_jb_feature">nyc.vonley.mi.prefs.jb.feature</string>
+    <string name="feature_none">feature.none</string>
+    <string name="feature_netcat">feature.netcat</string>
+    <string name="feature_goldhen">Golden Hen</string>
+    <string name="feature_orbisapi">Orbis Api</string>
+    <string name="feature_ftp">feature.ftp</string>
 </resources>

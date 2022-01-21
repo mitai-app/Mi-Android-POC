@@ -44,7 +44,8 @@ class ConsoleRecyclerAdapter @Inject constructor(
         notifyDataSetChanged()
     }
 
-    inner class ConsoleViewHolder(val binding: VhConsoleBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ConsoleViewHolder(val binding: VhConsoleBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         fun setTarget(console: Client) {
             sync.setTarget(console)
@@ -53,9 +54,10 @@ class ConsoleRecyclerAdapter @Inject constructor(
         }
 
         fun setConsole(console: Client) {
-            val headers = "${console.name} - ${console.ip}"
+            val headers = if (console.name == console.ip) console.ip else "${console.name} - ${console.ip}"
             binding.vhConsoleNickname.text = headers
-            binding.vhConsoleIp.text = console.featureString.takeIf { it.isNotEmpty() } ?: "Incompatible"
+            binding.vhConsoleIp.text =
+                console.featureString.takeIf { it.isNotEmpty() } ?: "Incompatible"
             binding.root.setOnClickListener {
                 if (console.activeFeatures.isNotEmpty()) {
                     setTarget(console)

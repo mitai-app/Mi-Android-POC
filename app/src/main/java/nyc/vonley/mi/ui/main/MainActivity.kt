@@ -9,10 +9,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -20,8 +23,13 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.navigateUp
 import dagger.hilt.android.AndroidEntryPoint
 import nyc.vonley.mi.R
+import nyc.vonley.mi.base.BaseContract
 import nyc.vonley.mi.databinding.ActivityMainBinding
 import nyc.vonley.mi.models.Console
+import nyc.vonley.mi.ui.main.console.ConsoleContract
+import nyc.vonley.mi.ui.main.ftp.FTPContract
+import nyc.vonley.mi.ui.main.home.HomeContract
+import nyc.vonley.mi.ui.main.payload.PayloadContract
 import java.io.File
 import javax.inject.Inject
 
@@ -30,29 +38,33 @@ const val KEY_EVENT_EXTRA = "key_event_extra"
 private const val IMMERSIVE_FLAG_TIMEOUT = 500L
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), MainContract.View {
+class MainActivity : AppCompatActivity(), MainContract.View,
+    NavController.OnDestinationChangedListener {
 
     @Inject
     lateinit var presenter: MainContract.Presenter
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var navHostFragment: NavHostFragment
+    private val navController: NavController
+        get() {
+            return navHostFragment.navController
+        }
+
+
+    private val current get() = navHostFragment.childFragmentManager.primaryNavigationFragment
+    private fun <T : BaseContract.View> currentView(): T? = current as? T
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.bottomAppBar)
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment?
-        val navController = navHostFragment!!.navController
+        this.navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         NavigationUI.setupWithNavController(binding.bottomNavigation, navController)
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            val i = when (destination.id) {
-                R.id.fragment_home, R.id.fragment_settings -> View.VISIBLE
-                else -> View.GONE
-            }
-            binding.fab.visibility = View.GONE // TODO: Implement later
-        }
+        navController.addOnDestinationChangedListener(this)
         presenter.init()
     }
 
@@ -106,7 +118,8 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         WindowInsetsControllerCompat(window, binding.fragmentContainer).let { controller ->
             controller.hide(WindowInsetsCompat.Type.systemBars())
-            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
 
@@ -129,15 +142,26 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     override fun setTitle(title: String?) {
-        binding.fakeToolbarTitle.text = title?: return
+        binding.fakeToolbarTitle.text = title ?: return
     }
 
     override fun setSummary(summary: String?) {
-        binding.fakeToolbarSummary.text = summary?: return
+        binding.fakeToolbarSummary.text = summary ?: return
+        binding.fakeToolbarSummary.isSelected = true
     }
 
     override fun onError(e: Throwable) {
 
+    }
+
+    override fun onDialogCanceled() {
+        super.onDialogCanceled()
+        currentView<BaseContract.View>()?.onDialogCanceled()
+    }
+
+    override fun onDialogInput(input: String) {
+        super.onDialogInput(input)
+        currentView<BaseContract.View>()?.onDialogInput(input)
     }
 
 
@@ -147,9 +171,76 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         fun getOutputDirectory(context: Context): File {
             val appContext = context.applicationContext
             val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
-                File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() } }
+                File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() }
+            }
             return if (mediaDir != null && mediaDir.exists())
                 mediaDir else appContext.filesDir
         }
+    }
+
+    val onPayloadClick: View.OnClickListener = View.OnClickListener { view ->
+        currentView<PayloadContract.View>()?.open()
+    }
+
+    val onFTPClick: View.OnClickListener = View.OnClickListener { view ->
+        currentView<FTPContract.View>()?.open()
+    }
+
+    val onConsoleClick: View.OnClickListener = View.OnClickListener { view ->
+        currentView<ConsoleContract.View>()?.addConsole()
+    }
+    val onHomeClick: View.OnClickListener = View.OnClickListener { view ->
+        currentView<HomeContract.View>()?.openInfoDialog()
+    }
+
+    override fun onDestinationChanged(
+        controller: NavController,
+        destination: NavDestination,
+        arguments: Bundle?
+    ) {
+        val i = when (destination.id) {
+            R.id.fragment_payload -> {
+                binding.fab.setOnClickListener(onPayloadClick)
+                binding.fab.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        this,
+                        R.drawable.icon_svg_upload_two
+                    )
+                )
+                View.VISIBLE
+            }
+            R.id.fragment_ftp -> {
+                binding.fab.setOnClickListener(onFTPClick)
+                binding.fab.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        this,
+                        R.drawable.ic_svg_upload
+                    )
+                )
+                View.VISIBLE
+            }
+            R.id.fragment_console -> {
+                binding.fab.setOnClickListener(onConsoleClick)
+                binding.fab.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        this,
+                        R.drawable.icon_svg_add
+                    )
+                )
+                View.VISIBLE
+            }
+            R.id.fragment_home -> {
+                binding.fab.setOnClickListener(onHomeClick)
+                binding.fab.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        this,
+                        R.drawable.icon_svg_info
+                    )
+                )
+                View.VISIBLE
+            }
+            else -> View.GONE
+        }
+        binding.fab.visibility = i
     }
 }

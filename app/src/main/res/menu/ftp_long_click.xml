@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item android:id="@+id/ftp_rename"
+        android:title="Rename"
+        android:icon="@drawable/icon_svg_edit"/>
+  
     <item
         android:id="@+id/ftp_download"
         android:title="Download"
         android:icon="@drawable/icon_svg_download"/>
-
 
     <item android:id="@+id/ftp_replace"
         android:title="Replace"

@@ -1,10 +1,25 @@
 package nyc.vonley.mi.ui.main.settings
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import nyc.vonley.mi.base.BasePresenter
+import nyc.vonley.mi.di.annotations.SharedPreferenceStorage
 import nyc.vonley.mi.persistence.AppDatabase
+import nyc.vonley.mi.utils.SharedPreferenceManager
 import javax.inject.Inject
 
-class SettingsPresenter @Inject constructor(val db: AppDatabase) : BasePresenter(), SettingsContract.Presenter {
+class SettingsPresenter @Inject constructor(val view: SettingsContract.View, val db: AppDatabase, @SharedPreferenceStorage val manager: SharedPreferenceManager) : BasePresenter(), SettingsContract.Presenter {
+    override fun clear() {
+        launch {
+            manager.clear()
+            db.clearAllTables()
+            withContext(Dispatchers.Main){
+                view.onCleared()
+                view.initData()
+            }
+        }
+    }
 
 
     override fun init() {

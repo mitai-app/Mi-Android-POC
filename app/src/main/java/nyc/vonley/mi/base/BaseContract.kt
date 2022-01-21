@@ -7,6 +7,12 @@ interface BaseContract {
 
     interface View {
         fun onError(e: Throwable)
+        fun onDialogInput(input: String) {
+
+        }
+        fun onDialogCanceled() {
+
+        }
     }
 
     interface Presenter : CoroutineScope, OnClientListener {

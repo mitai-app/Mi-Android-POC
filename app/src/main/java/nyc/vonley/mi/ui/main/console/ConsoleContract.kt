@@ -7,10 +7,14 @@ import nyc.vonley.mi.models.Client
 interface ConsoleContract {
 
     interface View : BaseContract.View, OnConsoleListener {
+        fun addConsole()
+        fun onConsoleAdded()
     }
 
     interface Presenter : BaseContract.Presenter, OnConsoleListener {
+        val getTargetSummary: String
         fun getConsoles(): List<Client>
+        fun addConsole(input: String)
     }
 
 }

@@ -38,7 +38,19 @@ class ConsoleClientHandler constructor(
     public override fun handle(event: List<Console>): Job {
         return launch {
             try {
-                consoleDao.insert(event)
+                event.onEach { console ->
+                    if (consoleDao.exists(console.ip)) {
+                        consoleDao.update(
+                            console.ip,
+                            console.type,
+                            console.features,
+                            console.lastKnownReachable,
+                            console.wifi
+                        )
+                    } else {
+                        consoleDao.insert(console)
+                    }
+                }
                 withContext(Dispatchers.Main) {
                     if (event.isNotEmpty()) {
                         onClientsFound(event)

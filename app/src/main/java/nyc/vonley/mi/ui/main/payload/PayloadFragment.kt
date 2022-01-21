@@ -22,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import nyc.vonley.mi.BuildConfig
 import nyc.vonley.mi.databinding.FragmentPayloadBinding
+import nyc.vonley.mi.ui.main.home.dialog
 import okhttp3.Response
 import javax.inject.Inject
 
@@ -68,7 +69,7 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         } ?: emptyList()
     }
 
-    private fun open(view: View) {
+    override fun open() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.data = Uri.parse("/")
         intent.type = "*/*"
@@ -85,7 +86,6 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.browseBtn.setOnClickListener(this@PayloadFragment::open)
         presenter.init()
     }
 
@@ -115,14 +115,17 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
                     }
                     val stream = contentResolver.openInputStream(uri)
                     if (stream != null) {
-                        val question = "Click confirm if \"${name}\" is the correct payload, otherwise swipe."
-                        val action = Snackbar.make(requireView(), question, Snackbar.LENGTH_INDEFINITE);
-                        val yes: (v: View) -> Unit = { view ->
+                        val jbPort = presenter.manager.featurePort
+                        val question =
+                            "Click confirm if \"${name}\" is the correct payload, and we are sending it to the right plugin, \"${jbPort.title}\" (Port ${jbPort.ports.first()}) otherwise press cancel."
+                        dialog(question, "Confirm")
+                        { dialog, i ->
                             presenter.sendPayload(stream)
-                            action.dismiss()
-                        }
-                        action.setAction("Confirm", yes)
-                        action.show()
+                            dialog.dismiss()
+                        }.setNegativeButton("Cancel")
+                        { dialog, i ->
+                            dialog.dismiss()
+                        }.create().show()
                     } else {
                         Snackbar.make(
                             requireView(),

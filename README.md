@@ -1,43 +1,50 @@
 # ミ Mi - PS4 Remote Tool　
 
-Jailbreak Complete UI
-![UI](success.png "UI")
-
-## 「ミがここにいる」
 Android App Developed by Mr-Smithy-x
+
+Jailbreak Complete UI
+<p float="left">
+  <img src="/success.png" width="300" />
+  <img src="/instructions.png" width="300" /> 
+  <img src="/home.png" width="300" /> 
+  <img src="/console.png" width="300" />
+</p>
+<p float="left">
+  <img src="/payload.png" width="300" />
+  <img src="/ftp.png" width="300" />
+  <img src="/setting.png" width="300" />
+  <img src="/failed.png" width="300" />
+</p>
 
 - [Github: @Mr-Smithy-x](https://github.com/Mr-Smithy-x)
 - [Twitter: @MrSmithyx](https://twitter.com/MrSmithyx)
 - [Patreon: @MrSmithyx](https://patreon.com/MrSmithyx)
 
 ## Steps:
-- Open App
+- Enter IP Address into PS4
 - Clear PS4 cache, and all that jazz, Enter: http://{android_ip_here}:8080/ (on PS4)
-- Click that only hyperlink at the bottom (on PS4 ofc)
-- exploit will do exploity things, just wait as the app loads the payload (may take a while depending on connection)  
-- Profit (on PS4)
+- Click that only hyperlink at the bottom
+- exploit will do exploity things, just wait as the app loads the payload (may take a while depending on connection)
+- Golden Hen will load from android app.
 
-## How to load consoles (as of beta)
-Once you jailbreak, and goldenhen is loaded, turn on ftp in goldenhen and click the target
+# How to load consoles (2 Ways)
+- Once you jailbreak, and goldenhen is loaded, turn on ftp in goldenhen. Mi will automatically find the ps4.
+- You can create a new PS4, then click on the target
 
 ## Features:
 - sleirsgoevy JB Host Server + mi.js helper, loads goldenhen 2.0b2
-- Ability to send payload to goldenhen binloader port 9090
-- FTP Features coming soon
-- Setting Features, undecided
+- Ability to send payload to goldenhen binloader port 9090 or Orbis API 6023
 - mi.js, just an extension for the android app to help send status updates to the android app
 
-## Alpha Roadmap
 - [X] Create Android JB Server in the background
 - [X] Load bin when jb finished
 - [X] Load Bin Payloads From Phone using Goldhen 2.0+ 9090
 - [X] Add 6.72, 7.02 7.5X, 9.00 jb hosts (thanks to sleirsgoevy repos)
-
-## Beta Roadmap
 - [X] FTP Manager
-- [] FTP Settings / Configurations
+- [X] FTP Settings / Configurations
+- Improve Overall Stability
 
-# Automatically Includes
+#  Automatically Includes (Through payload)
 
 ## GoldHEN - PS4 Homebrew Enabler
 ## Features
@@ -79,18 +86,3 @@ Special thanks to ps4 dev scene:
 - [zecoxao](https://twitter.com/notzecoxao) - research
 - [Znullptr](https://github.com/dmiller423) - research
 -  and others not mentions
-
-Screenshots
-
-Home
-![UI](home.png "UI")
-Console
-![UI](console.png "UI")
-Payload
-![UI](payload.png "UI")
-FTP: -- Coming Soon
-![UI](ftp.png "UI")
-Settings: -- Fixing Soon
-![UI](setting.png "UI")
-FailBreak Failed Screen:
-![UI](failed.png "UI")

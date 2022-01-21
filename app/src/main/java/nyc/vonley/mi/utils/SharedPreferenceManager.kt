@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.annotation.StringRes
 import nyc.vonley.mi.R
 import nyc.vonley.mi.models.OAuthToken
+import nyc.vonley.mi.models.enums.Feature
 
 /**
  *
@@ -22,6 +23,8 @@ interface SharedPreferenceManager {
 
     val sharedPreferences: SharedPreferences
 
+    fun clear() = sharedPreferences.edit().clear().apply()
+
     var voice: String?
         get() {
             return sharedPreferences.getString(this[VOICE], null)
@@ -36,18 +39,82 @@ interface SharedPreferenceManager {
         get() {
             return sharedPreferences.getInt(this[PITCH], 75) / 100f
         }
+        
+    var featurePort: Feature
+        get() {
+            val string = sharedPreferences.getString(
+                this[MIJBFEATUREPORT],
+                this[Feature.GOLDENHEN.id]
+            )
+            return enumValues<Feature>().find { p -> this[p.id] == string }?:Feature.GOLDENHEN
+        }
+        set(port) {
+            val edit = sharedPreferences.edit()
+            edit.putString(this[MIJBFEATUREPORT], this[port.id])
+            edit.apply()
+        }
 
-    val ftpPath: String?
+    var jbPort: Int
+        get() {
+            return sharedPreferences.getString(
+                this[MIJBSERVERPORT],
+                "8080"
+            )?.toInt()?:8080
+        }
+        set(port) {
+            val edit = sharedPreferences.edit()
+            edit.putInt(this[MIJBSERVERPORT], port)
+            edit.apply()
+        }
+
+    var ftpPath: String?
         get() {
             return sharedPreferences.getString(this[FTPPATH], "/")
         }
-    val ftpUser: String?
+        set(path) {
+            val edit = sharedPreferences.edit()
+            edit.putString(this[FTPPATH], path)
+            edit.apply()
+        }
+
+    var ftpUser: String?
         get() {
             return sharedPreferences.getString(this[FTPUSER], "")
         }
-    val ftpPass: String?
+        set(user) {
+            val edit = sharedPreferences.edit()
+            edit.putString(this[FTPUSER], user)
+            edit.apply()
+        }
+
+    var ftpPass: String?
         get() {
             return sharedPreferences.getString(this[FTPPASS], "")
+        }
+        set(pass) {
+            val edit = sharedPreferences.edit()
+            edit.putString(this[FTPPASS], pass)
+            edit.apply()
+        }
+
+    var targetName: String?
+        get() {
+            return sharedPreferences.getString(this[TARGETNAME], null)
+        }
+        set(path) {
+            val edit = sharedPreferences.edit()
+            edit.putString(this[TARGETNAME], path)
+            edit.apply()
+        }
+
+    var targetVersion: String?
+        get() {
+            return sharedPreferences.getString(this[TARGETVER], null)
+        }
+        set(path) {
+            val edit = sharedPreferences.edit()
+            edit.putString(this[TARGETVER], path)
+            edit.apply()
         }
 
     val speed: Float
@@ -63,6 +130,10 @@ interface SharedPreferenceManager {
         const val FTPPATH: Int = R.string.preference_ftp_loc
         const val FTPUSER: Int = R.string.preference_ftp_user
         const val FTPPASS: Int = R.string.preference_ftp_pass
+        const val TARGETNAME: Int = R.string.preference_target_name
+        const val TARGETVER: Int = R.string.preference_target_version
+        const val MIJBSERVERPORT: Int = R.string.preference_jb_port
+        const val MIJBFEATUREPORT: Int = R.string.preference_jb_feature
     }
 }
 

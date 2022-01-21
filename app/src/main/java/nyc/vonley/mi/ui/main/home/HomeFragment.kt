@@ -28,6 +28,8 @@ class HomeFragment : Fragment(), HomeContract.View {
 
     lateinit var adapter: TextViewAdapter
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -87,7 +89,12 @@ class HomeFragment : Fragment(), HomeContract.View {
     }
 
     override fun init(ip: String) {
-        binding.device.text = "http://$ip:8080"
+        binding.device.text = "http://$ip:${presenter.manager.jbPort}"
+    }
+
+    override fun openInfoDialog() {
+        val message = "Thank you for downloading Mi. Start by typing (${binding.device.text}) of this device into your ps4 browser and start the jailbreak process. When the Jailbreak process is complete Goldhen v2.0b2 will be loaded. In order to upload bin files please be sure to go onto your ps4 settings page -> golden hen -> and enable \"BinLoader Server\", likewise to use FTP Feature.\n\nHINT: ENABLE FTP ON YOUR PS4 SO THAT MI CAN DISCOVER YOUR DEVICE AUTOMATICALLY."
+        dialog(message, "Close") { dialog, i -> dialog.dismiss() }.create().show()
     }
 
     override fun onError(e: Throwable) {
