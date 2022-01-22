@@ -4,8 +4,8 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
-import nyc.vonley.mi.di.network.MiJBServer
-import nyc.vonley.mi.di.network.SyncService
+import nyc.vonley.mi.di.annotations.SharedPreferenceStorage
+import nyc.vonley.mi.utils.SharedPreferenceManager
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -17,35 +17,29 @@ class PSXService : Service() {
     lateinit var binder: PSXServiceBinder
 
     @Inject
-    lateinit var jb: MiJBServer
-
-    @Inject
-    lateinit var sync: SyncService
+    @SharedPreferenceStorage
+    lateinit var manager: SharedPreferenceManager
 
     override fun onBind(intent: Intent?): IBinder {
         return binder
     }
 
-    override fun onCreate() {
-        super.onCreate()
-    }
-
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val onStartCommand = super.onStartCommand(intent, flags, startId)
-        jb.init(this)
-        sync.getClients(true, 15)
+        if(manager.jbService){
+            binder.jb.startService()
+        }
+        binder.sync.getClients(true)
         return START_STICKY
     }
 
-
-    override fun onLowMemory() {
-        super.onLowMemory()
+    override fun onUnbind(intent: Intent?): Boolean {
+        return super.onUnbind(intent)
     }
 
     override fun onDestroy() {
-        sync.stop()
-        jb.stopService()
+        binder.sync.stop()
+        binder.jb.stopService()
         super.onDestroy()
     }
 

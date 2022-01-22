@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "nyc.vonley.mi"
-        minSdk 25
+        minSdk 21
         targetSdk 31
         versionCode 4
         versionName "1.0.0-rc"

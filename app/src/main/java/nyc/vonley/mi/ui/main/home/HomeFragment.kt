@@ -59,13 +59,13 @@ class HomeFragment : Fragment(), HomeContract.View {
     }
 
     override fun onJailbreakSucceeded(message: String) {
-        dialog("$message\nPssst... Turn on FTP in GoldenHen to auto detect the PS4!", "OK") { dialog, i ->
+        dialog("$message\nPssst... Turn on FTP in GoldenHen to auto detect the PS4!", "OK") { dialog, _ ->
             dialog.dismiss()
         }.create().show()
     }
 
     override fun onJailbreakFailed(message: String) {
-        dialog(message, "OK") { dialog, i ->
+        dialog(message, "OK") { dialog, _ ->
             dialog.dismiss()
         }.create().show()
     }
@@ -75,7 +75,7 @@ class HomeFragment : Fragment(), HomeContract.View {
         super.onDestroy()
     }
 
-    override fun onPayloadSent() {
+    override fun onPayloadSent(msg: String?) {
         Snackbar.make(requireView(), "Sending payload... please wait....", Snackbar.LENGTH_LONG)
             .show()
     }
@@ -88,19 +88,18 @@ class HomeFragment : Fragment(), HomeContract.View {
         adapter.add(mi.response)
     }
 
+    override fun onSendPayloadAttempt(attempt: Int) = Unit
+
     override fun init(ip: String) {
-        binding.device.text = "http://$ip:${presenter.manager.jbPort}"
+        binding.device.text = "http://$ip"
     }
 
     override fun openInfoDialog() {
         val message = "Thank you for downloading Mi. Start by typing (${binding.device.text}) of this device into your ps4 browser and start the jailbreak process. When the Jailbreak process is complete Goldhen v2.0b2 will be loaded. In order to upload bin files please be sure to go onto your ps4 settings page -> golden hen -> and enable \"BinLoader Server\", likewise to use FTP Feature.\n\nHINT: ENABLE FTP ON YOUR PS4 SO THAT MI CAN DISCOVER YOUR DEVICE AUTOMATICALLY."
-        dialog(message, "Close") { dialog, i -> dialog.dismiss() }.create().show()
+        dialog(message, "Close") { dialog, _ -> dialog.dismiss() }.create().show()
     }
 
-    override fun onError(e: Throwable) {
-
-    }
-
+    override fun onError(e: Throwable) = Unit
 
 }
 

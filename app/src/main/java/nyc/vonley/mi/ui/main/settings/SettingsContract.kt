@@ -12,7 +12,9 @@ interface SettingsContract {
 
     interface Presenter : BaseContract.Presenter {
         fun clear()
-
+        fun start()
+        fun stop()
+        fun restart()
     }
 
 }

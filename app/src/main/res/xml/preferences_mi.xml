@@ -1,6 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <PreferenceCategory
         app:icon="@drawable/icon_svg_wifi"
@@ -41,9 +41,9 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        app:shouldDisableView="true"
         app:icon="@drawable/icon_svg_monitor"
         app:isPreferenceVisible="false"
+        app:shouldDisableView="true"
         app:title="@string/header_control">
 
         <Preference
@@ -62,22 +62,35 @@
 
     </PreferenceCategory>
 
-
     <PreferenceCategory
         app:icon="@drawable/icon_svg_settings"
         app:iconSpaceReserved="false"
         app:title="@string/data_header">
 
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:title="Enable jb service"
+            app:key="@string/preference_jb_service"
+            app:summary="Allows you to jailbreak PS4" />
+
+        <ListPreference
+            android:defaultValue="15"
+            android:title="Scan for devices every..."
+            android:entries="@array/interval_entry"
+            android:entryValues="@array/interval_entry_values"
+            app:key="@string/preference_jb_scan"
+            app:summary="Allows you to find devices with ftp enabled." />
+
         <EditTextPreference
-            android:title="Default JB Port"
+            android:title="Default jb service port"
             app:key="@string/preference_jb_port"
             app:summary="Select" />
 
         <ListPreference
-            android:title="Default Payload Feature"
-            app:key="@string/preference_jb_feature"
             android:entries="@array/feature_entry"
             android:entryValues="@array/feature_entry"
+            android:title="Default payload feature"
+            app:key="@string/preference_jb_feature"
             app:summary="Select" />
 
         <Preference
@@ -86,14 +99,14 @@
             app:title="Clear Everything" />
 
         <Preference
-            app:key="@string/preference_version"
-            app:summary="@string/build_complete"
-            app:title="Version" />
-
-        <Preference
             app:key="@string/preference_dev"
             app:summary="Mr-Smithy-x"
             app:title="Development" />
+
+        <Preference
+            app:key="@string/preference_version"
+            app:summary="@string/build_complete"
+            app:title="Version" />
 
     </PreferenceCategory>
 </PreferenceScreen>

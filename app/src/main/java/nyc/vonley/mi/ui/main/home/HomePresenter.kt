@@ -2,20 +2,21 @@ package nyc.vonley.mi.ui.main.home
 
 import nyc.vonley.mi.base.BasePresenter
 import nyc.vonley.mi.di.annotations.SharedPreferenceStorage
-import nyc.vonley.mi.di.network.MiJBServer
+import nyc.vonley.mi.di.network.MiServer
+import nyc.vonley.mi.di.network.impl.MiServerImpl
 import nyc.vonley.mi.utils.SharedPreferenceManager
 import javax.inject.Inject
 
-class HomePresenter @Inject constructor(val view: HomeContract.View, val jb: MiJBServer,
-                                        @SharedPreferenceStorage override val manager: SharedPreferenceManager
-) :
-    BasePresenter(), HomeContract.Presenter {
-
+class HomePresenter @Inject constructor(
+    val view: HomeContract.View,
+    val jb: MiServer,
+    @SharedPreferenceStorage override val manager: SharedPreferenceManager
+) : BasePresenter(), HomeContract.Presenter {
 
 
     override fun init() {
         jb.add(view)
-        view.init(jb.service.sync.ipAddress)
+        view.init("${jb.sync.ipAddress}:${jb.activePort}")
     }
 
     override fun cleanup() {

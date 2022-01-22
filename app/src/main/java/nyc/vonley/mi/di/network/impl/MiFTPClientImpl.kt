@@ -22,7 +22,10 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
     MiFTPClient {
 
     override val job: Job = Job()
-    private lateinit var client: FTPClient
+
+    private
+
+    var client: FTPClient = FTPClient()
     private val ftpPath get() = manager.ftpPath
     private val ftpUser get() = manager.ftpUser
     private val ftpPass get() = manager.ftpPass
@@ -106,38 +109,35 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
     }
 
     override fun connect(ip: String, port: Int) {
-        if (!this::client.isInitialized) {
-            client = FTPClient()
+        if (_ip == null || _port == null) {
             _ip = ip
             _port = port
         }
-        if (this::client.isInitialized) {
-            if (client.isConnected) {
-                client.disconnect()
-            }
-            val block: suspend CoroutineScope.() -> Unit = {
-                if (client.isConnected) {
-                    if (_ip != ip || _port != port) {
-                        _ip = ip
-                        _port = port
-                        try {
-                            client.logout()
-                            client.disconnect()
-                        } catch (e: Throwable) {
-                            if (BuildConfig.DEBUG) {
-                                Log.e(TAG, e.message ?: "Something went wrong")
-                            }
-                        }
-                        _connect(ip, port)
-                    } else {
-                        callback.isLoggedInAlready()
-                    }
-                } else {
-                    _connect(ip, port)
-                }
-            }
-            launch(block = block)
+        if (client.isConnected) {
+            client.disconnect()
         }
+        val block: suspend CoroutineScope.() -> Unit = {
+            if (client.isConnected) {
+                if (_ip != ip || _port != port) {
+                    _ip = ip
+                    _port = port
+                    try {
+                        client.logout()
+                        client.disconnect()
+                    } catch (e: Throwable) {
+                        if (BuildConfig.DEBUG) {
+                            Log.e(TAG, e.message ?: "Something went wrong")
+                        }
+                    }
+                    _connect(ip, port)
+                } else {
+                    callback.isLoggedInAlready()
+                }
+            } else {
+                _connect(ip, port)
+            }
+        }
+        launch(block = block)
     }
 
     override val cwd: LiveData<Array<out FTPFile>> get() = _cwd

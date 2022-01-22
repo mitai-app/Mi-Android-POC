@@ -39,32 +39,37 @@ interface SharedPreferenceManager {
         get() {
             return sharedPreferences.getInt(this[PITCH], 75) / 100f
         }
-        
+
+
+    val jbService: Boolean
+        get() = sharedPreferences.getBoolean(this[MIJBSERVICE], true)
+
     var featurePort: Feature
         get() {
             val string = sharedPreferences.getString(
                 this[MIJBFEATUREPORT],
                 this[Feature.GOLDENHEN.id]
             )
-            return enumValues<Feature>().find { p -> this[p.id] == string }?:Feature.GOLDENHEN
+            return enumValues<Feature>().find { p -> this[p.id] == string } ?: Feature.GOLDENHEN
         }
         set(port) {
-            val edit = sharedPreferences.edit()
-            edit.putString(this[MIJBFEATUREPORT], this[port.id])
-            edit.apply()
+            this[MIJBFEATUREPORT] = this[port.id]
         }
 
+    var scanInterval: Int
+        get() = sharedPreferences.getString(this[MISCANINTERVAL], "15")?.toInt()?:15
+        set(interval) {
+            this[MISCANINTERVAL] = interval
+        }
     var jbPort: Int
         get() {
             return sharedPreferences.getString(
                 this[MIJBSERVERPORT],
                 "8080"
-            )?.toInt()?:8080
+            )?.toInt() ?: 8080
         }
         set(port) {
-            val edit = sharedPreferences.edit()
-            edit.putInt(this[MIJBSERVERPORT], port)
-            edit.apply()
+            this[MIJBFEATUREPORT] = port
         }
 
     var ftpPath: String?
@@ -133,13 +138,27 @@ interface SharedPreferenceManager {
         const val TARGETNAME: Int = R.string.preference_target_name
         const val TARGETVER: Int = R.string.preference_target_version
         const val MIJBSERVERPORT: Int = R.string.preference_jb_port
+        const val MISCANINTERVAL: Int = R.string.preference_jb_scan
         const val MIJBFEATUREPORT: Int = R.string.preference_jb_feature
+        const val MIJBSERVICE: Int = R.string.preference_jb_service
     }
 }
 
 
 operator fun SharedPreferenceManager.get(@StringRes string: Int): String {
     return context.getString(string)
+}
+
+inline operator fun<reified T> SharedPreferenceManager.get(string: String): T? {
+    return when(T::class.java){
+        MutableSet<String>::javaClass -> sharedPreferences.getStringSet(string, setOf())
+        String::javaClass -> sharedPreferences.getString(string, "")
+        Boolean::javaClass -> sharedPreferences.getBoolean(string, false)
+        Float::javaClass -> sharedPreferences.getFloat(string, 0f)
+        Int::javaClass -> sharedPreferences.getInt(string, 0)
+        Long::javaClass -> sharedPreferences.getLong(string, 0)
+        else -> throw Throwable("Unsupported")
+    } as? T
 }
 
 operator fun SharedPreferenceManager.set(@StringRes string: Int, value: String) {

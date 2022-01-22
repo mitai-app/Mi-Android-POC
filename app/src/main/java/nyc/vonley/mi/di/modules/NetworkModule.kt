@@ -12,7 +12,7 @@ import nyc.vonley.mi.di.annotations.AuthInterceptorOkHttpClient
 import nyc.vonley.mi.di.annotations.AuthRetrofitClient
 import nyc.vonley.mi.di.annotations.GuestRetrofitClient
 import nyc.vonley.mi.di.annotations.SharedPreferenceStorage
-import nyc.vonley.mi.di.network.MiJBServer
+import nyc.vonley.mi.di.network.impl.MiServerImpl
 import nyc.vonley.mi.di.network.PSXService
 import nyc.vonley.mi.di.network.SyncService
 import nyc.vonley.mi.di.network.auth.OAuth2Authenticator
@@ -52,8 +52,8 @@ object NetworkModule {
         @ApplicationContext context: Context,
         @SharedPreferenceStorage manager: SharedPreferenceManager,
         service: PSXService
-    ): MiJBServer {
-        return MiJBServer(context, manager, service)
+    ): MiServerImpl {
+        return MiServerImpl(context, manager, service)
     }
 
 

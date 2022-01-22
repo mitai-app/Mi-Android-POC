@@ -1,14 +1,13 @@
 package nyc.vonley.mi.di.network.impl
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkCapabilities
-import android.net.NetworkInfo
+import android.net.*
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
+import android.os.Build
 import android.text.format.Formatter
 import android.util.Log
+import androidx.annotation.RequiresApi
 import kotlinx.coroutines.*
 import nyc.vonley.mi.BuildConfig
 import nyc.vonley.mi.di.annotations.SharedPreferenceStorage
@@ -24,6 +23,7 @@ import nyc.vonley.mi.models.Console
 import nyc.vonley.mi.persistence.AppDatabase
 import nyc.vonley.mi.utils.SharedPreferenceManager
 import java.lang.ref.WeakReference
+import java.net.InetAddress
 import kotlin.coroutines.CoroutineContext
 
 
@@ -78,6 +78,7 @@ class SyncServiceImpl constructor(
     override val activeNetworkInfo: NetworkInfo?
         get() = cm.activeNetworkInfo
 
+    @get:RequiresApi(Build.VERSION_CODES.M)
     override val activeNetwork: Network?
         get() = cm.activeNetwork
 
@@ -96,12 +97,16 @@ class SyncServiceImpl constructor(
         val con = mContextRef.get()
         if (con != null) {
             cm = con.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            wm = con.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            wm = con.getApplicationContext().getSystemService(Context.WIFI_SERVICE) as WifiManager
         }
     }
 
     override fun isNetworkAvailable(): Boolean {
-        val actNw = cm.getNetworkCapabilities(activeNetwork ?: return false) ?: return false
+        val actNw = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            cm.getNetworkCapabilities(activeNetwork ?: return false) ?: return false
+        } else {
+            return activeNetworkInfo?.isConnected == true
+        }
         return when {
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
@@ -114,7 +119,11 @@ class SyncServiceImpl constructor(
     }
 
     override fun isWifiAvailable(): Boolean {
-        val actNw = cm.getNetworkCapabilities(activeNetwork ?: return false) ?: return false
+        val actNw = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            cm.getNetworkCapabilities(activeNetwork ?: return false) ?: return false
+        } else {
+            return activeNetworkInfo?.isConnected == true
+        }
         return when {
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
             else -> false
@@ -126,7 +135,7 @@ class SyncServiceImpl constructor(
     /**
      * Gets Active Clients & Gets Consoles
      */
-    override fun getClients(loop: Boolean, delaySeconds: Int) {
+    override fun getClients(loop: Boolean) {
         val block: suspend CoroutineScope.() -> Unit = {
             do {
                 if (BuildConfig.DEBUG) {
@@ -140,12 +149,12 @@ class SyncServiceImpl constructor(
 
                 if (BuildConfig.DEBUG) {
                     if (loop) {
-                        Log.e(TAG, "[fetching again in $delaySeconds seconds]")
+                        Log.e(TAG, "[fetching again in ${manager.scanInterval} seconds]")
                     } else {
                         Log.e(TAG, "[ran only once]")
                     }
                 }
-                val ms = (delaySeconds * 1000L) // can every 1500
+                val ms = (manager.scanInterval * 1000L) // can every 1500
                 delay(ms)
             } while (loop)
         }
@@ -234,7 +243,12 @@ class SyncServiceImpl constructor(
             for (i in 1 until 256) {
                 try {
                     val ip = "$prefix$i"
-                    val byName = activeNetwork?.getByName(ip) ?: continue
+                    val byName = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                        activeNetwork?.getByName(ip) ?: continue
+                    }else{
+                        InetAddress.getByName(ip) ?: continue
+                    }
+
                     if (byName.isReachable(100)) {
                         Log.i(
                             TAG,

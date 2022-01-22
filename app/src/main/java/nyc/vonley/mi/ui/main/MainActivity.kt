@@ -133,13 +133,7 @@ class MainActivity : AppCompatActivity(), MainContract.View,
         }
     }
 
-    override fun start() {
-
-    }
-
-    override fun onConsolesFound(consoles: List<Console>) {
-
-    }
+    override fun onConsolesFound(consoles: List<Console>) = Unit
 
     override fun setTitle(title: String?) {
         binding.fakeToolbarTitle.text = title ?: return
@@ -150,9 +144,7 @@ class MainActivity : AppCompatActivity(), MainContract.View,
         binding.fakeToolbarSummary.isSelected = true
     }
 
-    override fun onError(e: Throwable) {
-
-    }
+    override fun onError(e: Throwable) = Unit
 
     override fun onDialogCanceled() {
         super.onDialogCanceled()
@@ -178,18 +170,19 @@ class MainActivity : AppCompatActivity(), MainContract.View,
         }
     }
 
-    val onPayloadClick: View.OnClickListener = View.OnClickListener { view ->
+    private val onPayloadClick: View.OnClickListener = View.OnClickListener {
         currentView<PayloadContract.View>()?.open()
     }
 
-    val onFTPClick: View.OnClickListener = View.OnClickListener { view ->
+    private val onFTPClick: View.OnClickListener = View.OnClickListener {
         currentView<FTPContract.View>()?.open()
     }
 
-    val onConsoleClick: View.OnClickListener = View.OnClickListener { view ->
+    private val onConsoleClick: View.OnClickListener = View.OnClickListener {
         currentView<ConsoleContract.View>()?.addConsole()
     }
-    val onHomeClick: View.OnClickListener = View.OnClickListener { view ->
+
+    private val onHomeClick: View.OnClickListener = View.OnClickListener {
         currentView<HomeContract.View>()?.openInfoDialog()
     }
 

@@ -4,4 +4,21 @@
         <item>@string/feature_goldhen</item>
         <item>@string/feature_orbisapi</item>
     </string-array>
+    <string-array name="interval_entry">
+        <item>15 seconds</item>
+        <item>30 seconds</item>
+        <item>1 min</item>
+        <item>5 min</item>
+        <item>10 min</item>
+        <item>15 min</item>
+    </string-array>
+
+    <string-array name="interval_entry_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>300</item>
+        <item>600</item>
+        <item>900</item>
+    </string-array>
 </resources>

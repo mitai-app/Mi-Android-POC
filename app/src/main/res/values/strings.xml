@@ -24,6 +24,8 @@
     <string name="preference_target_version">nyc.vonley.mi.prefs.target.version</string>
     <string name="preference_jb_port">nyc.vonley.mi.prefs.jb.port</string>
     <string name="preference_jb_feature">nyc.vonley.mi.prefs.jb.feature</string>
+    <string name="preference_jb_service">nyc.vonley.mi.prefs.jb.service</string>
+    <string name="preference_jb_scan">nyc.vonley.mi.prefs.jb.scan</string>
     <string name="feature_none">feature.none</string>
     <string name="feature_netcat">feature.netcat</string>
     <string name="feature_goldhen">Golden Hen</string>

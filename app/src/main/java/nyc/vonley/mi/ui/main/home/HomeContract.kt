@@ -1,12 +1,12 @@
 package nyc.vonley.mi.ui.main.home
 
 import nyc.vonley.mi.base.BaseContract
-import nyc.vonley.mi.di.network.MiJBServer
+import nyc.vonley.mi.di.network.impl.MiServerImpl
 import nyc.vonley.mi.utils.SharedPreferenceManager
 
 interface HomeContract {
 
-    interface View : BaseContract.View, MiJBServer.MiJbServerListener {
+    interface View : BaseContract.View, MiServerImpl.MiJbServerListener {
         fun init(ip: String)
         fun openInfoDialog()
     }

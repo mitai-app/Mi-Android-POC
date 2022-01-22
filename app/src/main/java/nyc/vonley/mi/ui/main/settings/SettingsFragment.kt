@@ -21,7 +21,6 @@ import javax.inject.Inject
 class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), SettingsContract.View,
     Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
-
     val TAG = SettingsFragment::class.java.name
 
     @Inject
@@ -44,12 +43,13 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
     private lateinit var features: ListPreference
     private lateinit var port: EditTextPreference
     private lateinit var dev: Preference
+    private lateinit var scan: ListPreference
+    private lateinit var service: SwitchPreferenceCompat
 
     private var mainView: MainContract.View? = null
 
     @Inject
     lateinit var sync: SyncService
-
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.sharedPreferencesName = LocalStorageModule.PREFERENCE_FILE
@@ -69,6 +69,8 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
         targetVersion = preferenceScreen[getString(R.string.preference_target_version)]!!
         features = preferenceScreen[getString(R.string.preference_jb_feature)]!!
         port = preferenceScreen[getString(R.string.preference_jb_port)]!!
+        service = preferenceScreen[getString(R.string.preference_jb_service)]!!
+        scan = preferenceScreen[getString(R.string.preference_jb_scan)]!!
 
         wifi.onPreferenceClickListener = this
         rest.onPreferenceClickListener = this
@@ -82,14 +84,17 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
         ftpPass.onPreferenceClickListener = this
         features.onPreferenceClickListener = this
         port.onPreferenceClickListener = this
+        service.onPreferenceClickListener = this
+        scan.onPreferenceClickListener = this
 
         ftpUser.onPreferenceChangeListener = this
         ftpPass.onPreferenceChangeListener = this
         features.onPreferenceChangeListener = this
         port.onPreferenceChangeListener = this
+        scan.onPreferenceChangeListener = this
+        service.onPreferenceChangeListener = this
         initData()
     }
-
 
     override fun initData() {
         val title: CharSequence = if (sync.isConnected)
@@ -149,6 +154,19 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
             }
             port.key -> {
                 port.summary = newValue?.toString()
+                true
+            }
+            scan.key -> {
+                Snackbar.make(requireView(), "Value :Set", Snackbar.LENGTH_SHORT).show()
+                true
+            }
+            service.key -> {
+                val value = newValue as Boolean
+                if (value) {
+                    presenter.start()
+                } else{
+                    presenter.stop()
+                }
                 true
             }
             else -> false
