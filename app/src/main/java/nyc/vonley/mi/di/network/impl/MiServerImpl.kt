@@ -176,7 +176,7 @@ class MiServerImpl constructor(
     private var attempts = 10
 
 
-    fun create(title: String = "ミ (Mi)", content: String = "Visit http://${sync.ipAddress}:${activePort} on your ps4!", summary: String = "Jailbreak server is running in the background"): Notification {
+    fun create(title: String = "ミ (Mi) - PS4 Management Tool", content: String = "Visit http://${sync.ipAddress}:${activePort} on your ps4!", summary: String = "Jailbreak server is running in the background"): Notification {
         val channel_id = "MI"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "MI"

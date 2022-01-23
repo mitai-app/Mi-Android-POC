@@ -26,11 +26,6 @@ class PSXService : Service() {
     @SharedPreferenceStorage
     lateinit var manager: SharedPreferenceManager
 
-    override fun onCreate() {
-        super.onCreate()
-
-    }
-
     override fun onBind(intent: Intent?): IBinder {
         return binder
     }
