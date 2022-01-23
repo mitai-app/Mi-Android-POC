@@ -154,6 +154,7 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
             }
             port.key -> {
                 port.summary = newValue?.toString()
+                presenter.restart()
                 true
             }
             scan.key -> {

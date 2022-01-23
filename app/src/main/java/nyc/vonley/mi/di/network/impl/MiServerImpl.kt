@@ -1,12 +1,21 @@
 package nyc.vonley.mi.di.network.impl
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.util.Log
 import android.webkit.MimeTypeMap
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.coroutines.*
 import nyc.vonley.mi.BuildConfig
+import nyc.vonley.mi.R
 import nyc.vonley.mi.di.annotations.SharedPreferenceStorage
 import nyc.vonley.mi.di.network.MiServer
 import nyc.vonley.mi.di.network.PSXService
@@ -15,6 +24,7 @@ import nyc.vonley.mi.models.Device
 import nyc.vonley.mi.models.Mi
 import nyc.vonley.mi.models.jbPath
 import nyc.vonley.mi.models.supported
+import nyc.vonley.mi.ui.main.MainActivity
 import nyc.vonley.mi.utils.SharedPreferenceManager
 import java.io.File
 import java.io.InputStream
@@ -41,7 +51,7 @@ class MiServerImpl constructor(
         fun onSendPayloadAttempt(attempt: Int)
     }
 
-    private var server: NanoHTTPD? = null
+    override var server: NanoHTTPD? = null
     private val callbacks: HashMap<Class<*>, MiJbServerListener> = hashMapOf()
     private val callback: MiJbServerListener = object : MiJbServerListener {
         override fun onDeviceConnected(device: Device) {
@@ -165,6 +175,44 @@ class MiServerImpl constructor(
     private var console: Device? = null
     private var attempts = 10
 
+
+    fun create(title: String = "ミ (Mi)", content: String = "Visit http://${sync.ipAddress}:${activePort} on your ps4!", summary: String = "Jailbreak server is running in the background"): Notification {
+        val channel_id = "MI"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "MI"
+            val desc = "Mi Server"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(channel_id, name, importance).apply {
+                description = desc
+            }
+            val man = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            man.createNotificationChannel(channel)
+        }
+        val intent = Intent(context, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(context, System.currentTimeMillis().toInt(),  intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val texts = "Visit http://${sync.ipAddress}:${activePort} on your ps4!"
+        val titles = "ミ (Mi)"
+        val summaries = "Jailbreak server is running in the background"
+
+        val style = NotificationCompat.BigTextStyle()
+            .bigText(content)
+            .setBigContentTitle(title)
+            .setSummaryText(summary)
+
+        val server = NotificationCompat.Builder(context, channel_id)
+            .setSmallIcon(R.mipmap.orb)
+            .setStyle(style)
+            .setContentTitle(title)
+            .setContentText(content)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setOngoing(true)
+            .setAutoCancel(false)
+            .build()
+        return server
+    }
+
     private fun init(): NanoHTTPD {
         return object : NanoHTTPD(manager.jbPort), CoroutineScope {
 
@@ -177,6 +225,10 @@ class MiServerImpl constructor(
                     try {
                         ready = true
                         super.start()
+                        delay(3000)
+                        withContext(Dispatchers.Main) {
+                            NotificationManagerCompat.from(context).notify(0, create())
+                        }
                     }catch (e: Throwable){
                         ready = false
                         if(BuildConfig.DEBUG){
@@ -202,6 +254,11 @@ class MiServerImpl constructor(
                         if(BuildConfig.DEBUG){
                             Log.e(TAG, "failed to stop service ${e.message}")
                         }
+                    }
+
+                    delay(3000)
+                    withContext(Dispatchers.Main) {
+                        NotificationManagerCompat.from(context).cancel(0)
                     }
                 }
             }

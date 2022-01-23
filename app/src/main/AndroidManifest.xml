@@ -22,6 +22,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Lambda">
         <activity
+            android:launchMode="singleInstance"
+            android:taskAffinity=""
             android:name="nyc.vonley.mi.ui.main.MainActivity"
             android:exported="true">
             <intent-filter>
