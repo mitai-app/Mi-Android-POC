@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.main.payload.PayloadFragment">
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
@@ -15,5 +14,4 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/vh_payload" />
 
-</RelativeLayout>
-
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -1,8 +1,9 @@
 package nyc.vonley.mi.base
 
+import kotlinx.coroutines.CoroutineScope
 import okhttp3.*
 
-interface BaseClient {
+interface BaseClient: CoroutineScope {
 
     val http: OkHttpClient
 

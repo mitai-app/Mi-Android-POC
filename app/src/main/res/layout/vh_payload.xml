@@ -1,9 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:background="?android:attr/selectableItemBackground"
+    android:layout_height="wrap_content"
+    android:padding="12dp">
 
-    <include
-        android:id="@+id/vh_console"
-        layout="@layout/vh_ftp" />
-</FrameLayout>
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/vh_payload_img"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        app:srcCompat="@drawable/icon_svg_file"
+        app:tint="@color/ftpFolderColor" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/vh_payload_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/vh_payload_img"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/vh_payload_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:textColor="@color/ftpFolderTitleColor"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="Nickname" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/vh_payload_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:textColor="@color/ftpFolderSubtitleColor"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="192.168.1.45" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</RelativeLayout>

@@ -1,7 +1,10 @@
 package nyc.vonley.mi.di.network
 
 import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import nyc.vonley.mi.base.BaseClient
+import nyc.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import nyc.vonley.mi.utils.SharedPreferenceManager
 import okhttp3.Callback
 import okhttp3.Headers
@@ -9,8 +12,16 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.util.ArrayList
+import kotlin.coroutines.CoroutineContext
 
 interface PSXService : BaseClient {
+
+    interface PSXListener {
+        fun onSocketFailed()
+        fun onWriting(payload: PayloadAdapter.Payload)
+        fun onFinished()
+    }
 
     val sync: SyncService
 
@@ -69,4 +80,11 @@ interface PSXService : BaseClient {
             }
         }*/
     }
+
+    fun uploadBin (payloads: ArrayList<PayloadAdapter.Payload>, callback: PSXListener)
+
+    val job: Job
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.IO + job
 }

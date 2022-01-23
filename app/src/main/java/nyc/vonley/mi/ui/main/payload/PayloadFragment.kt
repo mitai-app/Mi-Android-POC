@@ -2,6 +2,7 @@ package nyc.vonley.mi.ui.main.payload
 
 import android.app.Activity.RESULT_OK
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -18,11 +19,14 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.database.getStringOrNull
 import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import nyc.vonley.mi.BuildConfig
 import nyc.vonley.mi.databinding.FragmentPayloadBinding
+import nyc.vonley.mi.ui.main.MainContract
 import nyc.vonley.mi.ui.main.home.dialog
+import nyc.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import okhttp3.Response
 import javax.inject.Inject
 
@@ -32,7 +36,8 @@ import javax.inject.Inject
  * create an instance of this fragment.
  */
 @AndroidEntryPoint
-class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, PayloadContract.View {
+class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, PayloadContract.View,
+    SwipeRefreshLayout.OnRefreshListener {
 
 
     private val assets get() = requireContext().assets
@@ -40,11 +45,15 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
     @Inject
     lateinit var presenter: PayloadContract.Presenter
 
+    private var mainView: MainContract.View? = null
+
     private val contentResolver: ContentResolver
         get() = requireContext().contentResolver
 
-    lateinit var startForResult: ActivityResultLauncher<Intent>
-    lateinit var binding: FragmentPayloadBinding
+    private lateinit var startForResult: ActivityResultLauncher<Intent>
+    private lateinit var binding: FragmentPayloadBinding
+    private val payloadAdapter = PayloadAdapter()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +78,7 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         } ?: emptyList()
     }
 
+
     override fun open() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.data = Uri.parse("/")
@@ -76,11 +86,22 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         startForResult.launch(Intent.createChooser(intent, "Open Folder"))
     }
 
+    override fun onSending(payload: PayloadAdapter.Payload) {
+        payloadAdapter.clear()
+    }
+
+    override fun onComplete(message: String) {
+        payloadAdapter.clear()
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentPayloadBinding.inflate(inflater, container, false)
+        binding.recycler.adapter = payloadAdapter
+        binding.root.setOnRefreshListener(this)
         return binding.root
     }
 
@@ -113,19 +134,9 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
                     if (BuildConfig.DEBUG) {
                         Log.e("TAG", "uri: ${uri.path}, name: $filename")
                     }
-                    val stream = contentResolver.openInputStream(uri)
+                    val stream = contentResolver.openInputStream(uri)?.readBytes()
                     if (stream != null) {
-                        val jbPort = presenter.manager.featurePort
-                        val question =
-                            "Click confirm if \"${name}\" is the correct payload, and we are sending it to the right plugin, \"${jbPort.title}\" (Port ${jbPort.ports.first()}) otherwise press cancel."
-                        dialog(question, "Confirm")
-                        { dialog, i ->
-                            presenter.sendPayload(stream)
-                            dialog.dismiss()
-                        }.setNegativeButton("Cancel")
-                        { dialog, i ->
-                            dialog.dismiss()
-                        }.create().show()
+                        payloadAdapter.add(PayloadAdapter.Payload(name, stream))
                     } else {
                         Snackbar.make(
                             requireView(),
@@ -159,8 +170,34 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
     override fun onError(e: Throwable) {
         Toast.makeText(
             requireContext(),
-            "We couldn't send the payload. \nError Message: ${e.message}",
+            "We couldn't send the payloads",
             Toast.LENGTH_LONG
         ).show()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mainView = context as? MainContract.View
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        mainView = null
+    }
+
+    override fun onRefresh() {
+        if (payloadAdapter.itemCount > 0) {
+            val name = payloadAdapter.payloads.map { it.name }.toList().joinToString(",")
+            val jbPort = presenter.manager.featurePort
+            val question =
+                "Click confirm if \"${name}\" are the correct payloads, and we are sending it to the right plugin, \"${jbPort.title}\" (Port ${jbPort.ports.first()}) otherwise press cancel."
+            dialog(question, "Confirm") { dialog, i ->
+                presenter.sendMultiplePayloads(payloadAdapter.payloads)
+                dialog.dismiss()
+            }.setNegativeButton("Cancel")
+            { dialog, i ->
+                dialog.dismiss()
+            }.create().show()
+        }
     }
 }

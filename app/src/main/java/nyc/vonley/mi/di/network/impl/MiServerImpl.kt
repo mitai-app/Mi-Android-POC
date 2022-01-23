@@ -175,6 +175,14 @@ class MiServerImpl constructor(
     private var console: Device? = null
     private var attempts = 10
 
+    init {
+        payloads["6.72"] = context.assets.open("payloads/goldenhen/672.bin").readBytes()
+        payloads["7.02"] = context.assets.open("payloads/goldenhen/702.bin").readBytes()
+        payloads["7.50"] = context.assets.open("payloads/goldenhen/750.bin").readBytes()
+        payloads["7.51"] = context.assets.open("payloads/goldenhen/751.bin").readBytes()
+        payloads["7.55"] = context.assets.open("payloads/goldenhen/755.bin").readBytes()
+        payloads["9.00"] = context.assets.open("payloads/goldenhen/900.bin").readBytes()
+    }
 
     fun create(title: String = "ミ (Mi) - PS4 Management Tool", content: String = "Visit http://${sync.ipAddress}:${activePort} on your ps4!", summary: String = "Jailbreak server is running in the background"): Notification {
         val channel_id = "MI"
@@ -394,22 +402,6 @@ class MiServerImpl constructor(
         }
     }
 
-    fun init(context: Context) {
-        payloads["6.72"] = context.assets.open("payloads/goldenhen/672.bin").readBytes()
-        payloads["7.02"] = context.assets.open("payloads/goldenhen/702.bin").readBytes()
-        payloads["7.50"] = context.assets.open("payloads/goldenhen/750.bin").readBytes()
-        payloads["7.51"] = context.assets.open("payloads/goldenhen/751.bin").readBytes()
-        payloads["7.55"] = context.assets.open("payloads/goldenhen/755.bin").readBytes()
-        payloads["9.00"] = context.assets.open("payloads/goldenhen/900.bin").readBytes()
-        try {
-            startService()
-        } catch (e: Exception) {
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, e.message ?: "Hmmm")
-            }
-        }
-    }
-
     override fun add(jb: MiJbServerListener) {
         callbacks[jb.javaClass] = jb
     }
@@ -494,7 +486,9 @@ class MiServerImpl constructor(
     private fun sendPayload(device: Device) {
         val payload = payloads[device.version]
         val block: suspend CoroutineScope.() -> Unit = {
-            delay(10000)
+            Log.e(TAG, "First we wait like a lion, and watch mira do its thing")
+            delay(20000)
+            Log.e(TAG, "Next we pounce and take the opportunity to send gratitude.")
             attempts = 0
             while (attempts <= ATTEMPT_LIMIT) {
                 try {
