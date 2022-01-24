@@ -41,9 +41,9 @@ class PSXService : Service(), BaseClient {
         return binder
     }
 
-    var check = true
-    var meta: Meta? = null
-    val seconds = 15
+    private var check = true
+    private var meta: Meta? = null
+    private val seconds = 60
 
     data class Meta(val version: String, val changes: String, val build: String) {
         override fun toString(): String {
