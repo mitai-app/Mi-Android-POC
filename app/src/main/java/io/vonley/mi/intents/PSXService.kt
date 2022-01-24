@@ -70,14 +70,22 @@ class PSXService : Service(), BaseClient {
                             response.body?.let { body ->
                                 val json = JSONObject(body.string())
                                 val version = json.getString("version")
-                                if (version.ver > BuildConfig.VERSION_NAME.ver) {
-                                    val changesList = json.getJSONArray("changes")
-                                    val build = json.getString("build")
-                                    val changes = StringBuilder()
-                                    for (i in 0..changesList.length()) {
-                                        changes.append(changesList[i].toString() + "\n")
-                                    }
-                                    this@PSXService.meta = Meta(version, changes.toString(), build)
+                                val ver = version.ver
+                                val buildVer = BuildConfig.VERSION_NAME.ver
+                                val compare = ver > buildVer;
+                                if (compare) {
+                                    val build = if(json.has("build")){
+                                         json.getString("build")
+                                    } else ""
+                                    val change = if(json.has("changes")) {
+                                        val changesList = json.getJSONArray("changes")
+                                        val changes = StringBuilder()
+                                        for (i in 0..changesList.length()) {
+                                            changes.append(changesList[i].toString() + "\n")
+                                        }
+                                        changes.toString()
+                                    }else ""
+                                    this@PSXService.meta = Meta(version, change, build)
                                 }
 
                             } ?: run {
