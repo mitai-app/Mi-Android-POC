@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f3e91effd455835d15b2f8d2901ef7a6",
+    "identityHash": "c9dc10c87dd600ee3dc962fb9a5d476b",
     "entities": [
       {
         "tableName": "Console",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ip` TEXT NOT NULL, `name` TEXT NOT NULL, `type` INTEGER NOT NULL, `features` TEXT NOT NULL, `lastKnownReachable` INTEGER NOT NULL, `wifi` TEXT NOT NULL, PRIMARY KEY(`ip`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ip` TEXT NOT NULL, `name` TEXT NOT NULL, `type` INTEGER NOT NULL, `features` TEXT NOT NULL, `lastKnownReachable` INTEGER NOT NULL, `wifi` TEXT NOT NULL, `pinned` INTEGER NOT NULL, PRIMARY KEY(`ip`))",
         "fields": [
           {
             "fieldPath": "ip",
@@ -43,6 +43,12 @@
             "columnName": "wifi",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "pinned",
+            "columnName": "pinned",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -58,7 +64,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f3e91effd455835d15b2f8d2901ef7a6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c9dc10c87dd600ee3dc962fb9a5d476b')"
     ]
   }
 }

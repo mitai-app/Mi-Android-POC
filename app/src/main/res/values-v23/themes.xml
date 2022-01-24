@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Lambda" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/material_red</item>
+        <item name="colorPrimaryVariant">@color/grey</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/material_red</item> <!-- This is for text -->
+        <item name="colorSecondaryVariant">@color/grey</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <item name="android:textColorPrimary">@color/material_red</item>
+        <item name="android:textColorSecondary">@color/black</item>
+        <item name="android:colorAccent">@color/black</item>
+
+        <item name="colorError">@color/material_red</item>
+        <item name="colorOnError">@color/white</item>
+
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="background">@color/white</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+
+        <item name="android:fontFamily">@font/montserrat</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/white</item>
+        <!-- Customize your theme here. -->
+    </style>
+</resources>

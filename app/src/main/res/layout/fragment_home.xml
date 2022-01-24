@@ -66,6 +66,7 @@
                 android:layout_height="200dp"
                 android:orientation="vertical"
                 android:paddingStart="8dp"
+                app:reverseLayout="true"
                 android:paddingEnd="8dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/text_view" />

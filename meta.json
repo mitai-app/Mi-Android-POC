@@ -1,29 +1,59 @@
 {
   "name": "Mi - PS4 Management App",
-  "author": "Mr-Smithy-x",
-  "version": "1.0.0-rc",
+  "author": "Vonley",
+  "version": "1.0.0",
   "contributors": [
-      "@Mr-Smithy-x"
+    "@Mr-Smithy-x/Vonley"
   ],
-  "file": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.0.0-rc",
-  "changelogs": {
-    "1.0.0-rc": {
-      "changes": "Improved stability, final settings for ftp client, and ability to manually add consoles. can change default jb port but must force restart the app. Can select how you want to upload the payload.",
+  "changes": [
+    "Multiple Payloads Support",
+    "Server Management so its not always running in bg",
+    "Fix renaming file",
+    "Restart server under different port now possible without restarting",
+    "Stability and package refactoring"
+  ],
+  "build": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.0.0",
+  "changelogs": [
+    {
+      "name": "1.0.0",
+      "changes": [
+        "Multiple Payloads Support",
+        "Server Management so its not always running in bg",
+        "Fix renaming file",
+        "Restart server under different port now possible without restarting",
+        "Stability and package refactoring"
+      ],
+      "build": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.0.0"
+    },
+    {
+      "name": "1.0.0-rc",
+      "changes": [
+        "Improved stability, final settings for ftp client, and ability to manually add consoles. can change default jb port but must force restart the app. Can select how you want to upload the payload."
+      ],
       "build": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.0.0-rc"
     },
-    "1.0.0-beta": {
-      "changes": "Improved stability, included ftp for browsing, uploading and deleting files",
+    {
+      "name": "1.0.0-beta",
+      "changes": [
+        "Improved stability, included ftp for browsing, uploading and deleting files"
+      ],
       "build": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.0.0-beta"
     },
-    "1.0.0-alpha.1": {
-      "changes": "Added proguard rules for production build to fix minor error upon compilation. Delay payload execution from server side. Makes sending payload a bit more stable.",
+    {
+      "name": "1.0.0-alpha.1",
+      "changes": [
+        "Added proguard rules for production build to fix minor error upon compilation. Delay payload execution from server side. Makes sending payload a bit more stable."
+      ],
       "build": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.0.0-alpha.1"
     },
-    "1.0.0-alpha": {
-      "changes": "Initial release",
+    {
+      "name": "1.0.0-alpha",
+      "changes": [
+        "Initial release"
+      ],
       "build": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.0.0-alpha"
     }
-  },
+  ],
   "thanks": [
     "Specter",
     "Sleirsgoevy",

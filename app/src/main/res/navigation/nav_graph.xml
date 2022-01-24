@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/fragment_home"
-        android:name="nyc.vonley.mi.ui.main.home.HomeFragment"
+        android:name="io.vonley.mi.ui.main.home.HomeFragment"
         android:label="Consoles"
         tools:layout="@layout/fragment_home">
 
@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/fragment_console"
-        android:name="nyc.vonley.mi.ui.main.console.ConsoleFragment"
+        android:name="io.vonley.mi.ui.main.console.ConsoleFragment"
         android:label="Consoles"
         tools:layout="@layout/fragment_console">
 
@@ -37,7 +37,7 @@
 
     <fragment
         android:id="@+id/fragment_permissions"
-        android:name="nyc.vonley.mi.ui.main.permissions.PermissionsFragment"
+        android:name="io.vonley.mi.ui.main.permissions.PermissionsFragment"
         android:label="PermissionsFragment">
         <action
             android:id="@+id/action_permissions_to_home"
@@ -48,7 +48,7 @@
 
     <fragment
         android:id="@+id/fragment_payload"
-        android:name="nyc.vonley.mi.ui.main.payload.PayloadFragment"
+        android:name="io.vonley.mi.ui.main.payload.PayloadFragment"
         android:label="Payload"
         tools:layout="@layout/fragment_payload">
         <argument
@@ -58,7 +58,7 @@
 
     <fragment
         android:id="@+id/fragment_ftp"
-        android:name="nyc.vonley.mi.ui.main.ftp.FTPFragment"
+        android:name="io.vonley.mi.ui.main.ftp.FTPFragment"
         android:label="FTP"
         tools:layout="@layout/fragment_f_t_p">
 
@@ -73,7 +73,7 @@
 
     <fragment
         android:id="@+id/fragment_settings"
-        android:name="nyc.vonley.mi.ui.main.settings.SettingsFragment"
+        android:name="io.vonley.mi.ui.main.settings.SettingsFragment"
         android:label="Settings"
         tools:layout="@layout/fragment_settings">
 
