@@ -1,5 +1,6 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
     <style name="Theme.Lambda" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/material_red</item>
@@ -19,6 +20,7 @@
         <item name="colorSurface">@color/white</item>
         <item name="colorOnSurface">@color/white</item>
 
+        <item name="android:windowLightStatusBar">false</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/dark_grey</item>
         <!-- Customize your theme here. -->
@@ -26,11 +28,5 @@
         <item name="android:textColorPrimary">@color/material_red</item>
         <item name="android:textColorSecondary">@color/white</item>
         <item name="colorAccent">@color/white</item>
-    </style>
-
-    <style name="Theme.Lambda.Prefs" parent="Theme.Lambda">
-        <item name="android:textColorPrimary">@color/material_red</item>
-        <item name="android:textColorSecondary">@color/white</item>
-        <item name="colorAccent">@color/material_red</item>
     </style>
 </resources>
