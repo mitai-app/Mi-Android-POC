@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.StringRes
 import io.vonley.mi.R
+import io.vonley.mi.extensions.fromJson
+import io.vonley.mi.extensions.toJson
+import io.vonley.mi.intents.PSXService
 import io.vonley.mi.models.OAuthToken
 import io.vonley.mi.models.enums.Feature
 
@@ -68,6 +71,13 @@ interface SharedPreferenceManager {
         set(interval) {
             this[MISCANINTERVAL] = interval
         }
+
+    var update: PSXService.Meta?
+        get() = sharedPreferences.getString(this[UPDATE], null)?.fromJson()
+        set(value) {
+            this[UPDATE] = value.toJson()
+        }
+
     var jbPort: Int
         get() {
             return sharedPreferences.getString(
@@ -149,6 +159,7 @@ interface SharedPreferenceManager {
         const val MISCANINTERVAL: Int = R.string.preference_jb_scan
         const val MIJBFEATUREPORT: Int = R.string.preference_jb_feature
         const val MIJBSERVICE: Int = R.string.preference_jb_service
+        const val UPDATE: Int = R.string.preference_app_update
     }
 }
 

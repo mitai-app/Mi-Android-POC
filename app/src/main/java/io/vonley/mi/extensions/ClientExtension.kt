@@ -16,6 +16,9 @@ inline fun <reified T> Gson.fromJson(json: String) =
 inline fun <reified T> String.fromJson(): T? =
     GsonBuilder().create().fromJson<T>(this, object : TypeToken<T>() {}.type)
 
+inline fun <reified T> T.toJson(): String =
+    GsonBuilder().create().toJson(this)
+
 fun InetAddress.client(wi: WifiInfo): Client {
     return object : Client {
 

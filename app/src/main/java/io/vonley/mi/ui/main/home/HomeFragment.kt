@@ -10,10 +10,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import io.noties.markwon.Markwon
+import io.vonley.mi.BuildConfig
 import io.vonley.mi.databinding.FragmentHomeBinding
+import io.vonley.mi.di.annotations.SharedPreferenceStorage
+import io.vonley.mi.intents.ver
 import io.vonley.mi.models.Device
 import io.vonley.mi.models.Mi
 import io.vonley.mi.ui.main.home.adapters.TextViewAdapter
+import io.vonley.mi.utils.SharedPreferenceManager
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,8 +30,11 @@ class HomeFragment : Fragment(), HomeContract.View {
     @Inject
     lateinit var presenter: HomeContract.Presenter
 
-    lateinit var adapter: TextViewAdapter
+    @Inject
+    @SharedPreferenceStorage
+    lateinit var manager: SharedPreferenceManager
 
+    lateinit var adapter: TextViewAdapter
 
 
     override fun onCreateView(
@@ -59,7 +66,10 @@ class HomeFragment : Fragment(), HomeContract.View {
     }
 
     override fun onJailbreakSucceeded(message: String) {
-        dialog("$message\nPssst... Turn on FTP in GoldenHen to auto detect the PS4!", "OK") { dialog, _ ->
+        dialog(
+            "$message\nPssst... Turn on FTP in GoldenHen to auto detect the PS4!",
+            "OK"
+        ) { dialog, _ ->
             dialog.dismiss()
         }.create().show()
     }
@@ -90,12 +100,27 @@ class HomeFragment : Fragment(), HomeContract.View {
 
     override fun onSendPayloadAttempt(attempt: Int) = Unit
 
+    private fun setUpdateIfAvailable() {
+        manager.update?.let { meta ->
+            if (meta.version.ver.compareTo(BuildConfig.VERSION_NAME.ver) == 1) {
+                binding.device.text = "New update: ${meta.version}\n${meta.changes}\n${meta.build}"
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setUpdateIfAvailable()
+    }
+
     override fun init(ip: String) {
         binding.device.text = "http://$ip"
+        setUpdateIfAvailable()
     }
 
     override fun openInfoDialog() {
-        val message = "Thank you for downloading Mi. Start by typing (${binding.device.text}) of this device into your ps4 browser and start the jailbreak process. When the Jailbreak process is complete Goldhen v2.0b2 will be loaded. In order to upload bin files please be sure to go onto your ps4 settings page -> golden hen -> and enable \"BinLoader Server\", likewise to use FTP Feature.\n\nHINT: ENABLE FTP ON YOUR PS4 SO THAT MI CAN DISCOVER YOUR DEVICE AUTOMATICALLY."
+        val message =
+            "Thank you for downloading Mi. Start by typing (${binding.device.text}) of this device into your ps4 browser and start the jailbreak process. When the Jailbreak process is complete Goldhen v2.0b2 will be loaded. In order to upload bin files please be sure to go onto your ps4 settings page -> golden hen -> and enable \"BinLoader Server\", likewise to use FTP Feature.\n\nHINT: ENABLE FTP ON YOUR PS4 SO THAT MI CAN DISCOVER YOUR DEVICE AUTOMATICALLY."
         dialog(message, "Close") { dialog, _ -> dialog.dismiss() }.create().show()
     }
 

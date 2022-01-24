@@ -13,7 +13,16 @@ interface BaseClient: CoroutineScope {
             .headers(headers)
             .post(body)
             .build()
-        val execute = http.newCall(req);
+        val execute = http.newCall(req)
+        execute.enqueue(response)
+    }
+
+    fun get(url: String, response: Callback) {
+        val req = Request.Builder()
+            .url(url)
+            .get()
+            .build()
+        val execute = http.newCall(req)
         execute.enqueue(response)
     }
 

@@ -27,6 +27,7 @@
     <string name="preference_jb_service">io.vonley.mi.prefs.jb.service</string>
     <string name="preference_jb_scan">io.vonley.mi.prefs.jb.scan</string>
     <string name="preference_jb_cache">io.vonley.mi.prefs.jb.cache</string>
+    <string name="preference_app_update">io.vonley.mi.prefs.app.update</string>
     <string name="feature_none">feature.none</string>
     <string name="feature_netcat">feature.netcat</string>
     <string name="feature_goldhen">Golden Hen</string>
