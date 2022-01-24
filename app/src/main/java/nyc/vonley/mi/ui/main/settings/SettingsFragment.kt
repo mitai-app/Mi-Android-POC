@@ -45,6 +45,7 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
     private lateinit var dev: Preference
     private lateinit var scan: ListPreference
     private lateinit var service: SwitchPreferenceCompat
+    private lateinit var cache: SwitchPreferenceCompat
 
     private var mainView: MainContract.View? = null
 
@@ -71,6 +72,7 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
         port = preferenceScreen[getString(R.string.preference_jb_port)]!!
         service = preferenceScreen[getString(R.string.preference_jb_service)]!!
         scan = preferenceScreen[getString(R.string.preference_jb_scan)]!!
+        cache = preferenceScreen[getString(R.string.preference_jb_cache)]!!
 
         wifi.onPreferenceClickListener = this
         rest.onPreferenceClickListener = this
@@ -86,7 +88,10 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
         port.onPreferenceClickListener = this
         service.onPreferenceClickListener = this
         scan.onPreferenceClickListener = this
+        cache.onPreferenceClickListener = this
 
+
+        cache.onPreferenceChangeListener = this
         ftpUser.onPreferenceChangeListener = this
         ftpPass.onPreferenceChangeListener = this
         features.onPreferenceChangeListener = this
@@ -119,6 +124,7 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
         ftpPass.dialogIcon = ContextCompat.getDrawable(requireContext(), R.mipmap.orb)
         features.summary = manager.featurePort.title
         port.summary = manager.jbPort.toString()
+        cache.summary = if(manager.cached) "Mi server will cache" else "Mi server will not cache"
     }
 
     override fun onAttach(context: Context) {
@@ -157,8 +163,13 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
                 presenter.restart()
                 true
             }
+            cache.key -> {
+                val values = newValue as Boolean
+                cache.summary = if(values) "Mi server will cache" else "Mi server will not cache"
+                true
+            }
             scan.key -> {
-                Snackbar.make(requireView(), "Value :Set", Snackbar.LENGTH_SHORT).show()
+
                 true
             }
             service.key -> {

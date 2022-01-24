@@ -19,6 +19,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.database.getStringOrNull
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +31,7 @@ import nyc.vonley.mi.ui.main.home.dialog
 import nyc.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import okhttp3.Response
 import javax.inject.Inject
+
 
 /**
  * A simple [Fragment] subclass.
@@ -54,13 +57,33 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
     private lateinit var binding: FragmentPayloadBinding
     private val payloadAdapter = PayloadAdapter()
 
+    private var swipeCallback: ItemTouchHelper.SimpleCallback = object :
+        ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            return false
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
+            if (swipeDir == ItemTouchHelper.LEFT || swipeDir == ItemTouchHelper.RIGHT) {
+                val position = viewHolder.bindingAdapterPosition
+                payloadAdapter.remove(position)
+            }
+        }
+    }
+    private val swipeTouchHelper by lazy { ItemTouchHelper(swipeCallback) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         startForResult =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult(), this)
     }
-
 
     private fun getPath(uri: Uri?): List<String?> {
         val projections =
@@ -86,21 +109,13 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         startForResult.launch(Intent.createChooser(intent, "Open Folder"))
     }
 
-    override fun onSending(payload: PayloadAdapter.Payload) {
-        payloadAdapter.clear()
-    }
-
-    override fun onComplete(message: String) {
-        payloadAdapter.clear()
-        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentPayloadBinding.inflate(inflater, container, false)
         binding.recycler.adapter = payloadAdapter
+        swipeTouchHelper.attachToRecyclerView(binding.recycler)
         binding.root.setOnRefreshListener(this)
         return binding.root
     }
@@ -175,6 +190,23 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         ).show()
     }
 
+    override fun onPayloadFailed(payload: PayloadAdapter.Payload) {
+        payloadAdapter.update(payload)
+    }
+
+    override fun onFinished() {
+        payloadAdapter.clear()
+        binding.root.isRefreshing = false
+    }
+
+    override fun onWriting(payload: PayloadAdapter.Payload) {
+
+    }
+
+    override fun onSent(payload: PayloadAdapter.Payload) {
+        payloadAdapter.update(payload)
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainView = context as? MainContract.View
@@ -196,6 +228,7 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
                 dialog.dismiss()
             }.setNegativeButton("Cancel")
             { dialog, i ->
+                binding.root.isRefreshing = false
                 dialog.dismiss()
             }.create().show()
         }

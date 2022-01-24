@@ -14,7 +14,7 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="16dp"
         app:srcCompat="@drawable/icon_svg_file"
-        app:tint="@color/ftpFolderColor" />
+        app:tint="@color/grey_darker" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/vh_payload_container"
@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="2dp"
-            android:textColor="@color/ftpFolderTitleColor"
+            android:textColor="?attr/colorOnBackground"
             android:textSize="14sp"
             android:textStyle="bold"
             tools:text="Nickname" />

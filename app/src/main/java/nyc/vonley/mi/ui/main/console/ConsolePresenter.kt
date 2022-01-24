@@ -21,7 +21,8 @@ class ConsolePresenter @Inject constructor(
     @SharedPreferenceStorage val manager: SharedPreferenceManager
 ) : BasePresenter(), ConsoleContract.Presenter {
     override val getTargetSummary: String
-        get() = sync.target?.let { "Current Target: ${it.name} - ${it.ip}" } ?: "Current Target: none"
+        get() = sync.target?.let { "Current Target: ${it.name} - ${it.ip}" }
+            ?: "Current Target: none"
 
     override fun getConsoles(): List<Console> {
         return emptyList()
@@ -32,18 +33,32 @@ class ConsolePresenter @Inject constructor(
             if (dao.exists(input)) {
                 dao.updateNickName(input, "Playstation 4")
             } else {
-                dao.insert(Console(
-                    input,
-                    "Playstation 4",
-                    ConsoleType.PS4,
-                    listOf(Feature.FTP),
-                    false,
-                    sync.wifiInfo.ssid
-                ))
+                dao.insert(
+                    Console(
+                        input,
+                        "Playstation 4",
+                        ConsoleType.PS4,
+                        listOf(Feature.FTP),
+                        false,
+                        sync.wifiInfo.ssid
+                    )
+                )
             }
             withContext(Dispatchers.Main) {
                 view.onConsoleAdded()
             }
+        }
+    }
+
+    override fun pin(client: Client) {
+        launch {
+            dao.setPin(client.ip, true)
+        }
+    }
+
+    override fun unpin(client: Client) {
+        launch {
+            dao.setPin(client.ip, false)
         }
     }
 

@@ -10,10 +10,10 @@ import nyc.vonley.mi.models.enums.Feature
 @Dao
 interface ConsoleDao : IDao<Console, String> {
 
-    @Query("SELECT * FROM Console WHERE (wifi = :wifi_ AND LENGTH(features) > 3) OR (name IS NOT ip) ORDER BY LENGTH(features) DESC, lastKnownReachable DESC ")
+    @Query("SELECT * FROM Console WHERE (wifi = :wifi_) OR (name IS NOT ip) ORDER BY pinned DESC, lastKnownReachable DESC, LENGTH(features) DESC, ip ASC")
     fun get(wifi_: String): LiveData<List<Console>>
 
-    @Query("SELECT * FROM Console WHERE LENGTH(features) > 3 ORDER BY LENGTH(features) DESC, lastKnownReachable DESC ")
+    @Query("SELECT * FROM Console ORDER BY pinned DESC, lastKnownReachable DESC, LENGTH(features) DESC, ip ASC ")
     fun getAll(): LiveData<List<Console>>
 
     @Query("SELECT EXISTS(SELECT * FROM Console WHERE ip = :ip_)")
@@ -21,8 +21,6 @@ interface ConsoleDao : IDao<Console, String> {
 
     @Query("UPDATE Console SET name = :name_ WHERE ip = :ip_")
     suspend fun updateNickName(ip_: String, name_: String)
-
-
 
 
     @Query("UPDATE Console SET type = :type_, features = :features_, lastKnownReachable = :lastKnown_, wifi = :wifi_ WHERE ip = :ip_")
@@ -33,5 +31,8 @@ interface ConsoleDao : IDao<Console, String> {
         lastKnown_: Boolean,
         wifi_: String
     )
+
+    @Query("UPDATE Console SET pinned = :pinned_ WHERE ip = :ip_")
+    fun setPin(ip_: String, pinned_: Boolean)
 
 }

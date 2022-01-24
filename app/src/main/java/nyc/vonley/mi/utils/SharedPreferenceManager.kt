@@ -25,6 +25,13 @@ interface SharedPreferenceManager {
 
     fun clear() = sharedPreferences.edit().clear().apply()
 
+
+    var cached: Boolean
+        get() = sharedPreferences.getBoolean(this[CACHED], false)
+        set(value) {
+            this[CACHED] = value
+        }
+
     var voice: String?
         get() {
             return sharedPreferences.getString(this[VOICE], null)
@@ -57,7 +64,7 @@ interface SharedPreferenceManager {
         }
 
     var scanInterval: Int
-        get() = sharedPreferences.getString(this[MISCANINTERVAL], "15")?.toInt()?:15
+        get() = sharedPreferences.getString(this[MISCANINTERVAL], "15")?.toInt() ?: 15
         set(interval) {
             this[MISCANINTERVAL] = interval
         }
@@ -128,6 +135,7 @@ interface SharedPreferenceManager {
         }
 
     companion object {
+        const val CACHED: Int = R.string.preference_jb_cache
         const val UUID: Int = R.string.preference_uuid
         const val VOICE: Int = R.string.preference_voices
         const val SPEED: Int = R.string.preference_speed
@@ -149,8 +157,8 @@ operator fun SharedPreferenceManager.get(@StringRes string: Int): String {
     return context.getString(string)
 }
 
-inline operator fun<reified T> SharedPreferenceManager.get(string: String): T? {
-    return when(T::class.java){
+inline operator fun <reified T> SharedPreferenceManager.get(string: String): T? {
+    return when (T::class.java) {
         MutableSet<String>::javaClass -> sharedPreferences.getStringSet(string, setOf())
         String::javaClass -> sharedPreferences.getString(string, "")
         Boolean::javaClass -> sharedPreferences.getBoolean(string, false)

@@ -26,7 +26,8 @@ data class Console(
     override var type: ConsoleType,
     override var features: List<Feature> = emptyList(),
     override var lastKnownReachable: Boolean,
-    override var wifi: String
+    override var wifi: String,
+    override var pinned: Boolean = false
 ) : Client, Parcelable, CoroutineScope {
 
     @Ignore

@@ -16,6 +16,7 @@ interface Client {
     var features: List<Feature>
     var wifi: String
     var lastKnownReachable: Boolean
+    var pinned: Boolean
 
     fun getInetAddress(): InetAddress? {
         return try {

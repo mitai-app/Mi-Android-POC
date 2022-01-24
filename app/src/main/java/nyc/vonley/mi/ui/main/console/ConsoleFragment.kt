@@ -6,7 +6,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import nyc.vonley.mi.databinding.FragmentConsoleBinding
@@ -14,7 +17,6 @@ import nyc.vonley.mi.models.Client
 import nyc.vonley.mi.ui.dialogs.MiInputDialog
 import nyc.vonley.mi.ui.main.MainContract
 import nyc.vonley.mi.ui.main.console.adapters.ConsoleRecyclerAdapter
-import nyc.vonley.mi.ui.main.home.dialog
 import javax.inject.Inject
 
 /**
@@ -34,11 +36,41 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
     @Inject
     lateinit var presenter: ConsoleContract.Presenter
 
+    lateinit var binding: FragmentConsoleBinding
+
+    private var swipeCallback: ItemTouchHelper.SimpleCallback = object :
+        ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            Toast.makeText(requireContext(), "on Move", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
+            val vh = viewHolder as ConsoleRecyclerAdapter.ConsoleViewHolder
+            val pos = viewHolder.bindingAdapterPosition
+            val client = vh.client?:return
+            if (swipeDir == ItemTouchHelper.LEFT) {
+                presenter.unpin(client)
+            } else if (swipeDir == ItemTouchHelper.RIGHT) {
+                presenter.pin(client)
+            }
+        }
+    }
+    private val swipeTouchHelper by lazy { ItemTouchHelper(swipeCallback) }
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val inflate = FragmentConsoleBinding.inflate(inflater, container, false)
+        binding = FragmentConsoleBinding.inflate(inflater, container, false)
         vm.consoles.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
                 adapter.setData(it)
@@ -46,9 +78,10 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
 
             }
         })
-        inflate.consoleRecycler.adapter = adapter
+        binding.consoleRecycler.adapter = adapter
+        swipeTouchHelper.attachToRecyclerView(binding.consoleRecycler)
         mainView?.setSummary(presenter.getTargetSummary)
-        return inflate.root
+        return binding.root
     }
 
     override fun onAttach(context: Context) {
@@ -69,7 +102,8 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
     override fun onClientsFound(clients: List<Client>) = Unit
 
     override fun addConsole() {
-        MiInputDialog.createDialog("Enter Console IP", "192.168.?.?").show(childFragmentManager, TAG)
+        MiInputDialog.createDialog("Enter Console IP", "192.168.?.?")
+            .show(childFragmentManager, TAG)
     }
 
     override fun onConsoleAdded() {

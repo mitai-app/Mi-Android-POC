@@ -15,6 +15,8 @@ interface ConsoleContract {
         val getTargetSummary: String
         fun getConsoles(): List<Client>
         fun addConsole(input: String)
+        fun pin(client: Client)
+        fun unpin(client: Client)
     }
 
 }

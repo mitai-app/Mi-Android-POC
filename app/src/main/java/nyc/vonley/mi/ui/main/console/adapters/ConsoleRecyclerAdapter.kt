@@ -3,8 +3,10 @@ package nyc.vonley.mi.ui.main.console.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import nyc.vonley.mi.R
 import nyc.vonley.mi.databinding.VhConsoleBinding
 import nyc.vonley.mi.di.network.SyncService
 import nyc.vonley.mi.models.Client
@@ -47,14 +49,27 @@ class ConsoleRecyclerAdapter @Inject constructor(
     inner class ConsoleViewHolder(val binding: VhConsoleBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        var client: Client? = null
+
         fun setTarget(console: Client) {
+            this.client = console
             sync.setTarget(console)
             view.setSummary("Current Target: ${console.name}, w/ ${console.featureString}")
             Toast.makeText(itemView.context, "Target set!", Toast.LENGTH_SHORT).show()
         }
 
         fun setConsole(console: Client) {
+            this.client = console
             val headers = if (console.name == console.ip) console.ip else "${console.name} - ${console.ip}"
+            val colorInt = if (console.pinned) {
+                R.color.material_red
+            } else {
+                R.color.grey_darker
+            }
+            val color = ContextCompat.getColorStateList(itemView.context, colorInt);
+
+            binding.vhConsoleNickname.setTextColor(color)
+            binding.vhConsoleImg.imageTintList = color
             binding.vhConsoleNickname.text = headers
             binding.vhConsoleIp.text =
                 console.featureString.takeIf { it.isNotEmpty() } ?: "Incompatible"

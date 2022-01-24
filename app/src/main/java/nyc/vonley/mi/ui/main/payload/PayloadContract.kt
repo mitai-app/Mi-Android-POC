@@ -1,6 +1,7 @@
 package nyc.vonley.mi.ui.main.payload
 
 import nyc.vonley.mi.base.BaseContract
+import nyc.vonley.mi.di.network.PSXService
 import nyc.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import nyc.vonley.mi.utils.SharedPreferenceManager
 import okhttp3.Response
@@ -10,11 +11,9 @@ import java.util.ArrayList
 
 interface PayloadContract {
 
-    interface View : BaseContract.View {
+    interface View : BaseContract.View, PSXService.PSXListener {
         fun onPayloadSent(response: Response)
         fun open()
-        fun onSending(payload: PayloadAdapter.Payload)
-        fun onComplete(message: String)
     }
 
     interface Presenter : BaseContract.Presenter {

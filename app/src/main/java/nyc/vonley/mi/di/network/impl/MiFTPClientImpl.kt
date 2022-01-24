@@ -275,7 +275,9 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
             if (ftpFile.isFile) {
                 val remoteFile = "$ftpPath/${ftpFile.name}"
                 val toRemoteFile = "$ftpPath/$input"
-                return client.rename(remoteFile, toRemoteFile)
+                val rename = client.rename(remoteFile, toRemoteFile)
+                getGWD()
+                return rename
             }
         }
         return false

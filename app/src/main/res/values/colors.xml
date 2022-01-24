@@ -20,4 +20,5 @@
 
     <color name="ftpFileTitleColor">@color/dark_grey</color>
     <color name="ftpFileSubtitleColor">@color/grey_darker</color>
+    <color name="green">#5DBE49</color>
 </resources>

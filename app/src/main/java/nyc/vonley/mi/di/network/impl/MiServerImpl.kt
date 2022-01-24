@@ -169,22 +169,27 @@ class MiServerImpl constructor(
     private val miJs: ByteArray = context.assets.open("jb/mi.js").readBytes()
     private val failHtml: ByteArray = context.assets.open("pages/fail.html").readBytes()
     private val routes: HashMap<String, ByteArray> = hashMapOf()
-    private val payloads: HashMap<String, ByteArray> = hashMapOf()
+    private val payloads: HashMap<String, ByteArray> by lazy {
+        return@lazy hashMapOf(
+            Pair("6.72", context.assets.open("payloads/goldenhen/672.bin").readBytes()),
+            Pair("7.02", context.assets.open("payloads/goldenhen/702.bin").readBytes()),
+            Pair("7.50", context.assets.open("payloads/goldenhen/750.bin").readBytes()),
+            Pair("7.51", context.assets.open("payloads/goldenhen/751.bin").readBytes()),
+            Pair("7.55", context.assets.open("payloads/goldenhen/755.bin").readBytes()),
+            Pair("9.00", context.assets.open("payloads/goldenhen/900.bin").readBytes())
+        )
+    }
     private val root: String get() = console!!.jbPath
     private var ready: Boolean = false
     private var console: Device? = null
-    private var attempts = 10
+    private var attempts = 3
 
-    init {
-        payloads["6.72"] = context.assets.open("payloads/goldenhen/672.bin").readBytes()
-        payloads["7.02"] = context.assets.open("payloads/goldenhen/702.bin").readBytes()
-        payloads["7.50"] = context.assets.open("payloads/goldenhen/750.bin").readBytes()
-        payloads["7.51"] = context.assets.open("payloads/goldenhen/751.bin").readBytes()
-        payloads["7.55"] = context.assets.open("payloads/goldenhen/755.bin").readBytes()
-        payloads["9.00"] = context.assets.open("payloads/goldenhen/900.bin").readBytes()
-    }
 
-    fun create(title: String = "ミ (Mi) - PS4 Management Tool", content: String = "Visit http://${sync.ipAddress}:${activePort} on your ps4!", summary: String = "Jailbreak server is running in the background"): Notification {
+    fun create(
+        title: String = "ミ (Mi) - PS4 Management Tool",
+        content: String = "Visit http://${sync.ipAddress}:${activePort} on your ps4!",
+        summary: String = "Jailbreak server is running in the background"
+    ): Notification {
         val channel_id = "MI"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "MI"
@@ -197,7 +202,12 @@ class MiServerImpl constructor(
             man.createNotificationChannel(channel)
         }
         val intent = Intent(context, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, System.currentTimeMillis().toInt(),  intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            System.currentTimeMillis().toInt(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
         val texts = "Visit http://${sync.ipAddress}:${activePort} on your ps4!"
         val titles = "ミ (Mi)"
@@ -237,9 +247,9 @@ class MiServerImpl constructor(
                         withContext(Dispatchers.Main) {
                             NotificationManagerCompat.from(context).notify(0, create())
                         }
-                    }catch (e: Throwable){
+                    } catch (e: Throwable) {
                         ready = false
-                        if(BuildConfig.DEBUG){
+                        if (BuildConfig.DEBUG) {
                             Log.e(TAG, "failed to start service ${e.message}")
                         }
                     }
@@ -250,16 +260,16 @@ class MiServerImpl constructor(
                 launch {
                     try {
                         jobThread?.cancelAndJoin()
-                    }catch (t: Throwable) {
-                        if(BuildConfig.DEBUG){
+                    } catch (t: Throwable) {
+                        if (BuildConfig.DEBUG) {
                             Log.e(TAG, "jobThread.cancelAndJoin() failed ${t.message}")
                         }
                     }
                     try {
                         super.stop()
                         ready = false
-                    }catch (e: Throwable){
-                        if(BuildConfig.DEBUG){
+                    } catch (e: Throwable) {
+                        if (BuildConfig.DEBUG) {
                             Log.e(TAG, "failed to stop service ${e.message}")
                         }
                     }
@@ -338,6 +348,11 @@ class MiServerImpl constructor(
                                     return Response(Response.Status.OK, "text/*", "received")
                                 }
                                 else -> {
+                                    if (uri.contains(".manifest")) {
+                                        if (!manager.cached) {
+                                            return Response(Response.Status.OK, "/*", "")
+                                        }
+                                    }
                                     val path = uri.drop(1)
                                     return Response(
                                         Response.Status.OK,
@@ -484,45 +499,52 @@ class MiServerImpl constructor(
     }
 
     private fun sendPayload(device: Device) {
-        val payload = payloads[device.version]
-        val block: suspend CoroutineScope.() -> Unit = {
-            Log.e(TAG, "First we wait like a lion, and watch mira do its thing")
-            delay(20000)
-            Log.e(TAG, "Next we pounce and take the opportunity to send gratitude.")
-            attempts = 0
-            while (attempts <= ATTEMPT_LIMIT) {
-                try {
-                    if (BuildConfig.DEBUG) {
-                        Log.e(TAG, "Attempting to connect to ${device.ip}:9021")
+        payloads[device.version]?.let { payload ->
+            Log.e(TAG, "Payload Size: ${payload.size}")
+            if (payload.isEmpty()) return@let
+            val block: suspend CoroutineScope.() -> Unit = {
+                Log.e(TAG, "First we wait like a lion, and watch mira do its thing")
+                delay(20000)
+                Log.e(TAG, "Next we pounce and take the opportunity to send gratitude.")
+                attempts = 0
+                while (attempts < ATTEMPT_LIMIT) {
+                    try {
+                        if (BuildConfig.DEBUG) {
+                            Log.e(TAG, "Attempting to connect to ${device.ip}:9021")
+                        }
+                        val outSock = Socket()
+                        val inetSocketAddress = InetSocketAddress(device.ip, 9021)
+                        outSock.connect(inetSocketAddress, 10000)
+                        val outputStream = outSock.getOutputStream()
+                        val string = "Sending GoldenHen 2.0b2 payload for PS4 ${device.version}"
+                        callback.onLog(string)
+                        outputStream.write(payload)
+                        outputStream.flush()
+                        outputStream.close()
+                        callback.onPayloadSent(string)
+                        outSock.close()
+                        break
+                    } catch (ex: Exception) {
+                        if (BuildConfig.DEBUG) {
+                            Log.e(TAG, "Port not open, ${ex.message}")
+                            Log.e(TAG, "Retrying in 10 seconds")
+                        }
+                        attempts++
+                        callback.onSendPayloadAttempt(attempts)
+                        delay(10000)
                     }
-                    val outSock = Socket()
-                    val inetSocketAddress = InetSocketAddress(device.ip, 9021)
-                    outSock.connect(inetSocketAddress, 10000)
-                    val outputStream = outSock.getOutputStream()
-                    val string = "Sending GoldenHen 2.0b2 payload for PS4 ${device.version}"
-                    callback.onLog(string)
-                    outputStream.write(payload)
-                    outputStream.flush()
-                    outputStream.close()
-                    callback.onPayloadSent(string)
-                    outSock.close()
-                    break
-                } catch (ex: Exception) {
-                    if (BuildConfig.DEBUG) {
-                        Log.e(TAG, "Port not open, ${ex.message}")
-                        Log.e(TAG, "Retrying in 10 seconds")
-                    }
-                    attempts++
-                    callback.onSendPayloadAttempt(attempts)
-                    delay(10000)
                 }
+                attempts = 0
             }
-            attempts = 0
-        }
-        if (!this::port9021.isInitialized) {
-            this.port9021 = launch(block = block)
-        } else if ((!this.port9021.isActive || this.port9021.isCompleted) && !this.port9021.start()) {
-            this.port9021 = launch(block = block)
+            if (!this::port9021.isInitialized) {
+                this.port9021 = launch(block = block)
+            } else if ((!this.port9021.isActive || this.port9021.isCompleted) && !this.port9021.start()) {
+                this.port9021 = launch(block = block)
+            }
+        } ?: run {
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "So the payloads aren't event loaded wtf")
+            }
         }
     }
 
@@ -532,7 +554,7 @@ class MiServerImpl constructor(
         get() = Dispatchers.IO + job
 
     companion object {
-        const val ATTEMPT_LIMIT = 10
+        const val ATTEMPT_LIMIT = 3
         const val TAG = "MiJbServer"
     }
 

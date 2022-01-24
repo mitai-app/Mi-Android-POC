@@ -127,6 +127,7 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.ftp_rename -> {
+                    this.ftpFile = ftpFile
                     MiInputDialog.createDialog("Rename to", "What would you like ${ftpFile.name}")
                         .show(childFragmentManager, TAG)
                 }
@@ -337,6 +338,7 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
         super.onDialogInput(input)
         ftpFile?.let {
             presenter.rename(ftpFile!!, input)
+            ftpFile = null
         } ?: run {
             dialog("Unable to rename the file :(", "OK") { dialog, i -> dialog.dismiss() }.create()
                 .show()

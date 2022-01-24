@@ -24,6 +24,7 @@ fun InetAddress.client(wi: WifiInfo): Client {
         private var consoleType: ConsoleType = ConsoleType.UNKNOWN
         private var wifiInfo: String = wi.ssid ?: "not connected?"
         private var feats: List<Feature> = emptyList()
+        private var pin: Boolean = false
 
 
         override val ip: String
@@ -58,6 +59,11 @@ fun InetAddress.client(wi: WifiInfo): Client {
             get() = isReachable
             set(value) {
                 isReachable = value
+            }
+        override var pinned: Boolean
+            get() = pin
+            set(value) {
+                pin = value
             }
 
     }

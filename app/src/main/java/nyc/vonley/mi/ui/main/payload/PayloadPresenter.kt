@@ -33,20 +33,7 @@ class PayloadPresenter @Inject constructor(
     }
 
     override fun sendMultiplePayloads(payloads: ArrayList<PayloadAdapter.Payload>) {
-        ps4.uploadBin(payloads, object: PSXService.PSXListener {
-            override fun onSocketFailed() {
-                view.onError(Throwable("Unable to start socket"))
-            }
-
-            override fun onWriting(payload: PayloadAdapter.Payload) {
-                view.onSending(payload)
-            }
-
-            override fun onFinished() {
-                view.onComplete("Payloads sent!")
-            }
-
-        })
+        ps4.uploadBin(payloads, view)
     }
 
     override fun init() {

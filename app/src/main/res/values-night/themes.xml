@@ -26,7 +26,7 @@
 
         <item name="android:textColorPrimary">@color/material_red</item>
         <item name="android:textColorSecondary">@color/white</item>
-        <item name="colorAccent">@color/material_red</item>
+        <item name="colorAccent">@color/white</item>
     </style>
 
     <style name="Theme.Lambda.Prefs" parent="Theme.Lambda">

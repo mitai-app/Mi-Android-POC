@@ -12,18 +12,18 @@
 
         <item name="android:textColorPrimary">@color/material_red</item>
         <item name="android:textColorSecondary">@color/black</item>
-        <item name="android:colorAccent">@color/material_red</item>
+        <item name="android:colorAccent">@color/black</item>
 
         <item name="colorError">@color/material_red</item>
         <item name="colorOnError">@color/white</item>
 
+        <item name="android:windowLightStatusBar">true</item>
         <item name="android:textColor">@color/black</item>
         <item name="background">@color/white</item>
         <item name="colorSurface">@color/white</item>
         <item name="colorOnSurface">@color/black</item>
 
         <item name="android:fontFamily">@font/montserrat</item>
-        <item name="android:windowLightStatusBar">true</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/white</item>
         <!-- Customize your theme here. -->

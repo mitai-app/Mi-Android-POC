@@ -18,9 +18,10 @@ import kotlin.coroutines.CoroutineContext
 interface PSXService : BaseClient {
 
     interface PSXListener {
-        fun onSocketFailed()
-        fun onWriting(payload: PayloadAdapter.Payload)
         fun onFinished()
+        fun onWriting(payload: PayloadAdapter.Payload)
+        fun onSent(payload: PayloadAdapter.Payload)
+        fun onPayloadFailed(payload: PayloadAdapter.Payload)
     }
 
     val sync: SyncService

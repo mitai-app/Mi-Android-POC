@@ -10,7 +10,7 @@ import nyc.vonley.mi.models.enums.FeaturesConverter
 @Database(
     entities = [
         Console::class
-    ], version = 1, exportSchema = true
+    ], version = 2, exportSchema = true
 )
 @TypeConverters(ConsoleTypeConverter::class, FeaturesConverter::class)
 abstract class AppDatabase: RoomDatabase() {

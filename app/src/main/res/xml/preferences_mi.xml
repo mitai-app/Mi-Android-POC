@@ -1,6 +1,5 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
         app:icon="@drawable/icon_svg_wifi"
@@ -63,9 +62,32 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        app:icon="@drawable/icon_svg_settings"
+        app:icon="@drawable/icon_svg_command"
         app:iconSpaceReserved="false"
-        app:title="@string/data_header">
+        app:title="Server Settings">
+
+
+        <ListPreference
+            android:entries="@array/feature_entry"
+            android:entryValues="@array/feature_entry"
+            android:title="Default payload port"
+            app:key="@string/preference_jb_feature"
+            app:summary="Select default port" />
+
+
+        <EditTextPreference
+            android:title="Default jb service port"
+            app:key="@string/preference_jb_port"
+            app:summary="Select default jb port" />
+
+        <ListPreference
+            android:defaultValue="15"
+            android:entries="@array/interval_entry"
+            android:entryValues="@array/interval_entry_values"
+            android:title="Scan for devices every..."
+            app:key="@string/preference_jb_scan"
+            app:summary="Allows you to find devices with ftp enabled." />
+
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
@@ -73,25 +95,17 @@
             app:key="@string/preference_jb_service"
             app:summary="Allows you to jailbreak PS4" />
 
-        <ListPreference
-            android:defaultValue="15"
-            android:title="Scan for devices every..."
-            android:entries="@array/interval_entry"
-            android:entryValues="@array/interval_entry_values"
-            app:key="@string/preference_jb_scan"
-            app:summary="Allows you to find devices with ftp enabled." />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:title="Cache Host Files"
+            app:key="@string/preference_jb_cache"
+            app:summary="All Mi Server to cache files" />
+    </PreferenceCategory>
 
-        <EditTextPreference
-            android:title="Default jb service port"
-            app:key="@string/preference_jb_port"
-            app:summary="Select" />
-
-        <ListPreference
-            android:entries="@array/feature_entry"
-            android:entryValues="@array/feature_entry"
-            android:title="Default payload feature"
-            app:key="@string/preference_jb_feature"
-            app:summary="Select" />
+    <PreferenceCategory
+        app:icon="@drawable/icon_svg_settings"
+        app:iconSpaceReserved="false"
+        app:title="App Settings">
 
         <Preference
             app:key="@string/preference_clear"
