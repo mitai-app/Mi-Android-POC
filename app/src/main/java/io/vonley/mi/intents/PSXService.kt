@@ -9,6 +9,7 @@ import io.vonley.mi.BuildConfig
 import io.vonley.mi.base.BaseClient
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
 import io.vonley.mi.extensions.toJson
+import io.vonley.mi.utils.Semver
 import io.vonley.mi.utils.SharedPreferenceManager
 import kotlinx.coroutines.*
 import okhttp3.Call
@@ -50,40 +51,6 @@ class PSXService : Service(), BaseClient {
         }
     }
 
-    class Version(version: String?) : Comparable<Version?> {
-        private val version: String
-        fun get(): String {
-            return version
-        }
-
-        override operator fun compareTo(that: Version?): Int {
-            if (that == null) return 1
-            val thisParts = this.get().split("\\.").toTypedArray()
-            val thatParts = that.get().split("\\.").toTypedArray()
-            val length = Math.max(thisParts.size, thatParts.size)
-            for (i in 0 until length) {
-                val thisPart = if (i < thisParts.size) thisParts[i].toInt() else 0
-                val thatPart = if (i < thatParts.size) thatParts[i].toInt() else 0
-                if (thisPart < thatPart) return -1
-                if (thisPart > thatPart) return 1
-            }
-            return 0
-        }
-
-        override fun equals(that: Any?): Boolean {
-            if (this === that) return true
-            if (that == null) return false
-            return if (this.javaClass != that.javaClass) false else this.compareTo(that as Version) == 0
-        }
-
-        init {
-            requireNotNull(version) { "Version can not be null" }
-            require(version.matches("[0-9]+(\\.[0-9]+)*".toRegex())) { "Invalid version format" }
-            this.version = version
-        }
-    }
-
-
     private var update: Job? = null
     private fun checkforUpdates() {
         val block: suspend CoroutineScope.() -> Unit = {
@@ -103,7 +70,7 @@ class PSXService : Service(), BaseClient {
                             response.body?.let { body ->
                                 val json = JSONObject(body.string())
                                 val version = json.getString("version")
-                                if (version.ver.compareTo(BuildConfig.VERSION_NAME.ver) == 1) {
+                                if (version.ver > BuildConfig.VERSION_NAME.ver) {
                                     val changesList = json.getJSONArray("changes")
                                     val build = json.getString("build")
                                     val changes = StringBuilder()
@@ -168,5 +135,5 @@ class PSXService : Service(), BaseClient {
 
 }
 
-val String.ver: PSXService.Version
-    get() = PSXService.Version(this)
+val String.ver: Semver
+    get() = Semver(this)

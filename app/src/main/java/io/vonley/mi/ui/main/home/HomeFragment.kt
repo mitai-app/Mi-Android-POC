@@ -102,7 +102,7 @@ class HomeFragment : Fragment(), HomeContract.View {
 
     private fun setUpdateIfAvailable() {
         manager.update?.let { meta ->
-            if (meta.version.ver.compareTo(BuildConfig.VERSION_NAME.ver) == 1) {
+            if (meta.version.ver > BuildConfig.VERSION_NAME.ver) {
                 binding.device.text = "New update: ${meta.version}\n${meta.changes}\n${meta.build}"
             }
         }
