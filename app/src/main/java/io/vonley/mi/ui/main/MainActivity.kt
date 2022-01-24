@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -64,6 +65,7 @@ class MainActivity : AppCompatActivity(), MainContract.View,
         this.navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         NavigationUI.setupWithNavController(binding.bottomNavigation, navController)
+        NavOptions.Builder().setLaunchSingleTop(true).build()
         navController.addOnDestinationChangedListener(this)
         presenter.init()
     }
