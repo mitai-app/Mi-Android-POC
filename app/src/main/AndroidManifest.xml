@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="nyc.vonley.mi">
+    package="io.vonley.mi">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -14,7 +14,7 @@
 
 
     <application
-        android:name="nyc.vonley.mi.MiApplication"
+        android:name="io.vonley.mi.MiApplication"
         android:allowBackup="true"
         android:icon="@mipmap/orb"
         android:label="@string/app_name"
@@ -24,7 +24,7 @@
         <activity
             android:launchMode="singleInstance"
             android:taskAffinity=""
-            android:name="nyc.vonley.mi.ui.main.MainActivity"
+            android:name="io.vonley.mi.ui.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,12 +40,12 @@
         -->
 
         <service
-            android:name=".intents.VoiceService"
+            android:name="io.vonley.mi.intents.VoiceService"
             android:enabled="true"
             android:exported="true" />
 
         <service
-            android:name=".intents.PSXService"
+            android:name="io.vonley.mi.intents.PSXService"
             android:enabled="true"
             android:exported="true" />
     </application>

@@ -11,11 +11,11 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "nyc.vonley.mi"
+        applicationId "io.vonley.mi"
         minSdk 21
         targetSdk 31
-        versionCode 4
-        versionName "1.0.0-rc"
+        versionCode 5
+        versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
