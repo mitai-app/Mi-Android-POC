@@ -80,7 +80,7 @@ class PSXService : Service(), BaseClient {
                                     val change = if(json.has("changes")) {
                                         val changesList = json.getJSONArray("changes")
                                         val changes = StringBuilder()
-                                        for (i in 0..changesList.length()) {
+                                        for (i in 0 until changesList.length()) {
                                             changes.append(changesList[i].toString() + "\n")
                                         }
                                         changes.toString()

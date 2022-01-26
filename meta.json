@@ -5,7 +5,7 @@
   "contributors": [
     "@Mr-Smithy-x/Vonley"
   ],
-  "changes": [
+  "changelog": [
     "Multiple Payloads Support",
     "Server Management so its not always running in bg",
     "Fix renaming file",
