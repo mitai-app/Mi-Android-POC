@@ -13,7 +13,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fi.iki.elonen.NanoHTTPD
-import kotlinx.coroutines.*
 import io.vonley.mi.BuildConfig
 import io.vonley.mi.R
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
@@ -25,7 +24,10 @@ import io.vonley.mi.models.Mi
 import io.vonley.mi.models.jbPath
 import io.vonley.mi.models.supported
 import io.vonley.mi.ui.main.MainActivity
+import io.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import io.vonley.mi.utils.SharedPreferenceManager
+import kotlinx.coroutines.*
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
 import java.net.InetSocketAddress
@@ -187,7 +189,7 @@ class MiServerImpl constructor(
 
     fun create(
         title: String = "ミ (Mi) - PS4 Management Tool",
-        content: String = "Visit http://${sync.ipAddress}:${activePort} on your ps4!",
+        content: String = "Visit http://${service.localDeviceIp}:${activePort} on your ps4!",
         summary: String = "Jailbreak server is running in the background"
     ): Notification {
         val channel_id = "MI"
@@ -209,7 +211,7 @@ class MiServerImpl constructor(
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val texts = "Visit http://${sync.ipAddress}:${activePort} on your ps4!"
+        val texts = "Visit http://${service.localDeviceIp}:${activePort} on your ps4!"
         val titles = "ミ (Mi)"
         val summaries = "Jailbreak server is running in the background"
 
@@ -290,10 +292,10 @@ class MiServerImpl constructor(
                         callback.onDeviceConnected(it)
                         manager.targetVersion = it.version
                         manager.targetName = it.ip
+                        val mime = getMimeType(uri) ?: "text/*"
                         if (it.supported) {
                             if (this@MiServerImpl.console?.ip != it.ip) this@MiServerImpl.console =
                                 it
-                            val mime = getMimeType(uri) ?: "text/*"
                             callback.onLog("PS4 -> $uri")
                             when (uri) {
                                 "/" -> {
@@ -348,12 +350,14 @@ class MiServerImpl constructor(
                                     return Response(Response.Status.OK, "text/*", "received")
                                 }
                                 else -> {
+                                    val path = uri.drop(1)
                                     if (uri.contains(".manifest")) {
                                         if (!manager.cached) {
                                             return Response(Response.Status.OK, "/*", "")
                                         }
                                     }
-                                    val path = uri.drop(1)
+                                    Log.e(TAG, "URI: $uri")
+
                                     return Response(
                                         Response.Status.OK,
                                         mime,
@@ -361,7 +365,13 @@ class MiServerImpl constructor(
                                     )
                                 }
                             }
-                        } else {
+                        } else if(payloads.containsKey(uri)) {
+                            return Response(
+                                Response.Status.OK,
+                                "application/x-newton-compatible-pkg",
+                                ByteArrayInputStream(payloads[uri])
+                            )
+                        }else {
                             return Response(
                                 Response.Status.OK,
                                 "text/html",
@@ -369,6 +379,13 @@ class MiServerImpl constructor(
                             )
                         }
                     } ?: run {
+                        if (payloads.containsKey(uri)) {
+                            return Response(
+                                Response.Status.OK,
+                                "application/x-newton-compatible-pkg",
+                                ByteArrayInputStream(payloads[uri])
+                            )
+                        }
                         callback.onUnsupported("This device is not supported!")
                         return Response(
                             Response.Status.OK, "text/html", failHtml.decodeToString()
@@ -425,6 +442,15 @@ class MiServerImpl constructor(
         if (callbacks.containsKey(jb.javaClass)) {
             callbacks.remove(jb.javaClass)
         }
+    }
+
+    override fun hostPackage(vararg payloads: PayloadAdapter.Payload): Array<String> {
+        val urls = payloads.map { payload ->
+            val path = "/pkg/${payload.name}"
+            this.payloads[path] = payload.data
+            "http://${service.localDeviceIp}:${manager.jbPort}$path"
+        }
+        return urls.toTypedArray()
     }
 
     override fun startService() {

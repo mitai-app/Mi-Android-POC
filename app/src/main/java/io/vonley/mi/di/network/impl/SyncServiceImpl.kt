@@ -85,11 +85,11 @@ class SyncServiceImpl constructor(
     override val wifiInfo: WifiInfo
         get() = wm.connectionInfo
 
-    override val ipAddressInt: Int
+    override val localDeviceIpInt: Int
         get() = wifiInfo.ipAddress
 
-    override val ipAddress: String
-        get() = Formatter.formatIpAddress(ipAddressInt)
+    override val localDeviceIp: String
+        get() = Formatter.formatIpAddress(localDeviceIpInt)
     //endregion
 
     init {
@@ -209,8 +209,8 @@ class SyncServiceImpl constructor(
     private fun fetchConsoles(clients: List<Client>): List<Console> {
         try {
             Log.i(TAG, "[FetchConsoles::Start] Active Network: $activeNetworkInfo")
-            Log.i(TAG, "[Device Local IP] $ipAddress")
-            val prefix = ipAddress.substring(0, ipAddress.lastIndexOf(".") + 1)
+            Log.i(TAG, "[Device Local IP] $localDeviceIp")
+            val prefix = localDeviceIp.substring(0, localDeviceIp.lastIndexOf(".") + 1)
             Log.i(TAG, "[Local IP Prefix] $prefix")
             val consoles = clients
                 .mapNotNull { client -> client.console() }
@@ -236,8 +236,8 @@ class SyncServiceImpl constructor(
     private fun fetchClients(): List<Client> {
         try {
             Log.i(TAG, "[FetchClients::Start] Active Network: $activeNetworkInfo")
-            Log.i(TAG, "[Device Local IP] $ipAddress")
-            val prefix = ipAddress.substring(0, ipAddress.lastIndexOf(".") + 1)
+            Log.i(TAG, "[Device Local IP] $localDeviceIp")
+            val prefix = localDeviceIp.substring(0, localDeviceIp.lastIndexOf(".") + 1)
             Log.i(TAG, "[Local IP Prefix] $prefix")
             val clients = ArrayList<Client>()
             for (i in 1 until 256) {

@@ -12,6 +12,7 @@ import io.vonley.mi.di.network.impl.MiFTPClientImpl
 import io.vonley.mi.di.network.impl.MiServerImpl
 import io.vonley.mi.di.network.impl.SyncServiceImpl
 import io.vonley.mi.di.network.impl.PSXServiceImpl
+import javax.inject.Singleton
 
 
 @Module
@@ -19,15 +20,19 @@ import io.vonley.mi.di.network.impl.PSXServiceImpl
 abstract class InterfaceModule {
 
     @Binds
+    @Singleton
     abstract fun bindMiFtpClientService(impl: MiFTPClientImpl): MiFTPClient
 
     @Binds
+    @Singleton
     abstract fun bindMiServer(impl: MiServerImpl): MiServer
 
     @Binds
+    @Singleton
     abstract fun bindClientService(impl: SyncServiceImpl): SyncService
 
     @Binds
+    @Singleton
     abstract fun bindPS4Client(impl: PSXServiceImpl): PSXService
 
 }

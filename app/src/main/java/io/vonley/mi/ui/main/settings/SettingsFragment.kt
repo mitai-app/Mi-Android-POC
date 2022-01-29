@@ -107,7 +107,7 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
         else
             "Not connected"
 
-        val summary: CharSequence = if (sync.isConnected) sync.ipAddress else "Not connected"
+        val summary: CharSequence = if (sync.isConnected) sync.localDeviceIp else "Not connected"
         wifi.title = "Wifi SSID: $title"
         wifi.summary = summary
         version.summary = BuildConfig.VERSION_NAME

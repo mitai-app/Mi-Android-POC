@@ -2,6 +2,7 @@ package io.vonley.mi.ui.main.payload
 
 import io.vonley.mi.base.BasePresenter
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
+import io.vonley.mi.di.network.MiServer
 import io.vonley.mi.di.network.impl.PSXServiceImpl
 import io.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import io.vonley.mi.utils.SharedPreferenceManager
@@ -15,6 +16,7 @@ import javax.inject.Inject
 class PayloadPresenter @Inject constructor(
     val view: PayloadContract.View,
     val ps4: PSXServiceImpl,
+    val server: MiServer,
     @SharedPreferenceStorage override val manager: SharedPreferenceManager
 ) : BasePresenter(),
     PayloadContract.Presenter {
@@ -32,7 +34,7 @@ class PayloadPresenter @Inject constructor(
     }
 
     override fun sendMultiplePayloads(payloads: ArrayList<PayloadAdapter.Payload>) {
-        ps4.uploadBin(payloads, view)
+        ps4.uploadBin(server, payloads, view)
     }
 
     override fun init() {

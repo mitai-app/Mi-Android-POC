@@ -7,6 +7,8 @@ import kotlinx.coroutines.*
 import io.vonley.mi.BuildConfig
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
 import io.vonley.mi.di.network.MiFTPClient
+import io.vonley.mi.di.network.SyncService
+import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.utils.SharedPreferenceManager
 import io.vonley.mi.utils.set
 import okhttp3.internal.notifyAll
@@ -16,16 +18,17 @@ import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPConnectionClosedException
 import org.apache.commons.net.ftp.FTPFile
 import java.io.*
+import java.net.InetSocketAddress
+import java.net.Socket
 import javax.inject.Inject
 
-class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val manager: SharedPreferenceManager) :
+class MiFTPClientImpl constructor(@SharedPreferenceStorage override val manager: SharedPreferenceManager,
+                                  override val sync: SyncService) :
     MiFTPClient {
 
     override val job: Job = Job()
 
-    private
-
-    var client: FTPClient = FTPClient()
+    private var client: FTPClient = FTPClient()
     private val ftpPath get() = manager.ftpPath
     private val ftpUser get() = manager.ftpUser
     private val ftpPass get() = manager.ftpPass
@@ -89,21 +92,37 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
     }
 
     private suspend fun _connect(ip: String, port: Int) {
-        try {
-            client.connect(ip, port)
-            client.addProtocolCommandListener(this@MiFTPClientImpl)
-            val login = client.login(ftpUser, ftpPass)
-            if (login) {
-                setWorkingDir(ftpPath)
-                client.setFileType(FTP.BINARY_FILE_TYPE)
-                callback.onLoggedIn()
-            } else {
-                callback.onInvalidCredentials()
+        sync.target?.let { target ->
+            val filter = Feature.FTP.ports.filter { port ->
+                try {
+                    val socket = Socket()
+                    socket.connect(InetSocketAddress(ip, port))
+                    socket.close()
+                    return@filter true
+                } catch (e: Throwable) {
+                    return@filter false
+                }
             }
-        } catch (e: Throwable) {
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, e.message ?: "Something went wrong")
+            try {
+                val p = filter.firstOrNull() ?: port
+                this._port = p
+                client.connect(ip, p)
+                client.addProtocolCommandListener(this@MiFTPClientImpl)
+                val login = client.login(ftpUser, ftpPass)
+                if (login) {
+                    setWorkingDir(ftpPath)
+                    client.setFileType(FTP.BINARY_FILE_TYPE)
+                    callback.onLoggedIn()
+                } else {
+                    callback.onInvalidCredentials()
+                }
+            } catch (e: Throwable) {
+                if (BuildConfig.DEBUG) {
+                    Log.e(TAG, e.message ?: "Something went wrong")
+                }
+                callback.onFailedToConnect()
             }
+        }?: run {
             callback.onFailedToConnect()
         }
     }

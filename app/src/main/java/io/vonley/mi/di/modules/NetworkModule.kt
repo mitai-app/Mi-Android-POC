@@ -12,6 +12,7 @@ import io.vonley.mi.di.annotations.AuthInterceptorOkHttpClient
 import io.vonley.mi.di.annotations.AuthRetrofitClient
 import io.vonley.mi.di.annotations.GuestRetrofitClient
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
+import io.vonley.mi.di.network.MiServer
 import io.vonley.mi.di.network.impl.MiServerImpl
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.SyncService
@@ -70,9 +71,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideFTPService(
-        @SharedPreferenceStorage manager: SharedPreferenceManager
+        @SharedPreferenceStorage manager: SharedPreferenceManager,
+        sync: SyncService
     ): MiFTPClientImpl {
-        return MiFTPClientImpl(manager)
+        return MiFTPClientImpl(manager, sync)
     }
 
     @AuthInterceptorOkHttpClient

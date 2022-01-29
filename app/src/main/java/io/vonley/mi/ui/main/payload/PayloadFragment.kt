@@ -30,6 +30,8 @@ import io.vonley.mi.ui.main.MainContract
 import io.vonley.mi.ui.main.home.dialog
 import io.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import okhttp3.Response
+import okio.source
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 
@@ -149,10 +151,11 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
                     if (BuildConfig.DEBUG) {
                         Log.e("TAG", "uri: ${uri.path}, name: $filename")
                     }
+                    val bos = ByteArrayOutputStream()
                     val stream = contentResolver.openInputStream(uri)?.readBytes()
-                    if (stream != null) {
-                        payloadAdapter.add(PayloadAdapter.Payload(name, stream))
-                    } else {
+                    stream?.let {
+                        payloadAdapter.add(PayloadAdapter.Payload(name, it))
+                    }?: run {
                         Snackbar.make(
                             requireView(),
                             "Couldn't fetch the filestream :(",

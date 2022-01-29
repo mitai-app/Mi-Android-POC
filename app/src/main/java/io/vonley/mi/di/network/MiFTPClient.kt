@@ -15,6 +15,7 @@ import kotlin.coroutines.CoroutineContext
 
 interface MiFTPClient : CoroutineScope, ProtocolCommandListener {
     val job: Job
+    val sync: SyncService
     val manager: SharedPreferenceManager
     override val coroutineContext: CoroutineContext get() = Dispatchers.IO + job
     val cwd: LiveData<Array<out FTPFile>>

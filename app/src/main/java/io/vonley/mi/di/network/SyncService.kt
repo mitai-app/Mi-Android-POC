@@ -15,8 +15,8 @@ interface SyncService: CoroutineScope {
     val wifiInfo: WifiInfo
     val activeNetworkInfo: NetworkInfo?
     val activeNetwork: Network?
-    val ipAddressInt: Int get() = wifiInfo.ipAddress
-    val ipAddress: String get() = Formatter.formatIpAddress(ipAddressInt)
+    val localDeviceIpInt: Int get() = wifiInfo.ipAddress
+    val localDeviceIp: String get() = Formatter.formatIpAddress(localDeviceIpInt)
     val isConnected: Boolean
     val handlers: HashMap<Class<*>, ClientHandler>
     val TAG: String

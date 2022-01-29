@@ -30,7 +30,12 @@
     <string name="preference_app_update">io.vonley.mi.prefs.app.update</string>
     <string name="feature_none">feature.none</string>
     <string name="feature_netcat">feature.netcat</string>
+    <string name="feature_ftp">feature.ftp</string>
+
     <string name="feature_goldhen">Golden Hen</string>
     <string name="feature_orbisapi">Orbis Api</string>
-    <string name="feature_ftp">feature.ftp</string>
+    <string name="feature_rpi">Remote Pkg Inst</string>
+    <string name="feature_ps3mapi">PS3MAPI</string>
+    <string name="feature_ccapi">CCAPI</string>
+    <string name="feature_webman">Webman</string>
 </resources>

@@ -80,11 +80,23 @@ fun Client.console(): Console? {
             val value = values.find { f -> f.ports.find { p -> p == port } == port }
             return@map if (value != null) Feature.valueOf(value.name) else Feature.NONE
         }
-        // TODO: For now we only recognize goldenhen ports, when stable it should perform
-        val type = if (features.contains(Feature.GOLDENHEN)) {
-            ConsoleType.PS4
-        } else {
-            ConsoleType.UNKNOWN
+        // TODO: For now we only recognize rpi and orbisapi ports, when stable it should perform
+        // Since goldenhen bin loader isnt that stable, we cant really keep doing requests on it
+        // It will eventually lock and wont be able to connect or goldenhen will be in a hang state
+        val ps4 = arrayOf(Feature.GOLDENHEN, Feature.NETCAT, Feature.RPI, Feature.ORBISAPI)
+        val ps3 = arrayOf(Feature.CCAPI, Feature.PS3MAPI, Feature.WEBMAN)
+        val isPs4 = features.any { p -> p in ps4 }
+        val isPs3 = features.any { p -> p in ps3 }
+        val type = when {
+            isPs4 -> {
+                ConsoleType.PS4
+            }
+            isPs3 -> {
+                ConsoleType.PS3
+            }
+            else -> {
+                ConsoleType.UNKNOWN
+            }
         }
         return Console(
             ip,

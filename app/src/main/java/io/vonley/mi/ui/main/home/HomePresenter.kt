@@ -15,7 +15,7 @@ class HomePresenter @Inject constructor(
 
     override fun init() {
         jb.add(view)
-        view.init("${jb.sync.ipAddress}:${jb.activePort}")
+        view.init("${jb.service.localDeviceIp}:${jb.activePort}")
     }
 
     override fun cleanup() {
