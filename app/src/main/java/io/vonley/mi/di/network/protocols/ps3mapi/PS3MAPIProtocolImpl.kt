@@ -6,11 +6,14 @@ import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.protocols.ps3mapi.models.PS3MAPIResponse
 import io.vonley.mi.di.network.protocols.ps3mapi.models.Process
 import io.vonley.mi.di.network.protocols.ps3mapi.models.Temperature
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import okhttp3.internal.notifyAll
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.net.Socket
+import kotlin.coroutines.CoroutineContext
 
 class PS3MAPIProtocolImpl(
     override val service: PSXService,
@@ -54,6 +57,11 @@ class PS3MAPIProtocolImpl(
             }
             return process
         }
+
+    private val job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.IO + job
 
 
     override fun openDataSocket() {

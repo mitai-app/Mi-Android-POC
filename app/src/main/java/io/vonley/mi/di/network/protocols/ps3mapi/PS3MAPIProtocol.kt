@@ -2,12 +2,19 @@ package io.vonley.mi.di.network.protocols.ps3mapi
 
 import androidx.lifecycle.LiveData
 import io.vonley.mi.di.network.impl.get
+import io.vonley.mi.di.network.protocols.ccapi.models.ConsoleIdType
 import io.vonley.mi.di.network.protocols.common.PSXProtocol
 import io.vonley.mi.di.network.protocols.common.*
+import io.vonley.mi.di.network.protocols.common.cmds.Boot
+import io.vonley.mi.di.network.protocols.common.cmds.Buzzer
+import io.vonley.mi.di.network.protocols.common.cmds.LedColor
+import io.vonley.mi.di.network.protocols.common.cmds.LedStatus
+import io.vonley.mi.di.network.protocols.common.models.ConsoleInfo
 import io.vonley.mi.di.network.protocols.ps3mapi.cmds.*
 import io.vonley.mi.di.network.protocols.ps3mapi.models.PS3MAPIResponse
 import io.vonley.mi.di.network.protocols.ps3mapi.models.Process
 import io.vonley.mi.di.network.protocols.ps3mapi.models.Temperature
+import io.vonley.mi.models.enums.ConsoleType
 import io.vonley.mi.models.enums.Feature
 import java.io.BufferedReader
 import java.io.IOException
@@ -262,7 +269,7 @@ interface PS3MAPIProtocol : PSXProtocol {
         if (!isConnected) {
             throw Exception("Not connected to host.")
         }
-        val buzzer = "PS3 BUZZER" + (buzz.ordinal + 1).toString()
+        val buzzer = "PS3 BUZZER ${buzz.ordinal}"
         val r: PS3MAPIResponse = PS3MAPIResponse.parse(super.send(buzzer) ?: return)
         listener.onJMAPIResponse(PS3OP.BUZZ, r.code, "A buzz was sent to the ps3")
         println(r.response)
@@ -298,17 +305,28 @@ interface PS3MAPIProtocol : PSXProtocol {
     @Throws(Exception::class)
     fun changeLed(
         color: LedColor,
-        mode: LedMode
+        mode: LedStatus
     ): PS3MAPIResponse? {
         if (!isConnected) {
             throw Exception("Not connected to host.")
         }
-        val led = "PS3 LED " + color.ordinal.toString() + " " + mode.ordinal.toString()
+        val led = "PS3 LED ${color.ordinal} ${mode.ordinal}"
         val res: PS3MAPIResponse = PS3MAPIResponse.parse(super.send(led) ?: return null)
         println(res.code)
         listener.onJMAPIResponse(PS3OP.LED, res.code, res.response)
         return res
     }
+
+    val info: ConsoleInfo?
+        get() {
+            val fw = fwVersion
+            val type = fwType
+            val t = temp
+            if(fw != null && type != null && t != null){
+                return ConsoleInfo(fw, io.vonley.mi.di.network.protocols.ccapi.models.ConsoleType.parse(type), t)
+            }
+            return null
+        }
 
     @get:Throws(Exception::class)
     var idps: String?
@@ -316,6 +334,7 @@ interface PS3MAPIProtocol : PSXProtocol {
             if (!isConnected) {
                 throw Exception("Not connected to host.")
             }
+            ConsoleIdType.IDPS
             val idps = "PS3 GETIDPS"
             val res: PS3MAPIResponse = PS3MAPIResponse.parse(super.send(idps) ?: return null)
             println(res.code)

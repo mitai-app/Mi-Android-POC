@@ -2,7 +2,7 @@ package io.vonley.mi.di.network.protocols.common
 
 import io.vonley.mi.base.BaseClient
 import io.vonley.mi.di.network.PSXService
-import io.vonley.mi.di.network.protocols.ps3mapi.cmds.Boot
+import io.vonley.mi.di.network.protocols.common.cmds.Boot
 import io.vonley.mi.models.enums.Feature
 import okhttp3.*
 import java.io.BufferedReader
@@ -17,6 +17,7 @@ interface PSXNotify {
 
 interface PSXSystem {
     fun boot(ps3boot: Boot)
+
 }
 
 interface PSXProtocol : PSXNotify, PSXSystem, BaseClient {
