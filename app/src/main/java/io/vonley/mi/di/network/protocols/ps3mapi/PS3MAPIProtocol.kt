@@ -2,7 +2,12 @@ package io.vonley.mi.di.network.protocols.ps3mapi
 
 import androidx.lifecycle.LiveData
 import io.vonley.mi.di.network.impl.get
-import io.vonley.mi.di.network.protocols.PSXProtocol
+import io.vonley.mi.di.network.protocols.common.PSXProtocol
+import io.vonley.mi.di.network.protocols.common.*
+import io.vonley.mi.di.network.protocols.ps3mapi.cmds.*
+import io.vonley.mi.di.network.protocols.ps3mapi.models.PS3MAPIResponse
+import io.vonley.mi.di.network.protocols.ps3mapi.models.Process
+import io.vonley.mi.di.network.protocols.ps3mapi.models.Temperature
 import io.vonley.mi.models.enums.Feature
 import java.io.BufferedReader
 import java.io.IOException
@@ -14,6 +19,14 @@ interface PS3MAPIProtocol : PSXProtocol {
     override val feature: Feature get() = Feature.PS3MAPI
     private val _socket: Socket? get() = service[service.target!!, feature]
     override val socket: Socket get() = _socket!!
+
+    val listener: JMAPIListener
+    val processes: List<Process>
+    val liveProcesses: LiveData<List<Process>>
+    var attached: Boolean
+    var process: Process?
+
+
 
     fun connect(ip: String?, port: Int): Boolean {
         return if (!socket.isConnected() || socket.isClosed()) {
@@ -68,13 +81,6 @@ interface PS3MAPIProtocol : PSXProtocol {
         fun onJMAPISetMemory(response: String?, offset: Long)
         fun onJMAPIMemoryError(response: String?, process: String?, offset: Long)
     }
-
-    val listener: JMAPIListener
-    var processes: List<Process>
-    val liveProcesses: LiveData<List<Process>>
-    var attached: Boolean
-    var process: Process?
-
 
     /**
      * Attaches to the ps3 process with the process id provided by developer
@@ -191,11 +197,11 @@ interface PS3MAPIProtocol : PSXProtocol {
      * @return whether it was a success
      * @see
      */
-    fun deleteHistory(mode: PS3MAPIResponse.DELHISTORY): Boolean {
+    fun deleteHistory(mode: DeleteHistory): Boolean {
         var s = "PS3 DELHISTORY"
         when (mode) {
-            PS3MAPIResponse.DELHISTORY.EXCLUDE_DIR -> {}
-            PS3MAPIResponse.DELHISTORY.INCLUDE_DIR -> s += "+D"
+            DeleteHistory.EXCLUDE_DIR -> {}
+            DeleteHistory.INCLUDE_DIR -> s += "+D"
         }
         val res: PS3MAPIResponse = PS3MAPIResponse.parse(super.send(s) ?: return false)
         listener.onJMAPIResponse(
@@ -216,23 +222,6 @@ interface PS3MAPIProtocol : PSXProtocol {
      * @see PS3Process
      */
     val pids: List<Process>
-        get() {
-            val process: MutableList<Process> = ArrayList<Process>()
-            val text = "PROCESS GETALLPID"
-            val (_, response, code) = PS3MAPIResponse.parse(super.send(text) ?: return emptyList())
-            for (s in response.split("\\|".toRegex()).toTypedArray()) {
-                if (s == "0") continue
-                val (_, response1, _) = PS3MAPIResponse.parse(
-                    super.send("PROCESS GETNAME $s") ?: continue
-                )
-                process.add(Process.create(response1, s))
-            }
-            if (process.size > 0) {
-                this.processes = processes
-                listener.onJMAPIPS3Process(PS3MAPIResponse.Code.REQUESTSUCCESSFUL, process)
-            }
-            return process
-        }
 
     /**
      * Gets the firmware type of your ps3
@@ -269,49 +258,30 @@ interface PS3MAPIProtocol : PSXProtocol {
     }
 
     @Throws(Exception::class)
-    fun buzzer(buzz: PS3MAPIResponse.BUZZER) {
+    fun buzzer(buzz: Buzzer) {
         if (!isConnected) {
             throw Exception("Not connected to host.")
         }
         val buzzer = "PS3 BUZZER" + (buzz.ordinal + 1).toString()
         val r: PS3MAPIResponse = PS3MAPIResponse.parse(super.send(buzzer) ?: return)
-        listener.onJMAPIResponse(
-            PS3OP.BUZZ,
-            r.code,
-            "A buzz was send to the ps3"
-        )
+        listener.onJMAPIResponse(PS3OP.BUZZ, r.code, "A buzz was sent to the ps3")
         println(r.response)
     }
 
     @Throws(Exception::class)
-    fun boot(ps3boot: PS3MAPIResponse.PS3BOOT) {
+    override fun boot(ps3boot: Boot) {
         if (!isConnected) {
             throw Exception("Not connected to host.")
         }
         val boot = "PS3 $ps3boot"
         val res: PS3MAPIResponse = PS3MAPIResponse.parse(super.send(boot) ?: return)
-        when (ps3boot) {
-            PS3MAPIResponse.PS3BOOT.REBOOT -> listener.onJMAPIResponse(
-                PS3OP.BOOT,
-                res.code,
-                "Rebooting console"
-            )
-            PS3MAPIResponse.PS3BOOT.SHUTDOWN -> listener.onJMAPIResponse(
-                PS3OP.BOOT,
-                res.code,
-                "Shutting down console"
-            )
-            PS3MAPIResponse.PS3BOOT.HARDREBOOT -> listener.onJMAPIResponse(
-                PS3OP.BOOT,
-                res.code,
-                "Hard Rebooting console"
-            )
-            PS3MAPIResponse.PS3BOOT.SOFTREBOOT -> listener.onJMAPIResponse(
-                PS3OP.BOOT,
-                res.code,
-                "Soft rebooting console"
-            )
+        val msg  = when (ps3boot) {
+            Boot.REBOOT -> "Rebooting console"
+            Boot.SHUTDOWN -> "Shutting down console"
+            Boot.HARDREBOOT -> "Hard Rebooting console"
+            Boot.SOFTREBOOT -> "Soft rebooting console"
         }
+        listener.onJMAPIResponse(PS3OP.BOOT, res.code, msg)
         println(res.response)
     }
 
@@ -327,8 +297,8 @@ interface PS3MAPIProtocol : PSXProtocol {
 
     @Throws(Exception::class)
     fun changeLed(
-        color: PS3MAPIResponse.LEDCOLOR,
-        mode: PS3MAPIResponse.LEDMODE
+        color: LedColor,
+        mode: LedMode
     ): PS3MAPIResponse? {
         if (!isConnected) {
             throw Exception("Not connected to host.")

@@ -3,13 +3,16 @@ package io.vonley.mi.di.network.protocols.ps3mapi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.vonley.mi.di.network.PSXService
+import io.vonley.mi.di.network.protocols.ps3mapi.models.PS3MAPIResponse
+import io.vonley.mi.di.network.protocols.ps3mapi.models.Process
+import io.vonley.mi.di.network.protocols.ps3mapi.models.Temperature
 import okhttp3.internal.notifyAll
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.net.Socket
 
-class PS3MAPI(
+class PS3MAPIProtocolImpl(
     override val service: PSXService,
 ) : PS3MAPIProtocol, PS3MAPIProtocol.JMAPIListener {
 
@@ -17,21 +20,41 @@ class PS3MAPI(
     var data_sock: Socket? = null
 
     override val listener: PS3MAPIProtocol.JMAPIListener = this
-    private var _processes = MutableLiveData<List<Process>>()
-    override val liveProcesses: LiveData<List<Process>> get() = _processes
+    private var _liveProcesses = MutableLiveData<List<Process>>()
+    override val liveProcesses: LiveData<List<Process>> get() = _liveProcesses
 
-    override var processes: List<Process> = listOf()
+    private var _processes: ArrayList<Process> = arrayListOf()
         set(value) {
-            if(value.isNotEmpty()) {
+            if (value.isNotEmpty()) {
                 synchronized(_processes) {
-                    _processes.postValue(value)
-                    _processes.notifyAll()
+                    _liveProcesses.postValue(value)
+                    _liveProcesses.notifyAll()
                 }
                 field = value
             }
         }
+    override val processes: List<Process> get() = _processes
     override var attached: Boolean = false
     override var process: Process? = null
+    override val pids: List<Process>
+        get() {
+            val process: ArrayList<Process> = ArrayList<Process>()
+            val text = "PROCESS GETALLPID"
+            val (_, response, code) = PS3MAPIResponse.parse(super.send(text) ?: return emptyList())
+            for (s in response.split("\\|".toRegex()).toTypedArray()) {
+                if (s == "0") continue
+                val (_, response1, _) = PS3MAPIResponse.parse(
+                    super.send("PROCESS GETNAME $s") ?: continue
+                )
+                process.add(Process.create(response1, s))
+            }
+            if (process.size > 0) {
+                this._processes = process
+                listener.onJMAPIPS3Process(PS3MAPIResponse.Code.REQUESTSUCCESSFUL, process)
+            }
+            return process
+        }
+
 
     override fun openDataSocket() {
         try {

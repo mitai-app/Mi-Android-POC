@@ -1,20 +1,32 @@
-package io.vonley.mi.di.network.protocols
+package io.vonley.mi.di.network.protocols.common
 
+import io.vonley.mi.base.BaseClient
 import io.vonley.mi.di.network.PSXService
-import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIResponse
-import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIResponse.Code
+import io.vonley.mi.di.network.protocols.ps3mapi.cmds.Boot
 import io.vonley.mi.models.enums.Feature
+import okhttp3.*
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.Socket
 
-interface PSXFunction {
+interface PSXNotify {
     fun notify(message: String)
 }
 
-interface PSXProtocol : PSXFunction {
+interface PSXSystem {
+    fun boot(ps3boot: Boot)
+}
+
+interface PSXProtocol : PSXNotify, PSXSystem, BaseClient {
+
+    override val http: OkHttpClient get() = service.http
+    override fun post(url: String, body: RequestBody, headers: Headers) = service.post(url, body, headers)
+    override fun post(url: String, body: RequestBody, headers: Headers, response: Callback) = service.post(url, body, headers, response)
+    override fun getRequest(url: String, response: Callback) = service.getRequest(url, response)
+    override fun getRequest(url: String) = service.getRequest(url)
+
 
     val service: PSXService
     val feature: Feature

@@ -1,30 +1,10 @@
-package io.vonley.mi.di.network.protocols.ps3mapi
+package io.vonley.mi.di.network.protocols.ps3mapi.models
 
 data class PS3MAPIResponse(
     val success: Boolean = false,
     val response: String,
-    val code: PS3MAPIResponse.Code?
+    val code: Code?
 ){
-
-    enum class PS3BOOT {
-        REBOOT, SOFTREBOOT, HARDREBOOT, SHUTDOWN
-    }
-
-    enum class BUZZER {
-        SINGLE, DOUBLE, TRIPLE
-    }
-
-    enum class LEDCOLOR {
-        RED, GREEN, YELLOW
-    }
-
-    enum class LEDMODE {
-        OFF, ON, BLINKFAST, BLINKSLOW
-    }
-
-    enum class DELHISTORY {
-        EXCLUDE_DIR, INCLUDE_DIR
-    }
 
     enum class SYSCALL8MODE {
         ENABLED, ONLY_COBRAMAMBA_AND_PS3API_ENABLED, ONLY_PS3MAPI_ENABLED, FAKEDISABLED, DISABLED
@@ -34,10 +14,11 @@ data class PS3MAPIResponse(
         DATACONNECTIONALREADYOPEN(125), MEMORYSTATUSOK(150), COMMANDOK(200), REQUESTSUCCESSFUL(226), ENTERINGPASSIVEMOVE(227),
         PS3MAPICONNECTED(220), PS3MAPICONNECTEDOK(230), MEMORYACTIONCOMPLETED(250), MEMORYACTIONPENDING(350)
     }
+
     companion object {
 
 
-        private fun findResponse(value: Int) = PS3MAPIResponse.Code.values().find { c -> c.value == value }
+        private fun findResponse(value: Int) = Code.values().find { c -> c.value == value }
 
         private fun parseResponse(success: Boolean, response: String): PS3MAPIResponse {
             if (success) {

@@ -1,4 +1,4 @@
-package io.vonley.mi.di.network.protocols.ps3mapi
+package io.vonley.mi.di.network.protocols.ps3mapi.models
 
 data class Process(val title: String, val process: String) {
     companion object {
