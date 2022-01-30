@@ -5,14 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.protocols.common.cmds.Boot
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIProtocol
-import io.vonley.mi.di.network.protocols.ps3mapi.models.Process
+import io.vonley.mi.di.network.protocols.common.models.Process
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
 class CCAPIProtocolImpl(override val service: PSXService) : CCAPIProtocol {
-    override val listener: PS3MAPIProtocol.JMAPIListener
-        get() = TODO("Not yet implemented")
 
     private val _processes =  arrayListOf<Process>()
     override val processes: List<Process>

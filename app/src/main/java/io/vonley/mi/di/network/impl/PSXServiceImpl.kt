@@ -10,7 +10,7 @@ import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.SyncService
 import io.vonley.mi.extensions.toJson
 import io.vonley.mi.models.Client
-import io.vonley.mi.models.enums.ConsoleType
+import io.vonley.mi.models.enums.PlatformType
 import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import io.vonley.mi.utils.SharedPreferenceManager
@@ -52,14 +52,14 @@ class PSXServiceImpl @Inject constructor(
         target?.let { target ->
             val ip = target.ip
             val allowed = when (target.type) {
-                ConsoleType.PS3 -> arrayOf(Feature.PS3MAPI, Feature.WEBMAN, Feature.CCAPI)
-                ConsoleType.PS4 -> arrayOf(
+                PlatformType.PS3 -> arrayOf(Feature.PS3MAPI, Feature.WEBMAN, Feature.CCAPI)
+                PlatformType.PS4 -> arrayOf(
                     Feature.GOLDENHEN,
                     Feature.NETCAT,
                     Feature.ORBISAPI,
                     Feature.RPI
                 )
-                ConsoleType.UNKNOWN -> arrayOf(Feature.FTP)
+                PlatformType.UNKNOWN -> arrayOf(Feature.FTP)
             }
             val filter = target.features.filter { it in allowed }
             launch {

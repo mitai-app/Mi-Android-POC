@@ -1,4 +1,4 @@
-package io.vonley.mi.di.network.protocols.ccapi.models
+package io.vonley.mi.di.network.protocols.common.models
 
 enum class ConsoleType {
     UNK, CEX, DEX, TOOL;

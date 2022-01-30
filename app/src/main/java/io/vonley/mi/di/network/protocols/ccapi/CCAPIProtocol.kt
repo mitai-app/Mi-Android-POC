@@ -2,8 +2,8 @@ package io.vonley.mi.di.network.protocols.ccapi
 
 import androidx.lifecycle.LiveData
 import io.vonley.mi.di.network.impl.get
-import io.vonley.mi.di.network.protocols.ccapi.models.ConsoleIdType
-import io.vonley.mi.di.network.protocols.ccapi.models.ConsoleType
+import io.vonley.mi.di.network.protocols.common.models.ConsoleId
+import io.vonley.mi.di.network.protocols.common.models.ConsoleType
 import io.vonley.mi.di.network.protocols.common.PSXProtocol
 import io.vonley.mi.di.network.protocols.common.cmds.Boot
 import io.vonley.mi.di.network.protocols.common.cmds.Buzzer
@@ -11,8 +11,8 @@ import io.vonley.mi.di.network.protocols.common.cmds.LedColor
 import io.vonley.mi.di.network.protocols.common.cmds.LedStatus
 import io.vonley.mi.di.network.protocols.common.models.ConsoleInfo
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIProtocol
-import io.vonley.mi.di.network.protocols.ps3mapi.models.Process
-import io.vonley.mi.di.network.protocols.ps3mapi.models.Temperature
+import io.vonley.mi.di.network.protocols.common.models.Process
+import io.vonley.mi.di.network.protocols.common.models.Temperature
 import io.vonley.mi.models.enums.Feature
 import java.io.BufferedReader
 import java.io.IOException
@@ -51,7 +51,6 @@ interface CCAPIProtocol : PSXProtocol {
     private val _socket: Socket? get() = service[service.target!!, feature]
     override val socket: Socket get() = _socket!!
 
-    val listener: PS3MAPIProtocol.JMAPIListener
     val processes: List<Process>
     val liveProcesses: LiveData<List<Process>>
     var attached: Boolean
@@ -100,7 +99,7 @@ interface CCAPIProtocol : PSXProtocol {
      */
     @Throws(IOException::class)
     fun getTemperature(): Temperature {
-        val temp: List<String> = getListRequest(compileUrl(CCFactory.temperature))
+        val temp: List<String> = getListRequest(compileUrl(CCAPIUrlBuilder.temperature))
         return Temperature(
             Integer.decode("0x" + temp[1]).toString(),
             Integer.decode("0x" + temp[2]).toString()
@@ -125,7 +124,7 @@ interface CCAPIProtocol : PSXProtocol {
      */
     @Throws(IOException::class)
     fun shutDown(boot: Boot) {
-        doRequest(compileUrl(CCFactory.shutDown(boot)))
+        doRequest(compileUrl(CCAPIUrlBuilder.shutDown(boot)))
     }
 
     /**
@@ -139,7 +138,7 @@ interface CCAPIProtocol : PSXProtocol {
     fun notify(notifyicons: NotifyIcon, message: String): String? {
         return getSimpleRequest(
             compileUrl(
-                CCFactory.notify(
+                CCAPIUrlBuilder.notify(
                     notifyicons,
                     URLEncoder.encode(message, "UTF-8").replace("+", "%20")
                 )
@@ -156,7 +155,7 @@ interface CCAPIProtocol : PSXProtocol {
      */
     @Throws(IOException::class)
     fun setConsoleLed(color: LedColor, led: LedStatus): String? {
-        return getSimpleRequest(compileUrl(CCFactory.setConsoleLed(color, led)))
+        return getSimpleRequest(compileUrl(CCAPIUrlBuilder.setConsoleLed(color, led)))
     }
 
     /**
@@ -167,8 +166,8 @@ interface CCAPIProtocol : PSXProtocol {
      * @throws IOException
      */
     @Throws(IOException::class)
-    fun setConsoleIds(type: ConsoleIdType, id: String?): String? {
-        return getSimpleRequest(compileUrl(CCFactory.setConsoleIds(type, id)))
+    fun setConsoleIds(type: ConsoleId, id: String?): String? {
+        return getSimpleRequest(compileUrl(CCAPIUrlBuilder.setConsoleIds(type, id)))
     }
 
     /**
@@ -180,10 +179,10 @@ interface CCAPIProtocol : PSXProtocol {
      * @throws IOException
      */
     @Throws(IOException::class)
-    fun setBootConsoleIds(type: ConsoleIdType, onBoot: Boolean, id: String?): String? {
+    fun setBootConsoleIds(type: ConsoleId, onBoot: Boolean, id: String?): String? {
         return getSimpleRequest(
             compileUrl(
-                CCFactory.setBootConsoleIds(
+                CCAPIUrlBuilder.setBootConsoleIds(
                     type,
                     onBoot,
                     id
@@ -201,7 +200,7 @@ interface CCAPIProtocol : PSXProtocol {
      */
     @Throws(IOException::class)
     fun ringBuzzer(buzzer: Buzzer): String? {
-        return getSimpleRequest(compileUrl(CCFactory.ringBuzzer(buzzer)))
+        return getSimpleRequest(compileUrl(CCAPIUrlBuilder.ringBuzzer(buzzer)))
     }
 
     /**
@@ -212,7 +211,7 @@ interface CCAPIProtocol : PSXProtocol {
     @Throws(IOException::class)
     fun attach(): Boolean {
         for (process in pids) {
-            if (process.title.contains("EBOOT.BIN")) {
+            if (process.name.contains("EBOOT.BIN")) {
                 attach(process)
                 return true
             }
@@ -248,7 +247,7 @@ interface CCAPIProtocol : PSXProtocol {
      */
     @Throws(IOException::class)
     fun setMemory(pid: String, addr: String, value: String): String? {
-        return getSimpleRequest(compileUrl(CCFactory.setMemory(pid, addr, value)))
+        return getSimpleRequest(compileUrl(CCAPIUrlBuilder.setMemory(pid, addr, value)))
     }
 
     /**
@@ -333,7 +332,7 @@ interface CCAPIProtocol : PSXProtocol {
 
     @Throws(IOException::class)
     fun getMemoryString(pid: String?, addr: String, size: Int): String? {
-        return getSimpleRequest(compileUrl(CCFactory.getMemory(pid, addr, size)))?.substring(1)
+        return getSimpleRequest(compileUrl(CCAPIUrlBuilder.getMemory(pid, addr, size)))?.substring(1)
     }
 
     @Throws(CCAPIException::class, IOException::class)
@@ -378,23 +377,23 @@ interface CCAPIProtocol : PSXProtocol {
     //region Private Methods
     @Throws(IOException::class)
     fun getFirmwareInfo(): List<String> {
-        return getListRequest(compileUrl(CCFactory.firmWareInfo))
+        return getListRequest(compileUrl(CCAPIUrlBuilder.firmWareInfo))
     }
 
     @Throws(IOException::class)
     fun getProcessList(): List<String> {
-        return getListRequest(compileUrl(CCFactory.processList))
+        return getListRequest(compileUrl(CCAPIUrlBuilder.processList))
     }
 
     @Throws(IOException::class)
     fun getProcessName(pid: String): List<String> {
-        return getListRequest(compileUrl(CCFactory.getProcessName(pid)))
+        return getListRequest(compileUrl(CCAPIUrlBuilder.getProcessName(pid)))
     }
 
     //endregion
 
     //endregion
-    private object CCFactory {
+    private object CCAPIUrlBuilder {
         val firmWareInfo: String
             get() = DIR.GETFIRMWAREINFO.name.lowercase()
         val temperature: String
@@ -423,12 +422,12 @@ interface CCAPIProtocol : PSXProtocol {
             return DIR.SETCONSOLELED.name.lowercase() + "?color=${color.ordinal}&status=${led}"
         }
 
-        fun setConsoleIds(type: ConsoleIdType, id: String?): String {
+        fun setConsoleIds(type: ConsoleId, id: String?): String {
             return DIR.SETCONSOLEIDS.name.lowercase() + "?type=${type.ordinal}&id=$id"
 
         }
 
-        fun setBootConsoleIds(type: ConsoleIdType, onBoot: Boolean, id: String?): String {
+        fun setBootConsoleIds(type: ConsoleId, onBoot: Boolean, id: String?): String {
             return DIR.SETBOOTCONSOLEIDS.name.toLowerCase() + "?type=${type.ordinal}&on=${if (onBoot) 1 else 0}&id=$id"
 
         }

@@ -3,13 +3,10 @@ package io.vonley.mi.di.network.protocols.webman
 import androidx.lifecycle.LiveData
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIProtocol
-import io.vonley.mi.di.network.protocols.ps3mapi.models.Process
+import io.vonley.mi.di.network.protocols.common.models.Process
 import kotlin.coroutines.CoroutineContext
 
 class WebManProtocolImpl(override val service: PSXService): WebManProtocol{
-
-    override val listener: PS3MAPIProtocol.JMAPIListener
-        get() = TODO("Not yet implemented")
 
     override val processes: List<Process>
         get() = TODO("Not yet implemented")

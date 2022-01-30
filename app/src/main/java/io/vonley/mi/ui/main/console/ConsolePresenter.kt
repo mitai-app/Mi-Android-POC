@@ -8,7 +8,7 @@ import io.vonley.mi.di.annotations.SharedPreferenceStorage
 import io.vonley.mi.di.network.SyncService
 import io.vonley.mi.models.Client
 import io.vonley.mi.models.Console
-import io.vonley.mi.models.enums.ConsoleType
+import io.vonley.mi.models.enums.PlatformType
 import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.persistence.ConsoleDao
 import io.vonley.mi.utils.SharedPreferenceManager
@@ -37,7 +37,7 @@ class ConsolePresenter @Inject constructor(
                     Console(
                         input,
                         "Playstation 4",
-                        ConsoleType.PS4,
+                        PlatformType.PS4,
                         listOf(Feature.FTP),
                         false,
                         sync.wifiInfo.ssid

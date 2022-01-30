@@ -8,7 +8,7 @@ import io.vonley.mi.di.network.impl.get
 import io.vonley.mi.di.network.protocols.common.PSXProtocol
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIProtocol
 import io.vonley.mi.di.network.protocols.common.cmds.Boot
-import io.vonley.mi.di.network.protocols.ps3mapi.models.Process
+import io.vonley.mi.di.network.protocols.common.models.Process
 import io.vonley.mi.models.enums.Feature
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
@@ -34,7 +34,6 @@ interface WebManProtocol : PSXProtocol {
     private val _socket: Socket? get() = service[service.target!!, feature]
     override val socket: Socket get() = _socket!!
 
-    val listener: PS3MAPIProtocol.JMAPIListener
     val processes: List<Process>
     val liveProcesses: LiveData<List<Process>>
     var attached: Boolean

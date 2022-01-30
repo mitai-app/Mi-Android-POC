@@ -12,7 +12,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Entity
 @Parcelize
-enum class ConsoleType : Parcelable {
+enum class PlatformType : Parcelable {
     UNKNOWN, PS3, PS4
 }
 
@@ -65,10 +65,10 @@ class ProtocolTypeConverter {
 class ConsoleTypeConverter {
 
     @TypeConverter
-    fun toType(value: Int): ConsoleType = enumValues<ConsoleType>()[value]
+    fun toType(value: Int): PlatformType = enumValues<PlatformType>()[value]
 
     @TypeConverter
-    fun fromType(value: ConsoleType) = value.ordinal
+    fun fromType(value: PlatformType) = value.ordinal
 
 }
 

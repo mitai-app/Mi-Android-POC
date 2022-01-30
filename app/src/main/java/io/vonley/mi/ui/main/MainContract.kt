@@ -2,7 +2,7 @@ package io.vonley.mi.ui.main
 
 import io.vonley.mi.base.BaseContract
 import io.vonley.mi.models.Console
-import io.vonley.mi.models.enums.ConsoleType
+import io.vonley.mi.models.enums.PlatformType
 
 interface MainContract {
 
@@ -13,7 +13,7 @@ interface MainContract {
     }
 
     interface Presenter : BaseContract.Presenter {
-        fun getConsoles(console: ConsoleType);
+        fun getConsoles(platform: PlatformType);
     }
 
 }

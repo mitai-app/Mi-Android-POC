@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.protocols.ps3mapi.models.PS3MAPIResponse
-import io.vonley.mi.di.network.protocols.ps3mapi.models.Process
-import io.vonley.mi.di.network.protocols.ps3mapi.models.Temperature
+import io.vonley.mi.di.network.protocols.common.models.Process
+import io.vonley.mi.di.network.protocols.common.models.Temperature
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import okhttp3.internal.notifyAll

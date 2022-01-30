@@ -1,7 +1,7 @@
 package io.vonley.mi.models
 
 import android.util.Log
-import io.vonley.mi.models.enums.ConsoleType
+import io.vonley.mi.models.enums.PlatformType
 import io.vonley.mi.models.enums.Feature
 import okhttp3.internal.closeQuietly
 import java.net.InetAddress
@@ -12,7 +12,7 @@ interface Client {
 
     val ip: String
     var name: String
-    var type: ConsoleType
+    var type: PlatformType
     var features: List<Feature>
     var wifi: String
     var lastKnownReachable: Boolean

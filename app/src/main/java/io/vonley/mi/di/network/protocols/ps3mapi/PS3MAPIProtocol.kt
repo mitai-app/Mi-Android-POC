@@ -2,19 +2,15 @@ package io.vonley.mi.di.network.protocols.ps3mapi
 
 import androidx.lifecycle.LiveData
 import io.vonley.mi.di.network.impl.get
-import io.vonley.mi.di.network.protocols.ccapi.models.ConsoleIdType
 import io.vonley.mi.di.network.protocols.common.PSXProtocol
 import io.vonley.mi.di.network.protocols.common.*
 import io.vonley.mi.di.network.protocols.common.cmds.Boot
 import io.vonley.mi.di.network.protocols.common.cmds.Buzzer
 import io.vonley.mi.di.network.protocols.common.cmds.LedColor
 import io.vonley.mi.di.network.protocols.common.cmds.LedStatus
-import io.vonley.mi.di.network.protocols.common.models.ConsoleInfo
+import io.vonley.mi.di.network.protocols.common.models.*
 import io.vonley.mi.di.network.protocols.ps3mapi.cmds.*
 import io.vonley.mi.di.network.protocols.ps3mapi.models.PS3MAPIResponse
-import io.vonley.mi.di.network.protocols.ps3mapi.models.Process
-import io.vonley.mi.di.network.protocols.ps3mapi.models.Temperature
-import io.vonley.mi.models.enums.ConsoleType
 import io.vonley.mi.models.enums.Feature
 import java.io.BufferedReader
 import java.io.IOException
@@ -118,7 +114,7 @@ interface PS3MAPIProtocol : PSXProtocol {
     }
 
     fun smartContainsProcess(processes: List<Process>): Process? =
-        processes.find { p -> p.title.lowercase().contains("eboot") }
+        processes.find { p -> p.name.lowercase().contains("eboot") }
 
     fun containsProcess(processes: List<Process>, process: Process?): Boolean {
         for (p in processes) {
@@ -323,7 +319,7 @@ interface PS3MAPIProtocol : PSXProtocol {
             val type = fwType
             val t = temp
             if(fw != null && type != null && t != null){
-                return ConsoleInfo(fw, io.vonley.mi.di.network.protocols.ccapi.models.ConsoleType.parse(type), t)
+                return ConsoleInfo(fw, ConsoleType.parse(type), t)
             }
             return null
         }
@@ -334,8 +330,7 @@ interface PS3MAPIProtocol : PSXProtocol {
             if (!isConnected) {
                 throw Exception("Not connected to host.")
             }
-            ConsoleIdType.IDPS
-            val idps = "PS3 GETIDPS"
+            val idps = "PS3 GET${ConsoleId.IDPS.name.uppercase()}"
             val res: PS3MAPIResponse = PS3MAPIResponse.parse(super.send(idps) ?: return null)
             println(res.code)
             listener.onJMAPIResponse(PS3OP.IDPS, res.code, res.response)
@@ -344,7 +339,7 @@ interface PS3MAPIProtocol : PSXProtocol {
         set(value) {
             if (value != null) {
                 if (!isConnected) throw Exception("Not connected to host.")
-                val idps_cmd = "PS3 SETIDPS " + value.substring(0, 16) + " " + value.substring(16)
+                val idps_cmd = "PS3 SET${ConsoleId.IDPS.name.uppercase()} ${value.substring(0, 16)} ${value.substring(16)}"
                 val res: PS3MAPIResponse =
                     PS3MAPIResponse.parse(super.send(idps_cmd) ?: return)
                 listener.onJMAPIResponse(PS3OP.IDPSSET, res.code, res.response)
@@ -357,7 +352,7 @@ interface PS3MAPIProtocol : PSXProtocol {
             if (!isConnected) {
                 throw Exception("Not connected to host.")
             }
-            val psid = "PS3 GETPSID"
+            val psid = "PS3 GET${ConsoleId.PSID.name.uppercase()}"
             val res: PS3MAPIResponse = PS3MAPIResponse.parse(super.send(psid) ?: return null)
             println(res.code)
             listener.onJMAPIResponse(PS3OP.PSID, res.code, res.response)
@@ -366,7 +361,7 @@ interface PS3MAPIProtocol : PSXProtocol {
         set(value) {
             if (value != null) {
                 if (!isConnected) throw Exception("Not connected to host.")
-                val psid_cmd = "PS3 SETPSID " + value.substring(0, 16) + " " + value.substring(16)
+                val psid_cmd = "PS3 SET${ConsoleId.PSID.name.uppercase()} ${value.substring(0, 16)} ${value.substring(16)}"
                 val res: PS3MAPIResponse = PS3MAPIResponse.parse(super.send(psid_cmd) ?: return)
                 listener.onJMAPIResponse(PS3OP.PSIDSET, res.code, res.response)
             }

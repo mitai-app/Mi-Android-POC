@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
 import io.vonley.mi.models.Console
-import io.vonley.mi.models.enums.ConsoleType
+import io.vonley.mi.models.enums.PlatformType
 import io.vonley.mi.models.enums.Feature
 
 @Dao
@@ -26,7 +26,7 @@ interface ConsoleDao : IDao<Console, String> {
     @Query("UPDATE Console SET type = :type_, features = :features_, lastKnownReachable = :lastKnown_, wifi = :wifi_ WHERE ip = :ip_")
     suspend fun update(
         ip_: String,
-        type_: ConsoleType,
+        type_: PlatformType,
         features_: List<Feature>,
         lastKnown_: Boolean,
         wifi_: String
