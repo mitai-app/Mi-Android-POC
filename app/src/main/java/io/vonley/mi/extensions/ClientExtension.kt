@@ -4,11 +4,13 @@ import android.net.wifi.WifiInfo
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import io.vonley.mi.di.network.SyncService
 import io.vonley.mi.models.Client
 import io.vonley.mi.models.Console
 import io.vonley.mi.models.enums.ConsoleType
 import io.vonley.mi.models.enums.Feature
 import java.net.InetAddress
+import java.net.Socket
 
 inline fun <reified T> Gson.fromJson(json: String) =
     fromJson<T>(json, object : TypeToken<T>() {}.type)
@@ -18,6 +20,10 @@ inline fun <reified T> String.fromJson(): T? =
 
 inline fun <reified T> T.toJson(): String =
     GsonBuilder().create().toJson(this)
+
+inline fun <reified T : Client> T.getSocket(sync: SyncService, port: Int): Socket? {
+    return sync.createSocket(this, port)
+}
 
 fun InetAddress.client(wi: WifiInfo): Client {
     return object : Client {
@@ -76,7 +82,8 @@ fun Client.console(): Console? {
     val actives = getActivePorts()
     if (actives.isNotEmpty()) {
         val features = actives.map { port ->
-            val values = Feature.values().filter { f -> f != Feature.NETCAT && f != Feature.GOLDENHEN }
+            val values =
+                Feature.values().filter { f -> f != Feature.NETCAT && f != Feature.GOLDENHEN }
             val value = values.find { f -> f.ports.find { p -> p == port } == port }
             return@map if (value != null) Feature.valueOf(value.name) else Feature.NONE
         }

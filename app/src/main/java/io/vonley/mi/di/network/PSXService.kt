@@ -4,12 +4,14 @@ import android.net.Network
 import android.net.NetworkInfo
 import android.net.wifi.WifiInfo
 import android.util.Log
+import androidx.lifecycle.LiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import io.vonley.mi.base.BaseClient
 import io.vonley.mi.di.network.handlers.ClientHandler
 import io.vonley.mi.di.network.listeners.OnConsoleListener
 import io.vonley.mi.models.Client
+import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import io.vonley.mi.utils.SharedPreferenceManager
 import okhttp3.Callback
@@ -18,6 +20,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.net.Socket
 import java.util.ArrayList
 import kotlin.coroutines.CoroutineContext
 
@@ -29,6 +32,8 @@ interface PSXService : BaseClient, SyncService {
         fun onSent(payload: PayloadAdapter.Payload)
         fun onPayloadFailed(payload: PayloadAdapter.Payload)
     }
+
+    val features: LiveData<List<Feature>>
 
     val sync: SyncService
 
@@ -112,6 +117,9 @@ interface PSXService : BaseClient, SyncService {
     override fun stop() = sync.stop()
 
     override fun removeConsoleListener(console: OnConsoleListener) = sync.removeConsoleListener(console)
+
+    override fun createSocket(client: Client, feature: Feature): Socket? = sync.createSocket(client, feature)
+    override fun getSocket(client: Client, feature: Feature): Socket? = sync.getSocket(client, feature)
 
     override val target: Client?
         get() = sync.target

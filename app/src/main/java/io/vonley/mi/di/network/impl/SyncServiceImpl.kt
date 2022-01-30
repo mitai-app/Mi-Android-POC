@@ -8,7 +8,6 @@ import android.os.Build
 import android.text.format.Formatter
 import android.util.Log
 import androidx.annotation.RequiresApi
-import kotlinx.coroutines.*
 import io.vonley.mi.BuildConfig
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
 import io.vonley.mi.di.network.SyncService
@@ -20,10 +19,14 @@ import io.vonley.mi.extensions.client
 import io.vonley.mi.extensions.console
 import io.vonley.mi.models.Client
 import io.vonley.mi.models.Console
+import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.persistence.AppDatabase
 import io.vonley.mi.utils.SharedPreferenceManager
+import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
 import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.Socket
 import kotlin.coroutines.CoroutineContext
 
 
@@ -57,17 +60,42 @@ class SyncServiceImpl constructor(
     private val job = Job()
     private lateinit var activeJob: Job
 
-
     override val isConnected: Boolean get() = isWifiAvailable()
 
     //region Override
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
+    private val cachedTargets = hashMapOf<String, HashMap<Feature, Socket>>()
+
+
+    override fun getSocket(client: Client, feature: Feature): Socket? {
+        return cachedTargets[client.ip]?.get(feature)
+    }
+
+    override fun createSocket(client: Client, feature: Feature): Socket? {
+        if (!cachedTargets.containsKey(client.ip)) {
+            cachedTargets[client.ip] = hashMapOf()
+        }
+        if (!cachedTargets[client.ip]!!.containsKey(feature)) {
+            for(port in feature.ports){
+                try{
+                    val socket = Socket()
+                    socket.connect(InetSocketAddress(client.ip, port), 2000)
+                    cachedTargets[client.ip]!![feature] = socket
+                    break;
+                }catch (e: Throwable){
+                    Log.e(TAG, "port failed", e)
+                }
+            }
+        }
+        return cachedTargets[client.ip]!![feature]
+    }
 
     var _target: Client? = null
         set(value) {
-            field =  value
-            if(value != null) {
+            field = value
+            if (value != null) {
+
                 manager.targetName = value.ip
             }
         }
@@ -243,9 +271,9 @@ class SyncServiceImpl constructor(
             for (i in 1 until 256) {
                 try {
                     val ip = "$prefix$i"
-                    val byName = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    val byName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         activeNetwork?.getByName(ip) ?: continue
-                    }else{
+                    } else {
                         InetAddress.getByName(ip) ?: continue
                     }
 
@@ -309,4 +337,12 @@ operator fun <T : ClientHandler> SyncService.set(clazz: Class<T>, data: T) {
 
 operator fun <T : ClientHandler> SyncService.get(clazz: Class<T>): T {
     return handlers[clazz] as T
+}
+
+operator fun <T: Client> SyncService.set(client: T, feature: Feature): Socket? {
+    return createSocket(client, feature)
+}
+
+operator fun <T: Client> SyncService.get(client: T, feature: Feature): Socket? {
+    return getSocket(client, feature)
 }

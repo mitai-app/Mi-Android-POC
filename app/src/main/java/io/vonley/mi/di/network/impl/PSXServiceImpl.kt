@@ -1,12 +1,16 @@
 package io.vonley.mi.di.network.impl
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
 import io.vonley.mi.di.modules.GuestInterceptorOkHttpClient
 import io.vonley.mi.di.network.MiServer
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.SyncService
 import io.vonley.mi.extensions.toJson
+import io.vonley.mi.models.Client
+import io.vonley.mi.models.enums.ConsoleType
 import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import io.vonley.mi.utils.SharedPreferenceManager
@@ -16,6 +20,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.internal.closeQuietly
+import okhttp3.internal.notifyAll
 import java.net.InetSocketAddress
 import java.net.Socket
 import javax.inject.Inject
@@ -26,7 +31,71 @@ class PSXServiceImpl @Inject constructor(
     @SharedPreferenceStorage override val manager: SharedPreferenceManager
 ) : PSXService {
 
+    companion object {
+        suspend fun notify(
+            sync: SyncService,
+            client: Client,
+            msg: String,
+            feature: Feature
+        ): Boolean {
+            val socket = sync[client, feature]
+
+            return false
+        }
+    }
+
+    private val _features = MutableLiveData<List<Feature>>()
+
+    override val features: LiveData<List<Feature>> = _features
+
+    override fun initialize() {
+        target?.let { target ->
+            val ip = target.ip
+            val allowed = when (target.type) {
+                ConsoleType.PS3 -> arrayOf(Feature.PS3MAPI, Feature.WEBMAN, Feature.CCAPI)
+                ConsoleType.PS4 -> arrayOf(
+                    Feature.GOLDENHEN,
+                    Feature.NETCAT,
+                    Feature.ORBISAPI,
+                    Feature.RPI
+                )
+                ConsoleType.UNKNOWN -> arrayOf(Feature.FTP)
+            }
+            val filter = target.features.filter { it in allowed }
+            launch {
+                val feats = filter.map { feature -> this@PSXServiceImpl[target] = feature; feature }
+                    .filter { this@PSXServiceImpl[target, it] != null }
+                synchronized(_features) {
+                    _features.value = feats
+                    _features.notifyAll()
+                }
+            }
+        }
+    }
+
     override val TAG = PSXService::class.java.name
+
+    suspend fun notify(msg: String): Boolean {
+        target?.let { console ->
+            features.value?.let { feat ->
+                return@notify when {
+                    Feature.PS3MAPI in feat -> {
+                        notify(this, target!!, msg, Feature.PS3MAPI)
+                    }
+                    Feature.WEBMAN in feat -> {
+                        notify(this, target!!, msg, Feature.WEBMAN)
+                    }
+                    Feature.CCAPI in feat -> {
+                        notify(this, target!!, msg, Feature.CCAPI)
+                    }
+                    else -> {
+                        return false
+                    }
+                }
+            }
+        }
+        return false
+    }
 
     data class RPI(val type: RPI.Type, val packages: Array<String>) {
         enum class Type {
@@ -47,7 +116,12 @@ class PSXServiceImpl @Inject constructor(
 
                         try {
                             val socket = Socket()
-                            socket.connect(InetSocketAddress(targetIp, manager.featurePort.ports.first()))
+                            socket.connect(
+                                InetSocketAddress(
+                                    targetIp,
+                                    manager.featurePort.ports.first()
+                                )
+                            )
                             withContext(Dispatchers.Main) {
                                 callback.onWriting(payload)
                             }
@@ -78,8 +152,12 @@ class PSXServiceImpl @Inject constructor(
                             val body = toJson.toRequestBody(contentType)
                             Log.e(TAG, "json: $toJson")
                             val res =
-                                post("http://$targetIp:12800/api/install", body, Headers.headersOf())
-                            Log.e(TAG,"Code: ${res.code}")
+                                post(
+                                    "http://$targetIp:12800/api/install",
+                                    body,
+                                    Headers.headersOf()
+                                )
+                            Log.e(TAG, "Code: ${res.code}")
                             res.body?.let { body ->
                                 Log.e(TAG, body.string())
                                 withContext(Dispatchers.Main) {

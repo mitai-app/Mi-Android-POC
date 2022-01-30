@@ -2,33 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/900-host" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/900-host/kexploit" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/900-host/webkit-9.00" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/trusted" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/trusted/672" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/trusted/672/src/8cc" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/trusted/672/src/8cc/bad_hoist" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/trusted/672/src/8cc/printf" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/trusted/75x" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/trusted/75x/src/8cc" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/trusted/75x/src/8cc/bad_hoist" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/trusted/75x/src/8cc/bad_hoist/external" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/trusted/75x/src/8cc/printf" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/trusted/75x/webkit-7.50" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/jb/trusted/75x/webkit-7.50/external" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/test" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/test/ps4jb2" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/test/ps4jb2/672" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/test/ps4jb2/672/src/8cc" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/test/ps4jb2/672/src/8cc/bad_hoist" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/test/ps4jb2/672/src/8cc/printf" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/test/ps4jb2/75x" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/test/ps4jb2/75x/src/8cc" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/test/ps4jb2/75x/src/8cc/bad_hoist" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/test/ps4jb2/75x/src/8cc/bad_hoist/external" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/test/ps4jb2/75x/src/8cc/printf" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/test/ps4jb2/75x/webkit-7.50" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/src/main/assets/test/ps4jb2/75x/webkit-7.50/external" vcs="Git" />
   </component>
 </project>

@@ -27,7 +27,7 @@ interface BaseClient: CoroutineScope {
         return execute.execute()
     }
 
-    fun get(url: String, response: Callback) {
+    fun getRequest(url: String, response: Callback) {
         val req = Request.Builder()
             .url(url)
             .get()

@@ -8,7 +8,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.vonley.mi.BuildConfig
 import io.vonley.mi.base.BaseClient
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
-import io.vonley.mi.extensions.toJson
 import io.vonley.mi.utils.Semver
 import io.vonley.mi.utils.SharedPreferenceManager
 import kotlinx.coroutines.*
@@ -59,7 +58,7 @@ class PSXService : Service(), BaseClient {
                     manager.update = meta
                     continue
                 }
-                get(
+                getRequest(
                     "https://raw.githubusercontent.com/Mr-Smithy-x/Mi/main/meta.json",
                     object : Callback {
                         override fun onFailure(call: Call, e: IOException) {
