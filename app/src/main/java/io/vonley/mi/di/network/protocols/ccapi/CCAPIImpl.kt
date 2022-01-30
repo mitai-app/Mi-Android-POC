@@ -3,14 +3,12 @@ package io.vonley.mi.di.network.protocols.ccapi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.vonley.mi.di.network.PSXService
-import io.vonley.mi.di.network.protocols.common.cmds.Boot
-import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIProtocol
 import io.vonley.mi.di.network.protocols.common.models.Process
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-class CCAPIProtocolImpl(override val service: PSXService) : CCAPIProtocol {
+class CCAPIImpl(override val service: PSXService) : CCAPIProtocol {
 
     private val _processes =  arrayListOf<Process>()
     override val processes: List<Process>
@@ -36,15 +34,7 @@ class CCAPIProtocolImpl(override val service: PSXService) : CCAPIProtocol {
             return processList
         }
 
-    override fun notify(message: String) {
-
-    }
-
-    override fun boot(ps3boot: Boot) {
-
-    }
-
-    val job = Job()
+    private val job = Job()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job

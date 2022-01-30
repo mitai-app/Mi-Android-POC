@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import io.vonley.mi.di.network.impl.get
 import io.vonley.mi.di.network.protocols.common.PSXProtocol
-import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIProtocol
 import io.vonley.mi.di.network.protocols.common.cmds.Boot
 import io.vonley.mi.di.network.protocols.common.models.Process
 import io.vonley.mi.models.enums.Feature
@@ -114,14 +113,19 @@ interface WebManProtocol : PSXProtocol {
             var link = ""
             var info = ""
             for (s in singleton) {
-                if (s.attr("key") == "title") {
-                    title = s.text()
-                } else if (s.attr("key") == "icon") {
-                    icon = s.text()
-                } else if (s.attr("key") == "module_action") {
-                    link = s.text().replace("127.0.0.1", service.targetIp.toString())
-                } else if (s.attr("key") == "info") {
-                    info = s.text()
+                when {
+                    s.attr("key") == "title" -> {
+                        title = s.text()
+                    }
+                    s.attr("key") == "icon" -> {
+                        icon = s.text()
+                    }
+                    s.attr("key") == "module_action" -> {
+                        link = s.text().replace("127.0.0.1", service.targetIp.toString())
+                    }
+                    s.attr("key") == "info" -> {
+                        info = s.text()
+                    }
                 }
             }
             icon = try {
@@ -286,25 +290,6 @@ interface WebManProtocol : PSXProtocol {
         download(url)
     }
 
-    fun refresh() {
-        val url = ("http://${service.targetIp}:80/refresh.ps3")
-        download(url)
-    }
-
-    fun insert() {
-        val url = ("http://${service.targetIp}:80/insert.ps3")
-        download(url)
-    }
-
-    fun eject() {
-        val url = ("http://${service.targetIp}:80/eject.ps3")
-        download(url)
-    }
-
-    fun unmount() {
-        val url = ("http://${service.targetIp}:80/mount.ps3/unmount")
-        download(url)
-    }
 
     override fun boot(ps3boot: Boot) {
         val ip = service.targetIp
@@ -321,5 +306,26 @@ interface WebManProtocol : PSXProtocol {
     fun verify(): Boolean {
         return exists("http://${service.targetIp}:80/index.ps3")
     }
+
+    override fun refresh() {
+        val url = ("http://${service.targetIp}:80/refresh.ps3")
+        download(url)
+    }
+
+    override fun insert() {
+        val url = ("http://${service.targetIp}:80/insert.ps3")
+        download(url)
+    }
+
+    override fun eject() {
+        val url = ("http://${service.targetIp}:80/eject.ps3")
+        download(url)
+    }
+
+    override fun unmount() {
+        val url = ("http://${service.targetIp}:80/mount.ps3/unmount")
+        download(url)
+    }
+
 
 }

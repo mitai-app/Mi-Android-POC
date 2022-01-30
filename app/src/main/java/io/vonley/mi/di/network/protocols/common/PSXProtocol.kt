@@ -17,7 +17,10 @@ interface PSXNotify {
 
 interface PSXSystem {
     fun boot(ps3boot: Boot)
-
+    fun refresh()
+    fun insert()
+    fun eject()
+    fun unmount()
 }
 
 interface PSXProtocol : PSXNotify, PSXSystem, BaseClient {
@@ -70,6 +73,38 @@ interface PSXProtocol : PSXNotify, PSXSystem, BaseClient {
     fun close() {
         if (socket.isConnected) {
             socket.close()
+        }
+    }
+
+    override fun refresh() {
+        service.target?.let {  target ->
+            if (Feature.WEBMAN in target.features) {
+                val url = ("http://${target.ip}:80/refresh.ps3")
+            }
+        }
+    }
+
+    override fun insert() {
+        service.target?.let {  target ->
+            if (Feature.WEBMAN in target.features) {
+                val url = ("http://${target.ip}:80/insert.ps3")
+            }
+        }
+    }
+
+    override fun eject() {
+        service.target?.let {  target ->
+            if (Feature.WEBMAN in target.features) {
+                val url = ("http://${target.ip}:80/eject.ps3")
+            }
+        }
+    }
+
+    override fun unmount() {
+        service.target?.let {  target ->
+            if (Feature.WEBMAN in target.features) {
+                val url = ("http://${target.ip}:80/mount.ps3/unmount")
+            }
         }
     }
 }

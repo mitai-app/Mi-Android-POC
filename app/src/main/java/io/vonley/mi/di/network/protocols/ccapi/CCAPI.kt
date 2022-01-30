@@ -2,17 +2,12 @@ package io.vonley.mi.di.network.protocols.ccapi
 
 import androidx.lifecycle.LiveData
 import io.vonley.mi.di.network.impl.get
-import io.vonley.mi.di.network.protocols.common.models.ConsoleId
-import io.vonley.mi.di.network.protocols.common.models.ConsoleType
 import io.vonley.mi.di.network.protocols.common.PSXProtocol
 import io.vonley.mi.di.network.protocols.common.cmds.Boot
 import io.vonley.mi.di.network.protocols.common.cmds.Buzzer
 import io.vonley.mi.di.network.protocols.common.cmds.LedColor
 import io.vonley.mi.di.network.protocols.common.cmds.LedStatus
-import io.vonley.mi.di.network.protocols.common.models.ConsoleInfo
-import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIProtocol
-import io.vonley.mi.di.network.protocols.common.models.Process
-import io.vonley.mi.di.network.protocols.common.models.Temperature
+import io.vonley.mi.di.network.protocols.common.models.*
 import io.vonley.mi.models.enums.Feature
 import java.io.BufferedReader
 import java.io.IOException
@@ -47,6 +42,15 @@ class CCAPIException(error: CCAPIERROR, errorMsg: String) : Throwable() {
 interface CCAPIProtocol : PSXProtocol {
 
 
+    /**
+     * Gets the process running on the ps3
+     * @see Process
+     * @return All the process that the PS3 has running.
+     * @throws IOException
+     */
+    @get:Throws(IOException::class)
+    val pids: List<Process>
+
     override val feature: Feature get() = Feature.CCAPI
     private val _socket: Socket? get() = service[service.target!!, feature]
     override val socket: Socket get() = _socket!!
@@ -61,11 +65,6 @@ interface CCAPIProtocol : PSXProtocol {
 
     fun compileUrl(compiled: String): String {
         return "$urlStub$compiled"
-    }
-
-
-    fun doRequest(urlString: String) {
-        getRequest(urlString)
     }
 
     @Throws(IOException::class)
@@ -85,10 +84,29 @@ interface CCAPIProtocol : PSXProtocol {
             while (br.readLine().also { stub = it } != null) {
                 stringList.add(stub ?: break)
             }
-            return stringList
+            return@use stringList
         }
     }
 
+    /**
+     * Set the mode for the ps3
+     * @param boot SHUTDOWN, SOFTBOOT, HARDBOOT
+     * @throws IOException
+     */
+    override fun boot(ps3boot: Boot) {
+        getSimpleRequest(compileUrl(CCAPIUrlBuilder.shutDown(ps3boot)))
+    }
+
+    override fun notify(message: String) {
+        getSimpleRequest(
+            compileUrl(
+                CCAPIUrlBuilder.notify(
+                    NotifyIcon.INFO,
+                    URLEncoder.encode(message, "UTF-8").replace("+", "%20")
+                )
+            )
+        );
+    }
 
     /**
      * Gets the current temperature
@@ -104,27 +122,6 @@ interface CCAPIProtocol : PSXProtocol {
             Integer.decode("0x" + temp[1]).toString(),
             Integer.decode("0x" + temp[2]).toString()
         )
-    }
-
-    /**
-     * Gets the process running on the ps3
-     * @see Process
-     *
-     * @return All the process that the PS3 has running.
-     * @throws IOException
-     */
-    @get:Throws(IOException::class)
-    val pids: List<Process>
-
-
-    /**
-     * Set the mode for the ps3
-     * @param boot SHUTDOWN, SOFTBOOT, HARDBOOT
-     * @throws IOException
-     */
-    @Throws(IOException::class)
-    fun shutDown(boot: Boot) {
-        doRequest(compileUrl(CCAPIUrlBuilder.shutDown(boot)))
     }
 
     /**
@@ -299,7 +296,7 @@ interface CCAPIProtocol : PSXProtocol {
      */
     @Throws(Exception::class, CCAPIException::class)
     fun getMemory(addr: Int, size: Int): ByteArray? {
-        val s = getMemoryString(Integer.toHexString(addr), size)?:return null
+        val s = getMemoryString(Integer.toHexString(addr), size) ?: return null
         val bytes = ByteArray(s.length / 2)
         var i = 0
         while (i < s.length) {
@@ -320,7 +317,7 @@ interface CCAPIProtocol : PSXProtocol {
      */
     @Throws(Exception::class, CCAPIException::class)
     fun getMemoryTC(addr: Int, size: Int): CharArray? {
-        val s = getMemoryString(Integer.toHexString(addr), size)?: return null
+        val s = getMemoryString(Integer.toHexString(addr), size) ?: return null
         val chars = CharArray(s.length / 2)
         var i = 0
         while (i < s.length) {
@@ -332,7 +329,15 @@ interface CCAPIProtocol : PSXProtocol {
 
     @Throws(IOException::class)
     fun getMemoryString(pid: String?, addr: String, size: Int): String? {
-        return getSimpleRequest(compileUrl(CCAPIUrlBuilder.getMemory(pid, addr, size)))?.substring(1)
+        return getSimpleRequest(
+            compileUrl(
+                CCAPIUrlBuilder.getMemory(
+                    pid,
+                    addr,
+                    size
+                )
+            )
+        )?.substring(1)
     }
 
     @Throws(CCAPIException::class, IOException::class)

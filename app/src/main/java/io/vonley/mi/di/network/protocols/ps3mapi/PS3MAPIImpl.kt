@@ -15,14 +15,14 @@ import java.net.ServerSocket
 import java.net.Socket
 import kotlin.coroutines.CoroutineContext
 
-class PS3MAPIProtocolImpl(
+class PS3MAPIImpl(
     override val service: PSXService,
-) : PS3MAPIProtocol, PS3MAPIProtocol.JMAPIListener {
+) : PS3MAPI, PS3MAPI.Listener {
 
     var server: ServerSocket? = null
     var data_sock: Socket? = null
 
-    override val listener: PS3MAPIProtocol.JMAPIListener = this
+    override val listener: PS3MAPI.Listener = this
     private var _liveProcesses = MutableLiveData<List<Process>>()
     override val liveProcesses: LiveData<List<Process>> get() = _liveProcesses
 
@@ -125,7 +125,7 @@ class PS3MAPIProtocolImpl(
     }
 
     override fun onJMAPIResponse(
-        ps3Op: PS3MAPIProtocol.PS3OP?,
+        ps3Op: PS3MAPI.PS3OP?,
         responseCode: PS3MAPIResponse.Code?,
         message: String?
     ) {

@@ -17,18 +17,17 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.net.Socket
 
-interface PS3MAPIProtocol : PSXProtocol {
+interface PS3MAPI : PSXProtocol {
 
     override val feature: Feature get() = Feature.PS3MAPI
     private val _socket: Socket? get() = service[service.target!!, feature]
     override val socket: Socket get() = _socket!!
 
-    val listener: JMAPIListener
+    val listener: Listener
     val processes: List<Process>
     val liveProcesses: LiveData<List<Process>>
     var attached: Boolean
     var process: Process?
-
 
 
     fun connect(ip: String?, port: Int): Boolean {
@@ -59,7 +58,7 @@ interface PS3MAPIProtocol : PSXProtocol {
     fun connectDataSocket()
     fun closeDataSocket(): Boolean
 
-    interface JMAPIListener {
+    interface Listener {
 
         fun onJMAPIError(error: String?)
         fun onJMAPIResponse(ps3Op: PS3OP?, responseCode: PS3MAPIResponse.Code?, message: String?)
@@ -71,7 +70,7 @@ interface PS3MAPIProtocol : PSXProtocol {
         fun onJMAPITemperature(responseCode: PS3MAPIResponse.Code?, temperature: Temperature?)
     }
 
-    interface JMAPIMemoryListener {
+    interface MemoryListener {
         @Throws(Exception::class)
         fun onJMAPIGetMemory(
             process: String?,
