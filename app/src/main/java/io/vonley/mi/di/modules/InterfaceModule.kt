@@ -17,7 +17,6 @@ import io.vonley.mi.di.network.protocols.ccapi.CCAPIImpl
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPI
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIImpl
 import io.vonley.mi.di.network.protocols.webman.WebMan
-import io.vonley.mi.di.network.protocols.webman.WebManImpl
 import javax.inject.Singleton
 
 

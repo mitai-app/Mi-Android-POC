@@ -51,8 +51,9 @@ object NetworkModule {
     @Singleton
     fun provideWebManService(
         service: PSXService,
+        @ApplicationContext context: Context
     ): WebManImpl {
-        return WebManImpl(service)
+        return WebManImpl(service, context.assets)
     }
 
     @Provides
