@@ -40,24 +40,23 @@ class PS3MAPIImpl(
     override val processes: List<Process> get() = _processes
     override var attached: Boolean = false
     override var process: Process? = null
-    override val pids: List<Process>
-        get() {
-            val process: ArrayList<Process> = ArrayList<Process>()
-            val text = "PROCESS GETALLPID"
-            val (_, response, code) = PS3MAPIResponse.parse(sendAndRecv(text) ?: return emptyList())
-            for (s in response.split("\\|".toRegex()).toTypedArray()) {
-                if (s == "0") continue
-                val (_, response1, _) = PS3MAPIResponse.parse(
-                    sendAndRecv("PROCESS GETNAME $s") ?: continue
-                )
-                process.add(Process.create(response1, s))
-            }
-            if (process.size > 0) {
-                this._processes = process
-                listener.onJMAPIPS3Process(PS3MAPIResponse.Code.REQUESTSUCCESSFUL, process)
-            }
-            return process
+    override suspend fun getPids(): List<Process> {
+        val process: ArrayList<Process> = ArrayList<Process>()
+        val text = "PROCESS GETALLPID"
+        val (_, response, code) = PS3MAPIResponse.parse(sendAndRecv(text) ?: return emptyList())
+        for (s in response.split("\\|".toRegex()).toTypedArray()) {
+            if (s == "0") continue
+            val (_, response1, _) = PS3MAPIResponse.parse(
+                sendAndRecv("PROCESS GETNAME $s") ?: continue
+            )
+            process.add(Process.create(response1, s))
         }
+        if (process.size > 0) {
+            this._processes = process
+            listener.onProcessReceived(PS3MAPIResponse.Code.REQUESTSUCCESSFUL, process)
+        }
+        return process
+    }
 
     private val job = Job()
 
@@ -65,7 +64,7 @@ class PS3MAPIImpl(
         get() = Dispatchers.IO + job
 
 
-    override fun openDataSocket() {
+    override suspend fun openDataSocket() {
         try {
             sendAndRecv("PASV")?.let { response ->
                 val pav = PS3MAPIResponse.parse(response)
@@ -121,11 +120,11 @@ class PS3MAPIImpl(
     }
 
 
-    override fun onJMAPIError(error: String?) {
+    override fun onError(error: String?) {
 
     }
 
-    override fun onJMAPIResponse(
+    override fun onResponse(
         ps3Op: PS3MAPI.PS3OP?,
         responseCode: PS3MAPIResponse.Code?,
         message: String?
@@ -133,11 +132,11 @@ class PS3MAPIImpl(
 
     }
 
-    override fun onJMAPIPS3Process(responseCode: PS3MAPIResponse.Code?, processes: List<Process>?) {
+    override fun onProcessReceived(responseCode: PS3MAPIResponse.Code?, processes: List<Process>?) {
 
     }
 
-    override fun onJMAPITemperature(
+    override fun onTemperatureReceived(
         responseCode: PS3MAPIResponse.Code?,
         temperature: Temperature?
     ) {

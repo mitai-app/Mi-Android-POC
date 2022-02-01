@@ -3,6 +3,7 @@ package io.vonley.mi.di.network.protocols.common
 import io.vonley.mi.base.BaseClient
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.protocols.common.cmds.Boot
+import io.vonley.mi.di.network.protocols.common.cmds.Buzzer
 import io.vonley.mi.models.enums.Feature
 import okhttp3.Callback
 import okhttp3.Headers
@@ -15,15 +16,16 @@ import java.io.PrintWriter
 import java.net.Socket
 
 interface PSXNotify {
-    fun notify(message: String)
+    suspend fun notify(message: String)
 }
 
 interface PSXSystem {
-    fun boot(ps3boot: Boot)
-    fun refresh()
-    fun insert()
-    fun eject()
-    fun unmount()
+    suspend fun boot(ps3boot: Boot)
+    suspend fun buzzer(buzz: Buzzer)
+    suspend fun refresh()
+    suspend fun insert()
+    suspend fun eject()
+    suspend fun unmount()
 }
 
 interface PSXProtocol : PSXNotify, PSXSystem, BaseClient {
@@ -43,7 +45,7 @@ interface PSXProtocol : PSXNotify, PSXSystem, BaseClient {
     val feature: Feature
     val socket: Socket
 
-    fun sendAndRecv(data: String?): String? {
+    suspend fun sendAndRecv(data: String?): String? {
         return try {
             send(data)
             recv()
@@ -53,7 +55,7 @@ interface PSXProtocol : PSXNotify, PSXSystem, BaseClient {
         }
     }
 
-    fun send(data: String?) {
+    suspend fun send(data: String?) {
         try {
             val pw = PrintWriter(socket.getOutputStream())
             pw.println(data)
@@ -63,13 +65,22 @@ interface PSXProtocol : PSXNotify, PSXSystem, BaseClient {
         }
     }
 
-    fun recv(): String? {
+    suspend fun recv(): String? {
         return try {
             val br = BufferedReader(InputStreamReader(socket.getInputStream()))
             br.readLine()
         } catch (ex: Exception) {
             ex.printStackTrace()
             null
+        }
+    }
+
+    suspend fun recvAll(): ByteArray {
+        return try {
+            socket.getInputStream().readBytes()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            ByteArray(0)
         }
     }
 
@@ -80,7 +91,7 @@ interface PSXProtocol : PSXNotify, PSXSystem, BaseClient {
         }
     }
 
-    override fun refresh() {
+    override suspend fun refresh() {
         service.target?.let { target ->
             if (Feature.WEBMAN in target.features) {
                 val url = ("http://${target.ip}:80/refresh.ps3")
@@ -88,7 +99,7 @@ interface PSXProtocol : PSXNotify, PSXSystem, BaseClient {
         }
     }
 
-    override fun insert() {
+    override suspend fun insert() {
         service.target?.let { target ->
             if (Feature.WEBMAN in target.features) {
                 val url = ("http://${target.ip}:80/insert.ps3")
@@ -96,7 +107,7 @@ interface PSXProtocol : PSXNotify, PSXSystem, BaseClient {
         }
     }
 
-    override fun eject() {
+    override suspend fun eject() {
         service.target?.let { target ->
             if (Feature.WEBMAN in target.features) {
                 val url = ("http://${target.ip}:80/eject.ps3")
@@ -104,7 +115,7 @@ interface PSXProtocol : PSXNotify, PSXSystem, BaseClient {
         }
     }
 
-    override fun unmount() {
+    override suspend fun unmount() {
         service.target?.let { target ->
             if (Feature.WEBMAN in target.features) {
                 val url = ("http://${target.ip}:80/mount.ps3/unmount")

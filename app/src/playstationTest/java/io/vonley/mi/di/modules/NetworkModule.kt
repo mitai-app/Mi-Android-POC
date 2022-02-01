@@ -21,7 +21,7 @@ import io.vonley.mi.di.network.impl.PSXServiceImpl
 import io.vonley.mi.di.network.impl.SyncServiceImpl
 import io.vonley.mi.di.network.protocols.ccapi.CCAPIImpl
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIImpl
-import io.vonley.mi.di.network.protocols.webman.WebManImpl
+import io.vonley.mi.di.network.protocols.webman.WebManImplTest
 import io.vonley.mi.persistence.AppDatabase
 import io.vonley.mi.utils.SharedPreferenceManager
 import okhttp3.Cache
@@ -52,8 +52,8 @@ object NetworkModule {
     fun provideWebManService(
         service: PSXService,
         @ApplicationContext context: Context
-    ): WebManImpl {
-        return WebManImpl(service, context.assets)
+    ): WebManImplTest {
+        return WebManImplTest(service, context.assets)
     }
 
     @Provides

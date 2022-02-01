@@ -3,11 +3,10 @@ package io.vonley.mi.di.network.protocols.webman
 
 import android.os.Environment
 import android.util.Log
-import androidx.lifecycle.LiveData
 import io.vonley.mi.di.network.impl.get
 import io.vonley.mi.di.network.protocols.common.PSXProtocol
 import io.vonley.mi.di.network.protocols.common.cmds.Boot
-import io.vonley.mi.di.network.protocols.common.models.Process
+import io.vonley.mi.di.network.protocols.common.cmds.Buzzer
 import io.vonley.mi.models.enums.Feature
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
@@ -33,7 +32,12 @@ enum class GameType {
  * this will be fun...
  */
 
-enum class Setup(val title: String, val param: String, value: KClass<*>, vararg coupled: CoupledSetup) {
+enum class Setup(
+    val title: String,
+    val param: String,
+    value: KClass<*>,
+    vararg coupled: CoupledSetup
+) {
     //region Scan these devices
     USB0("USB000", "u0", Boolean::class),
     USB1("USB001", "u1", Boolean::class),
@@ -54,6 +58,7 @@ enum class Setup(val title: String, val param: String, value: KClass<*>, vararg 
     BLU("Blu-ray", "blu", Boolean::class),
     RXV("Show Video Folder", "rxv", Boolean::class),
     DVD("DVD Video", "dvd", Boolean::class),
+
     //endregion
     LastPlayed("Load last-played game on startup", "lp", Boolean::class), //0,1
     EnableOnStartup(
@@ -146,6 +151,7 @@ enum class Setup(val title: String, val param: String, value: KClass<*>, vararg 
     l: 0
      */
 }
+
 enum class CoupledSetup(title: String, param: String, kClass: KClass<*>) {
     CheckForOnStartup("Check for %s on startup", "autop", String::class), //text
     DisableRemoteAccessToFTPWWWServices(
@@ -170,10 +176,6 @@ interface WebMan : PSXProtocol {
     private val _socket: Socket? get() = service[service.target!!, feature]
     override val socket: Socket get() = _socket!!
 
-    val processes: List<Process>
-    val liveProcesses: LiveData<List<Process>>
-    var attached: Boolean
-    var process: Process?
     val TAG: String get() = WebMan::class.java.name
 
 
@@ -183,7 +185,6 @@ interface WebMan : PSXProtocol {
     @Throws(IOException::class)
     suspend fun searchGames(): Map<GameType, List<Game>> {
         val xml: String = gameUrl
-        Log.e(TAG, xml)
         val file = download(xml)?.string() ?: return EnumMap(GameType::class.java)
         val document = Jsoup.parse(file, "", Parser.xmlParser())
         return hashMapOf(
@@ -421,14 +422,24 @@ interface WebMan : PSXProtocol {
                 s.lowercase().contains("rsx")
     }
 
-    override fun notify(message: String) {
+    override suspend fun notify(message: String) {
         val replace = URLEncoder.encode(message, "UTF-8").replace("+", "%20")
         val url = "http://${service.targetIp}:80/popup.ps3/$replace";
         download(url)
     }
 
+    override suspend fun buzzer(buzz: Buzzer) {
+        val ip = service.targetIp
+        val ordinal = when (buzz) {
+            Buzzer.CONTINUOUS -> Buzzer.TRIPLE.ordinal
+            else -> buzz.ordinal
+        }
+        val url = "http://$ip:80/buzzer.ps3mapi?mode=${ordinal}"
+        getRequest(url)
+    }
 
-    override fun boot(ps3boot: Boot) {
+
+    override suspend fun boot(ps3boot: Boot) {
         val ip = service.targetIp
         val url = when (ps3boot) {
             Boot.REBOOT -> "http://$ip:80/restart.ps3"
@@ -444,22 +455,22 @@ interface WebMan : PSXProtocol {
         return exists("http://${service.targetIp}:80/index.ps3")
     }
 
-    override fun refresh() {
+    override suspend fun refresh() {
         val url = ("http://${service.targetIp}:80/refresh.ps3")
         download(url)
     }
 
-    override fun insert() {
+    override suspend fun insert() {
         val url = ("http://${service.targetIp}:80/insert.ps3")
         download(url)
     }
 
-    override fun eject() {
+    override suspend fun eject() {
         val url = ("http://${service.targetIp}:80/eject.ps3")
         download(url)
     }
 
-    override fun unmount() {
+    override suspend fun unmount() {
         val url = ("http://${service.targetIp}:80/mount.ps3/unmount")
         download(url)
     }
