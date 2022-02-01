@@ -65,9 +65,11 @@ class PSXServiceImpl @Inject constructor(
             launch {
                 val feats = filter.map { feature -> this@PSXServiceImpl[target] = feature; feature }
                     .filter { this@PSXServiceImpl[target, it] != null }
-                synchronized(_features) {
-                    _features.value = feats
-                    _features.notifyAll()
+                withContext(Dispatchers.Main) {
+                    synchronized(_features) {
+                        _features.value = feats
+                        _features.notifyAll()
+                    }
                 }
             }
         }

@@ -54,7 +54,9 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
     @Inject
     lateinit var adapter: FTPRecyclerAdapter
 
-    private lateinit var binding: FragmentFTPBinding
+    private var _binding: FragmentFTPBinding? = null
+
+    private val binding get() = _binding!!
 
     private val contentResolver: ContentResolver
         get() = requireContext().contentResolver
@@ -76,7 +78,7 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFTPBinding.inflate(inflater, container, false)
+        _binding = FragmentFTPBinding.inflate(inflater, container, false)
         binding.recycler.adapter = adapter
         binding.recycler.addOnItemTouchListener(touch)
         binding.recycler.addOnChildAttachStateChangeListener(attach)
@@ -100,6 +102,7 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
     override fun onDestroyView() {
         presenter.cleanup()
         super.onDestroyView()
+        _binding = null
     }
 
     override fun onFTPDirOpened(files: Array<out FTPFile>) {

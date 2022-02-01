@@ -1,9 +1,11 @@
 package io.vonley.mi.models
 
 import android.util.Log
-import io.vonley.mi.models.enums.PlatformType
+import io.vonley.mi.di.network.SyncService
+import io.vonley.mi.di.network.impl.get
+import io.vonley.mi.di.network.impl.set
 import io.vonley.mi.models.enums.Feature
-import okhttp3.internal.closeQuietly
+import io.vonley.mi.models.enums.PlatformType
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -39,24 +41,44 @@ interface Client {
         }
     }
 
-    fun getActivePorts(): List<Int> {
-        val ports = Feature.values().filter { f -> f != Feature.NETCAT && f != Feature.GOLDENHEN}.map { f -> f.ports }.flatMap { it.iterator().asSequence() }
-            .filter { f -> f > 0 }.toTypedArray()
-        val result = ports.map { port ->
+    fun getActivePorts(service: SyncService): List<Feature> {
+        val features =
+            Feature.values().filter { f -> f != Feature.NETCAT && f != Feature.GOLDENHEN }
+                //.map { f -> f.ports }
+                //.flatMap { it.iterator().asSequence() }
+                .filter { f -> f.ports.first() > 0 }.toTypedArray()
+
+        val allowed = arrayOf(Feature.CCAPI, Feature.WEBMAN, Feature.PS3MAPI)
+        val result = features.mapNotNull features@{ feature ->
             try {
-                Log.i("[Client:CheckPort]", "Checking ${ip}:$port")
-                val socket = Socket()
-                val socketAddress = InetSocketAddress(ip, port)
-                socket.connect(socketAddress, 1000)
-                if (socket.isConnected) {
-                    Log.i("Client:Connected", "${ip}:$port is active")
-                    socket.closeQuietly()
-                    return@map port
+                if (feature in allowed) {
+                    service[this] = feature
+                    if (service[this, feature] != null) {
+                        return@features feature
+                    } else return@features Feature.NONE
+                } else {
+                    val map = feature.ports.toList().mapNotNull port@{ port ->
+                        try {
+                            Log.i("[Client:CheckPort]", "Checking ${ip}:$port")
+                            val socket = Socket()
+                            val socketAddress = InetSocketAddress(ip, port)
+                            socket.connect(socketAddress, 1000)
+                            if (socket.isConnected) {
+                                Log.i("Client:Connected", "${ip}:$feature is active")
+                                socket.close()
+                                return@port feature
+                            }
+                        } catch (e: Throwable) {
+                            Log.e("[Client:FailToConnect]", "${ip}:$feature ")
+                        }
+                        return@port Feature.NONE
+                    }.distinct().firstOrNull()
+                    return@features map
                 }
             } catch (e: Throwable) {
-                Log.e("[Client:FailedToConnect]", "${ip}:$port ")
+                Log.e("[Client:FailToConnect]", "${ip}:$feature ")
             }
-            return@map 0
+            return@features Feature.NONE
         }.distinct()
         return result
     }

@@ -27,7 +27,7 @@ enum class GameType {
 }
 
 
-interface WebManProtocol : PSXProtocol {
+interface WebMan : PSXProtocol {
 
     override val feature: Feature get() = Feature.WEBMAN
     private val _socket: Socket? get() = service[service.target!!, feature]
@@ -37,14 +37,14 @@ interface WebManProtocol : PSXProtocol {
     val liveProcesses: LiveData<List<Process>>
     var attached: Boolean
     var process: Process?
-    val TAG: String get() = WebManProtocol::class.java.name
+    val TAG: String get() = WebMan::class.java.name
 
 
     private val gameUrl: String
         get() = "http://${service.targetIp}/dev_hdd0/xmlhost/game_plugin/mygames.xml"
 
     @Throws(IOException::class)
-    fun searchGames(): Map<GameType, List<Game>> {
+    suspend fun searchGames(): Map<GameType, List<Game>> {
         val xml: String = gameUrl
         Log.e(TAG, xml)
         val file = download(xml)?.string() ?: return EnumMap(GameType::class.java)

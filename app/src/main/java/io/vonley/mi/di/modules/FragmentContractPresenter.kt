@@ -4,14 +4,19 @@ import android.app.Application
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.scopes.FragmentScoped
+import io.vonley.mi.di.network.SyncService
 import io.vonley.mi.di.repository.ConsoleRepository
+import io.vonley.mi.ui.main.MainContract
 import io.vonley.mi.ui.main.console.ConsoleFragment
 import io.vonley.mi.ui.main.console.ConsoleViewModel
+import io.vonley.mi.ui.main.console.adapters.ConsoleRecyclerAdapter
+import io.vonley.mi.ui.main.console.sheets.ConsoleOptionSheetFragment
 import io.vonley.mi.ui.main.ftp.FTPFragment
 import io.vonley.mi.ui.main.home.HomeFragment
 import io.vonley.mi.ui.main.payload.PayloadFragment
@@ -47,6 +52,11 @@ object FragmentContractPresenter {
     }
 
     @Provides
+    fun provideConsoleOptionSheetFragment(activity: Fragment): ConsoleOptionSheetFragment {
+        return if (activity is  ConsoleOptionSheetFragment) activity else ConsoleOptionSheetFragment()
+    }
+
+    @Provides
     @FragmentScoped
     fun provideConsoleViewModelFactory(
         application: Application,
@@ -62,6 +72,17 @@ object FragmentContractPresenter {
         factory: ConsoleViewModel.Factory
     ): ConsoleViewModel {
         return ViewModelProvider(fragment, factory)[ConsoleViewModel::class.java]
+    }
+
+    @Provides
+    @FragmentScoped
+    fun provideConsoleRecyclerAdapter(
+        view: MainContract.View,
+        service: SyncService,
+        sheet: ConsoleOptionSheetFragment,
+        fragment: ConsoleFragment
+    ): ConsoleRecyclerAdapter {
+        return ConsoleRecyclerAdapter(view, service, sheet, fragment.childFragmentManager)
     }
 
 }

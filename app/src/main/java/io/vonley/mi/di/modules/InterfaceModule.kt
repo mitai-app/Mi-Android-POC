@@ -12,6 +12,12 @@ import io.vonley.mi.di.network.impl.MiFTPClientImpl
 import io.vonley.mi.di.network.impl.MiServerImpl
 import io.vonley.mi.di.network.impl.SyncServiceImpl
 import io.vonley.mi.di.network.impl.PSXServiceImpl
+import io.vonley.mi.di.network.protocols.ccapi.CCAPI
+import io.vonley.mi.di.network.protocols.ccapi.CCAPIImpl
+import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPI
+import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIImpl
+import io.vonley.mi.di.network.protocols.webman.WebMan
+import io.vonley.mi.di.network.protocols.webman.WebManImpl
 import javax.inject.Singleton
 
 
@@ -22,6 +28,18 @@ abstract class InterfaceModule {
     @Binds
     @Singleton
     abstract fun bindMiFtpClientService(impl: MiFTPClientImpl): MiFTPClient
+
+    @Binds
+    @Singleton
+    abstract fun bindCCAPIService(impl: CCAPIImpl): CCAPI
+
+    @Binds
+    @Singleton
+    abstract fun bindWebManService(impl: WebManImpl): WebMan
+
+    @Binds
+    @Singleton
+    abstract fun bindPS3MAPIService(impl: PS3MAPIImpl): PS3MAPI
 
     @Binds
     @Singleton

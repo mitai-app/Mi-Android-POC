@@ -22,6 +22,7 @@ class PS3MAPIImpl(
     var server: ServerSocket? = null
     var data_sock: Socket? = null
 
+    override var authed: Boolean = false
     override val listener: PS3MAPI.Listener = this
     private var _liveProcesses = MutableLiveData<List<Process>>()
     override val liveProcesses: LiveData<List<Process>> get() = _liveProcesses
@@ -43,11 +44,11 @@ class PS3MAPIImpl(
         get() {
             val process: ArrayList<Process> = ArrayList<Process>()
             val text = "PROCESS GETALLPID"
-            val (_, response, code) = PS3MAPIResponse.parse(super.send(text) ?: return emptyList())
+            val (_, response, code) = PS3MAPIResponse.parse(sendAndRecv(text) ?: return emptyList())
             for (s in response.split("\\|".toRegex()).toTypedArray()) {
                 if (s == "0") continue
                 val (_, response1, _) = PS3MAPIResponse.parse(
-                    super.send("PROCESS GETNAME $s") ?: continue
+                    sendAndRecv("PROCESS GETNAME $s") ?: continue
                 )
                 process.add(Process.create(response1, s))
             }
@@ -66,7 +67,7 @@ class PS3MAPIImpl(
 
     override fun openDataSocket() {
         try {
-            send("PASV")?.let { response ->
+            sendAndRecv("PASV")?.let { response ->
                 val pav = PS3MAPIResponse.parse(response)
                 val start: Int = pav.response.indexOf("(") + 1
                 val end: Int = pav.response.indexOf(")")

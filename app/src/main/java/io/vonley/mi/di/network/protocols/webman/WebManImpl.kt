@@ -8,7 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-class WebManImpl(override val service: PSXService) : WebManProtocol {
+class WebManImpl(override val service: PSXService) : WebMan {
 
     private val _liveProcesses = MutableLiveData<List<Process>>()
 

@@ -56,7 +56,8 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         get() = requireContext().contentResolver
 
     private lateinit var startForResult: ActivityResultLauncher<Intent>
-    private lateinit var binding: FragmentPayloadBinding
+    private var _binding: FragmentPayloadBinding? = null
+    private val binding get() = _binding!!
     private val payloadAdapter = PayloadAdapter()
 
     private var swipeCallback: ItemTouchHelper.SimpleCallback = object :
@@ -115,7 +116,7 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPayloadBinding.inflate(inflater, container, false)
+        _binding = FragmentPayloadBinding.inflate(inflater, container, false)
         binding.recycler.adapter = payloadAdapter
         swipeTouchHelper.attachToRecyclerView(binding.recycler)
         binding.root.setOnRefreshListener(this)
@@ -140,6 +141,10 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
             } else this.pathSegments.last()
         }
 
+    override fun onDestroyView() {
+        _binding = null;
+        super.onDestroyView()
+    }
 
     override fun onActivityResult(result: ActivityResult) {
         if (result.resultCode == RESULT_OK) {

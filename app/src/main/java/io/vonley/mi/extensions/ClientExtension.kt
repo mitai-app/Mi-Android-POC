@@ -78,15 +78,10 @@ fun InetAddress.client(wi: WifiInfo): Client {
     }
 }
 
-fun Client.console(): Console? {
-    val actives = getActivePorts()
+fun Client.console(service: SyncService): Console? {
+    val actives = getActivePorts(service)
     if (actives.isNotEmpty()) {
-        val features = actives.map { port ->
-            val values =
-                Feature.values().filter { f -> f != Feature.NETCAT && f != Feature.GOLDENHEN }
-            val value = values.find { f -> f.ports.find { p -> p == port } == port }
-            return@map if (value != null) Feature.valueOf(value.name) else Feature.NONE
-        }
+        val features = actives
         // TODO: For now we only recognize rpi and orbisapi ports, when stable it should perform
         // Since goldenhen bin loader isnt that stable, we cant really keep doing requests on it
         // It will eventually lock and wont be able to connect or goldenhen will be in a hang state

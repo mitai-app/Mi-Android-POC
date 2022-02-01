@@ -7,10 +7,15 @@ import android.text.format.Formatter
 import io.vonley.mi.di.network.handlers.ClientHandler
 import io.vonley.mi.di.network.listeners.OnConsoleListener
 import io.vonley.mi.models.Client
+import io.vonley.mi.di.network.impl.SyncServiceImpl
 import io.vonley.mi.models.enums.Feature
 import kotlinx.coroutines.CoroutineScope
 import java.net.Socket
 
+/**
+ * Implementations are in this class
+ * @see SyncServiceImpl
+ */
 interface SyncService : CoroutineScope {
 
     val target: Client?

@@ -28,6 +28,30 @@ android {
         }
     }
 
+    externalNativeBuild {
+        ndkBuild {
+            path 'src/main/jni/Android.mk'
+        }
+    }
+    flavorDimensions 'playstation'
+    productFlavors {
+        playstation {
+            dimension 'playstation'
+            applicationId "io.vonley.mi"
+            externalNativeBuild.cmake {
+                cppFlags '-DPROD'
+            }
+
+        }
+        playstationTest {
+            dimension 'playstation'
+            applicationId "io.vonley.mi"
+            externalNativeBuild.cmake {
+                cppFlags '-DDEBUG'
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false

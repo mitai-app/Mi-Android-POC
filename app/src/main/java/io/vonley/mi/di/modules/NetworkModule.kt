@@ -12,14 +12,16 @@ import io.vonley.mi.di.annotations.AuthInterceptorOkHttpClient
 import io.vonley.mi.di.annotations.AuthRetrofitClient
 import io.vonley.mi.di.annotations.GuestRetrofitClient
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
-import io.vonley.mi.di.network.MiServer
-import io.vonley.mi.di.network.impl.MiServerImpl
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.SyncService
 import io.vonley.mi.di.network.auth.OAuth2Authenticator
 import io.vonley.mi.di.network.impl.MiFTPClientImpl
+import io.vonley.mi.di.network.impl.MiServerImpl
 import io.vonley.mi.di.network.impl.PSXServiceImpl
 import io.vonley.mi.di.network.impl.SyncServiceImpl
+import io.vonley.mi.di.network.protocols.ccapi.CCAPIImpl
+import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIImpl
+import io.vonley.mi.di.network.protocols.webman.WebManImpl
 import io.vonley.mi.persistence.AppDatabase
 import io.vonley.mi.utils.SharedPreferenceManager
 import okhttp3.Cache
@@ -36,6 +38,31 @@ object NetworkModule {
 
     const val LOG = true
     const val BASE_URL = "http://192.168.1.45"
+
+    @Provides
+    @Singleton
+    fun provideCCAPIService(
+        service: PSXService,
+    ): CCAPIImpl {
+        return CCAPIImpl(service)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWebManService(
+        service: PSXService,
+    ): WebManImpl {
+        return WebManImpl(service)
+    }
+
+    @Provides
+    @Singleton
+    fun providePS3MAPIService(
+        service: PSXService,
+    ): PS3MAPIImpl {
+        return PS3MAPIImpl(service)
+    }
+
 
     @Provides
     @Singleton

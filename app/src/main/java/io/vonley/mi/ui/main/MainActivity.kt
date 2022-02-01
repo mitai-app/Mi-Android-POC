@@ -46,7 +46,8 @@ class MainActivity : AppCompatActivity(), MainContract.View,
     lateinit var presenter: MainContract.Presenter
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityMainBinding
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
     private lateinit var navHostFragment: NavHostFragment
     private val navController: NavController
         get() {
@@ -59,7 +60,7 @@ class MainActivity : AppCompatActivity(), MainContract.View,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.bottomAppBar)
         this.navHostFragment =
@@ -186,6 +187,11 @@ class MainActivity : AppCompatActivity(), MainContract.View,
 
     private val onHomeClick: View.OnClickListener = View.OnClickListener {
         currentView<HomeContract.View>()?.openInfoDialog()
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 
     override fun onDestinationChanged(

@@ -1,7 +1,10 @@
 package io.vonley.mi.di.network.impl
 
 import android.content.Context
-import android.net.*
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkInfo
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
@@ -24,9 +27,11 @@ import io.vonley.mi.persistence.AppDatabase
 import io.vonley.mi.utils.SharedPreferenceManager
 import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
+import java.net.ConnectException
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 
@@ -65,7 +70,7 @@ class SyncServiceImpl constructor(
     //region Override
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
-    private val cachedTargets = hashMapOf<String, HashMap<Feature, Socket>>()
+    private val cachedTargets = hashMapOf<String, EnumMap<Feature, Socket>>()
 
 
     override fun getSocket(client: Client, feature: Feature): Socket? {
@@ -74,18 +79,33 @@ class SyncServiceImpl constructor(
 
     override fun createSocket(client: Client, feature: Feature): Socket? {
         if (!cachedTargets.containsKey(client.ip)) {
-            cachedTargets[client.ip] = hashMapOf()
+            cachedTargets[client.ip] = EnumMap<Feature, Socket>(Feature::class.java)
         }
         if (!cachedTargets[client.ip]!!.containsKey(feature)) {
-            for(port in feature.ports){
-                try{
+            for (port in feature.ports) {
+                try {
                     val socket = Socket()
                     socket.connect(InetSocketAddress(client.ip, port), 2000)
-                    cachedTargets[client.ip]!![feature] = socket
-                    break;
-                }catch (e: Throwable){
+                    if (socket.isConnected) {
+                        cachedTargets[client.ip]!![feature] = socket
+                        break;
+                    }
+                } catch (con: ConnectException) {
+                    Log.e(TAG, con.message ?: "Unable to connect")
+                } catch (e: Throwable) {
                     Log.e(TAG, "port failed", e)
                 }
+            }
+        }
+        var socket = cachedTargets[client.ip]?.get(feature)
+        if (socket != null && socket.isClosed) {
+            try {
+                val lastPort: Int = socket.port
+                socket = Socket()
+                socket.connect(InetSocketAddress(client.ip, lastPort))
+                cachedTargets[client.ip]!![feature] = socket
+            } catch (e: Throwable) {
+                cachedTargets[client.ip]!![feature] = null
             }
         }
         return cachedTargets[client.ip]!![feature]
@@ -228,6 +248,16 @@ class SyncServiceImpl constructor(
                 handler.listeners.clear()
             }
         }
+        cachedTargets.onEach { entry ->
+            val ip = entry.key
+            entry.value.onEach { entryFeature ->
+                val feature = entryFeature.key
+                val socket = entryFeature.value
+                if (socket.isConnected) {
+                    socket.close()
+                }
+            }
+        }.clear()
     }
 
     /**
@@ -241,7 +271,7 @@ class SyncServiceImpl constructor(
             val prefix = localDeviceIp.substring(0, localDeviceIp.lastIndexOf(".") + 1)
             Log.i(TAG, "[Local IP Prefix] $prefix")
             val consoles = clients
-                .mapNotNull { client -> client.console() }
+                .mapNotNull { client -> client.console(this) }
                 .filter { client -> client.features.isNotEmpty() }
             launch {
                 withContext(Dispatchers.Main) {
@@ -339,10 +369,10 @@ operator fun <T : ClientHandler> SyncService.get(clazz: Class<T>): T {
     return handlers[clazz] as T
 }
 
-operator fun <T: Client> SyncService.set(client: T, feature: Feature): Socket? {
+operator fun <T : Client> SyncService.set(client: T, feature: Feature): Socket? {
     return createSocket(client, feature)
 }
 
-operator fun <T: Client> SyncService.get(client: T, feature: Feature): Socket? {
+operator fun <T : Client> SyncService.get(client: T, feature: Feature): Socket? {
     return getSocket(client, feature)
 }

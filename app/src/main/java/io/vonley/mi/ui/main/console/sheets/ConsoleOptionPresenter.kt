@@ -8,7 +8,7 @@ import javax.inject.Inject
 class ConsoleOptionPresenter @Inject constructor(
     val view: ConsoleOptionContract.View,
     val service: PSXService
-) : BasePresenter(), BaseContract.Presenter {
+) : BasePresenter(), ConsoleOptionContract.Presenter {
 
 
     override fun init() {

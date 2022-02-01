@@ -36,7 +36,9 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
     @Inject
     lateinit var presenter: ConsoleContract.Presenter
 
-    lateinit var binding: FragmentConsoleBinding
+    private var _binding: FragmentConsoleBinding? = null
+
+    private val binding get() = _binding!!
 
     private var swipeCallback: ItemTouchHelper.SimpleCallback = object :
         ItemTouchHelper.SimpleCallback(
@@ -70,14 +72,12 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentConsoleBinding.inflate(inflater, container, false)
-        vm.consoles.observe(viewLifecycleOwner, {
+        _binding = FragmentConsoleBinding.inflate(inflater, container, false)
+        vm.consoles.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 adapter.setData(it)
-            } else {
-
             }
-        })
+        }
         binding.consoleRecycler.adapter = adapter
         swipeTouchHelper.attachToRecyclerView(binding.consoleRecycler)
         mainView?.setSummary(presenter.getTargetSummary)
@@ -97,6 +97,11 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
     override fun onResume() {
         super.onResume()
         presenter.init()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onClientsFound(clients: List<Client>) = Unit

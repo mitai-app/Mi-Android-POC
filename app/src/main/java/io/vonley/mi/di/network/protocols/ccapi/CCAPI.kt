@@ -39,7 +39,7 @@ class CCAPIException(error: CCAPIERROR, errorMsg: String) : Throwable() {
     }
 }
 
-interface CCAPIProtocol : PSXProtocol {
+interface CCAPI : PSXProtocol {
 
 
     /**
@@ -59,7 +59,7 @@ interface CCAPIProtocol : PSXProtocol {
     val liveProcesses: LiveData<List<Process>>
     var attached: Boolean
     var process: Process?
-    val TAG: String get() = CCAPIProtocol::class.java.name
+    val TAG: String get() = CCAPI::class.java.name
 
     val urlStub get() = "http://${service.targetIp}:${feature.ports.first()}/ccapi/"
 

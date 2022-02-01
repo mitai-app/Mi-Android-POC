@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.vonley.mi.R
@@ -14,11 +15,14 @@ import io.vonley.mi.models.Console
 import io.vonley.mi.models.activeFeatures
 import io.vonley.mi.models.featureString
 import io.vonley.mi.ui.main.MainContract
+import io.vonley.mi.ui.main.console.sheets.ConsoleOptionSheetFragment
 import javax.inject.Inject
 
 class ConsoleRecyclerAdapter @Inject constructor(
     val view: MainContract.View,
-    val sync: SyncService
+    val sync: SyncService,
+    val sheet: ConsoleOptionSheetFragment,
+    val manager: FragmentManager
 ) : RecyclerView.Adapter<ConsoleRecyclerAdapter.ConsoleViewHolder>() {
 
     private var consoles = emptyList<Console>()
@@ -56,6 +60,7 @@ class ConsoleRecyclerAdapter @Inject constructor(
             sync.setTarget(console)
             view.setSummary("Current Target: ${console.name}, w/ ${console.featureString}")
             Toast.makeText(itemView.context, "Target set!", Toast.LENGTH_SHORT).show()
+            sheet.show(manager, sheet.tag)
         }
 
         fun setConsole(console: Client) {

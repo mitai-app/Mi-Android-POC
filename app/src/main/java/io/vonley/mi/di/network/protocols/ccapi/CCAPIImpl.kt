@@ -8,7 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-class CCAPIImpl(override val service: PSXService) : CCAPIProtocol {
+class CCAPIImpl(override val service: PSXService) : CCAPI {
 
     private val _processes =  arrayListOf<Process>()
     override val processes: List<Process>
