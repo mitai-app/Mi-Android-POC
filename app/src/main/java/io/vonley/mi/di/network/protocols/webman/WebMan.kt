@@ -26,6 +26,83 @@ enum class GameType {
     PS3, PSP, PS2, PSX, QUERY
 }
 
+/**
+ * Need Parse Settings App with jsoup,
+ * Then decode these params into readable human text
+ * this will be fun...
+ */
+enum class Setup {
+    /**
+     * u0: 1
+    u1: 1
+    u2: 1
+    u3: 1
+    u6: 1
+    u7: 1
+    ps3: 1
+    ps2: 1
+    p2l: 1
+    ps1: 1
+    pse: 1
+    psp: 1
+    psl: 1
+    blu: 1
+    rxv: 1
+    dvd: 1
+    lp: 1
+    autop: /dev_hdd0/PS3ISO/AUTOBOOT.ISO
+    pl: 1
+    np: 1
+    aip: 192.168.1.229
+    nsp: 1
+    tid: 1
+    fc: 1
+    temp: 0
+    step: 60
+    mfan: 25
+    manu: 80
+    fsp0: 37
+    neth0: 127.0.0.1
+    netp0: 38008
+    neth1:
+    netp1: 38008
+    neth2:
+    netp2: 38008
+    b: 0
+    s: 3
+    id1: 1
+    vID1: IDPS
+    vID2: IDPS
+    id2: 1
+    vPS1: PSID
+    vPS2: PSID
+    hurl:
+    usr: 0
+    uacc: 00000001
+    fp: 1
+    l: 0
+    pfs: 1
+    pss: 1
+    ppv: 1
+    pnx: 1
+    pdf: 1
+    umt: 1
+    psv: 1
+    pgd: 1
+    pxr: 1
+    pid: 1
+    psd: 1
+    prs: 1
+    puw: 1
+    pf1: 1
+    pf2: 1
+    psc: 1
+    pn0: 1
+    pn1: 1
+    p2c: 1
+     */
+}
+
 
 interface WebMan : PSXProtocol {
 

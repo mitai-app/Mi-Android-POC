@@ -9,7 +9,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.vonley.mi.databinding.FragmentConsoleOptionSheetBinding
 import io.vonley.mi.ui.main.console.ConsoleContract
-import io.vonley.mi.ui.main.console.adapters.ConsoleOptionRecyclerAdapter
+import io.vonley.mi.ui.main.console.sheets.adapters.ConsoleOptionRecyclerAdapter
 import javax.inject.Inject
 
 
@@ -45,17 +45,6 @@ class ConsoleOptionSheetFragment : BottomSheetDialogFragment(), ConsoleOptionCon
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.list.layoutManager = GridLayoutManager(context, 1)
         binding.list.adapter = adapter
-    }
-
-    companion object {
-
-        fun newInstance(): ConsoleOptionSheetFragment =
-            ConsoleOptionSheetFragment().apply {
-                arguments = Bundle().apply {
-                    //putInt(ARG_ITEM_COUNT, itemCount)
-                }
-            }
-
     }
 
     override fun onDestroyView() {

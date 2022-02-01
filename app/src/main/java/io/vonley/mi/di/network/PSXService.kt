@@ -50,20 +50,6 @@ interface PSXService : BaseClient, SyncService {
         val body: RequestBody = file.toRequestBody()
         Log.e("URL", url)
         post(url, body, Headers.headersOf(), callback)
-        /*
-        if (target!!.features.contains(Feature.GOLDENHEN)) {
-            Feature.GOLDENHEN.ports.map { "$ip:$it" }.onEach { url ->
-                val body: RequestBody = file.toRequestBody()
-                Log.e("URL", url)
-                post(url, body, Headers.headersOf(), callback)
-            }
-        } else if (target!!.features.contains(Feature.ORBISAPI)) {
-            Feature.ORBISAPI.ports.map { "$ip:$it" }.onEach { url ->
-                val body: RequestBody = file.toRequestBody()
-                Log.e("URL", url)
-                post(url, body, Headers.headersOf(), callback)
-            }
-        }*/
     }
 
     /**
@@ -75,29 +61,9 @@ interface PSXService : BaseClient, SyncService {
         val body: RequestBody = file.asRequestBody()
         Log.e("URL", url)
         post(url, body, Headers.headersOf(), callback)
-        /*
-        if (target!!.features.contains(Feature.GOLDENHEN)) {
-            Feature.GOLDENHEN.ports.map { "$ip:$it" }.onEach { url ->
-                val body: RequestBody = file.asRequestBody()
-                Log.e("URL", url)
-                post(url, body, Headers.headersOf(), callback)
-            }
-        } else if (target!!.features.contains(Feature.ORBISAPI)) {
-            Feature.ORBISAPI.ports.map { "$ip:$it" }.onEach { url ->
-                val body: RequestBody = file.asRequestBody()
-                Log.e("URL", url)
-                post(url, body, Headers.headersOf(), callback)
-            }
-        }*/
     }
 
     fun uploadBin (server: MiServer, payloads: ArrayList<PayloadAdapter.Payload>, callback: PSXListener)
-
-    val job: Job
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO + job
-
 
 
     override fun cleanup() = sync.cleanup()
@@ -123,7 +89,9 @@ interface PSXService : BaseClient, SyncService {
 
     override val target: Client?
         get() = sync.target
-
+    val job: Job
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.IO + job
     override val wifiInfo: WifiInfo
         get() = sync.wifiInfo
     override val activeNetworkInfo: NetworkInfo?
