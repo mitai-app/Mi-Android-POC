@@ -1,44 +1,45 @@
-# ミ Mi - PS4 Remote Tool　
+# ミ Mi - PS4 & PS3 Remote Tool　
+Android App Developed by Vonley (formally Mr-Smithy-x)
 
-Android App Developed by Mr-Smithy-x
-
-- [Github: @Mr-Smithy-x](https://github.com/Mr-Smithy-x) 
+- [Github:  @vonley-io](https://github.com/vonley-io)
 - [Twitter: @MrSmithyx](https://twitter.com/MrSmithyx)
 - [Patreon: @MrSmithyx](https://patreon.com/MrSmithyx)
 
-## Steps:
-- Enter IP Address into PS4 
-- Clear PS4 cache, and all that jazz, Enter: http://{android_ip_here}:8080/ (on PS4)
-- Click that only hyperlink at the bottom
-- exploit will do exploity things, just wait as the app loads the payload (may take a while depending on connection)
-- Golden Hen will load from android app.
-
-# How to load consoles (2 Ways)
-- Once you jailbreak, and goldenhen is loaded, turn on ftp in goldenhen. Mi will automatically find the ps4.
-- You can create a new PS4, then click on the target
-
-## Features:
-- sleirsgoevy JB Host Server + mi.js helper, loads goldenhen 2.0b2
+## App Features:
+- sleirsgoevy JB Host(6.72, 7.02 7.5X, 9.00) + mi.js helper, loads goldenhen 2.1 upon jailbreak
 - Ability to send payload to goldenhen binloader port 9090 or Orbis API 6023
-- mi.js, just an extension for the android app to help send status updates to the android app
+- mi.js (an extension to help send status updates to the android app)
+- Can send payloads to GoldenHen.
+- FTP Manager + config
 
-- [X] Create Android JB Server in the background
-- [X] Load bin when jb finished
-- [X] Load Bin Payloads From Phone using Goldhen 2.0+ 9090
-- [X] Add 6.72, 7.02 7.5X, 9.00 jb hosts (thanks to sleirsgoevy repos)
-- [X] FTP Manager
-- [X] FTP Settings / Configurations
-- [x] Improve Overall Stability
+## Steps:
+- Clear PS4 cache
+- Enter: http://{android_ip_here}:8080/ (on PS4)
+- Click that only hyperlink at the bottom
+- Exploit will do exploity things, just wait as the app loads the payload (may take a while depending on connection)
+- Golden Hen v2.1 will load from android app.
 
-#  Automatically Includes (Through payload)
+## How to load consoles
+- Enable FTP on GoldenHen (port 2121)
+- OrbisAPI(port 6023)
+- Having CCAPI, PS3MAPI, WebMan Mod will allow the app to find the console.
+## OR
+- You can add a new console via the console page, then click on the target.
 
-## GoldHEN - PS4 Homebrew Enabler
+
+# GoldHEN - PS4 Homebrew Enabler 2.1
+
+## Changelog 2.1
+- Config file (/data/GoldHEN/config.ini)
+- Improved rest mode support
+- Added Klog Server 3232
+
 ## Features
 - Homebrew Enabler
 - Debug Settings
 - VR Support
 - Remote Package Install
-- Rest Mode Support
+- Rest Mode Support + improved in v2.1
 - External HDD Support
 - Official External HDD Format Support
 - Debug Trophies Support
@@ -54,21 +55,21 @@ Android App Developed by Mr-Smithy-x
 ### Credits
 
 Special thanks to ps4 dev scene:
-- [Specter](https://github.com/Cryptogenic) - research
-- [SiSTRo](https://github.com/SiSTR0) - golden hen
-- [golden](https://github.com/jogolden)  - research
-- [Joonie](https://github.com/Joonie86) - research
-- [Kameleon](https://github.com/KameleonReloaded) - research
-- [OSM](https://github.com/OSM-Made)  - research
-- [Al-Azif](https://github.com/Al-Azif)  - research
+- [Specter](https://github.com/Cryptogenic)
+- [SiSTRo](https://github.com/SiSTR0)
+- [golden](https://github.com/jogolden)
+- [Joonie](https://github.com/Joonie86)
+- [Kameleon](https://github.com/KameleonReloaded)
+- [OSM](https://github.com/OSM-Made) 
+- [Al-Azif](https://github.com/Al-Azif) 
 - [ChendoChap](https://github.com/ChendoChap)
-- [flat_z](https://github.com/flatz)  - research
-- [idc](https://github.com/idc)  - research
-- [kiwidoggie](https://github.com/kiwidoggie)  - research
-- [qwertyoruiop](https://twitter.com/qwertyoruiopz)  - research
-- [sleirsgoevy](https://github.com/sleirsgoevy) - research
-- [SocraticBliss](https://github.com/SocraticBliss) - research
-- [Vortex](https://github.com/xvortex) - research
-- [zecoxao](https://twitter.com/notzecoxao) - research
-- [Znullptr](https://github.com/dmiller423) - research
+- [flat_z](https://github.com/flatz) 
+- [idc](https://github.com/idc) 
+- [kiwidoggie](https://github.com/kiwidoggie) 
+- [qwertyoruiop](https://twitter.com/qwertyoruiopz) 
+- [sleirsgoevy](https://github.com/sleirsgoevy)
+- [SocraticBliss](https://github.com/SocraticBliss)
+- [Vortex](https://github.com/xvortex)
+- [zecoxao](https://twitter.com/notzecoxao)
+- [Znullptr](https://github.com/dmiller423)
 -  and others not mentions

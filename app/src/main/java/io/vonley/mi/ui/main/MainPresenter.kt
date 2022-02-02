@@ -16,7 +16,7 @@ class MainPresenter @Inject constructor(
     }
 
     override fun init() {
-        view.setTitle("ミ - PS4 Tool")
+        view.setTitle("ミ - PS4 & PS3 Remote Tool")
         view.setSummary("Current Target: none")
     }
 

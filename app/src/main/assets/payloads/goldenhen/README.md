@@ -34,8 +34,8 @@
 - FW Update Block
 - FTP Server on 2121 port
 - BinLoader Server on 9090 port
+- Klog Server on 3232 port
 - CE-30391-6 Error CMOS Fix
-
 ### :warning: Warnings
 
 The BinLoader server is in an experimental phase but in any case there are several payloads around, some even not very well done, which can also be harmful and in the best case only crash the console. So use it with caution.
