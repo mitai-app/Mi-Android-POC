@@ -82,6 +82,7 @@ fun Client.console(service: SyncService): Console? {
     val actives = openActivePorts(service)
     if (actives.isNotEmpty()) {
         val features = actives
+        features.e("FEATURES")
         // TODO: For now we only recognize rpi and orbisapi ports, when stable it should perform
         // Since goldenhen bin loader isnt that stable, we cant really keep doing requests on it
         // It will eventually lock and wont be able to connect or goldenhen will be in a hang state

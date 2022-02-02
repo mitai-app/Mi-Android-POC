@@ -77,12 +77,10 @@ interface Client {
                     } catch (e: Throwable) {
                         "$ip does not have $feature".e("Client:FailToConnect")
                     }
-                    return@port Feature.NONE
-                }.distinct().firstOrNull()
+                   Feature.NONE
+                }.distinct().firstOrNull{ p -> p != Feature.NONE }
                 return@features map
             }
-
-            return@features Feature.NONE
         }.distinct()
         return result
     }
