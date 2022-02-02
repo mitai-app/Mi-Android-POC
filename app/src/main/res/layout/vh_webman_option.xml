@@ -1,32 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="120dp"
-    android:layout_margin="4dp"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/material_red"
-    android:layout_height="210dp">
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardBackgroundColor="@color/dark_grey"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    app:cardPreventCornerOverlap="true">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/webman_game_cover"
-        android:layout_width="match_parent"
-        app:srcCompat="@mipmap/orb"
-        android:scaleType="centerCrop"
-        android:layout_height="160dp"/>
+    <RelativeLayout
+        android:id="@+id/webman_frame"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/webman_game_title"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/grey_darker"
-        android:textColor="@color/white"
-        android:layout_below="@id/webman_game_cover"
-        android:ellipsize="marquee"
-        android:textAlignment="center"
-        android:gravity="center"
-        android:padding="12dp"
-        android:singleLine="true"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        tools:text="Example" />
-</RelativeLayout>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/webman_game_cover"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            android:visibility="visible"
+            app:srcCompat="@mipmap/orb" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/webman_game_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/webman_game_cover"
+            android:layout_alignStart="@id/webman_game_cover"
+            android:layout_alignEnd="@id/webman_game_cover"
+            android:layout_alignParentStart="true"
+            android:background="@color/grey_darker"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:padding="12dp"
+            android:singleLine="true"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="Example" />
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

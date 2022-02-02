@@ -10,9 +10,9 @@ import dagger.hilt.android.scopes.FragmentScoped
 import io.vonley.mi.ui.main.console.ConsoleContract
 import io.vonley.mi.ui.main.console.ConsoleFragment
 import io.vonley.mi.ui.main.console.ConsolePresenter
-import io.vonley.mi.ui.main.console.sheets.ConsoleOptionContract
-import io.vonley.mi.ui.main.console.sheets.ConsoleOptionPresenter
-import io.vonley.mi.ui.main.console.sheets.ConsoleOptionSheetFragment
+import io.vonley.mi.ui.main.console.sheets.ProtocolContract
+import io.vonley.mi.ui.main.console.sheets.ProtocolPresenter
+import io.vonley.mi.ui.main.console.sheets.ProtocolSheetFragment
 import io.vonley.mi.ui.main.ftp.FTPContract
 import io.vonley.mi.ui.main.ftp.FTPFragment
 import io.vonley.mi.ui.main.ftp.FTPPresenter
@@ -64,11 +64,11 @@ abstract class FragmentPresenterModule {
 
     @Binds
     @FragmentScoped
-    abstract fun bindConsoleOptionSheetFragment(impl: ConsoleOptionSheetFragment): ConsoleOptionContract.View
+    abstract fun bindConsoleOptionSheetFragment(impl: ProtocolSheetFragment): ProtocolContract.View
 
     @Binds
     @FragmentScoped
-    abstract fun bindConsoleOptionPresenter(impl: ConsoleOptionPresenter): ConsoleOptionContract.Presenter
+    abstract fun bindConsoleOptionPresenter(impl: ProtocolPresenter): ProtocolContract.Presenter
 
     @Binds
     @FragmentScoped

@@ -15,13 +15,13 @@ import io.vonley.mi.models.Console
 import io.vonley.mi.models.activeFeatures
 import io.vonley.mi.models.featureString
 import io.vonley.mi.ui.main.MainContract
-import io.vonley.mi.ui.main.console.sheets.ConsoleOptionSheetFragment
+import io.vonley.mi.ui.main.console.sheets.ProtocolSheetFragment
 import javax.inject.Inject
 
 class ConsoleRecyclerAdapter @Inject constructor(
     val view: MainContract.View,
     val sync: SyncService,
-    val sheet: ConsoleOptionSheetFragment,
+    val sheet: ProtocolSheetFragment,
     val manager: FragmentManager
 ) : RecyclerView.Adapter<ConsoleRecyclerAdapter.ConsoleViewHolder>() {
 

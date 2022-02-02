@@ -14,10 +14,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-class GameSetAdapter(
+class WebmanGameSetAdapter(
     set: Map<GameType, List<Game>>,
     private val protocol: Webman,
-) : RecyclerView.Adapter<GameSetAdapter.GameSetViewHolder>(), CoroutineScope {
+) : RecyclerView.Adapter<WebmanGameSetAdapter.GameSetViewHolder>(), CoroutineScope {
 
     private val games = set.values.flatten()
 
@@ -44,7 +44,7 @@ class GameSetAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): GameSetAdapter.GameSetViewHolder {
+    ): WebmanGameSetAdapter.GameSetViewHolder {
         return GameSetViewHolder(
             VhWebmanOptionBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -55,7 +55,7 @@ class GameSetAdapter(
     }
 
 
-    override fun onBindViewHolder(holder: GameSetAdapter.GameSetViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: WebmanGameSetAdapter.GameSetViewHolder, position: Int) {
         holder.init(games[position])
     }
 

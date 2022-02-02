@@ -8,8 +8,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.vonley.mi.databinding.FragmentConsoleOptionSheetBinding
-import io.vonley.mi.ui.main.console.ConsoleContract
-import io.vonley.mi.ui.main.console.sheets.adapters.ConsoleOptionRecyclerAdapter
+import io.vonley.mi.ui.main.console.sheets.adapters.ProtocolRecyclerAdapter
 import javax.inject.Inject
 
 
@@ -23,7 +22,7 @@ import javax.inject.Inject
  * </pre>
  */
 @AndroidEntryPoint
-class ConsoleOptionSheetFragment : BottomSheetDialogFragment(), ConsoleOptionContract.View {
+class ProtocolSheetFragment : BottomSheetDialogFragment(), ProtocolContract.View {
 
     private var _binding: FragmentConsoleOptionSheetBinding? = null
 
@@ -32,7 +31,7 @@ class ConsoleOptionSheetFragment : BottomSheetDialogFragment(), ConsoleOptionCon
     private val binding get() = _binding!!
 
     @Inject
-    lateinit var adapter: ConsoleOptionRecyclerAdapter
+    lateinit var adapter: ProtocolRecyclerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

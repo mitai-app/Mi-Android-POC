@@ -1,9 +1,9 @@
-package io.vonley.mi.ui.main.console.sheets.adapters.views
+package io.vonley.mi.ui.main.console.sheets.views
 
 import androidx.recyclerview.widget.RecyclerView
 import io.vonley.mi.databinding.ViewWebmanBinding
 import io.vonley.mi.di.network.protocols.webman.Webman
-import io.vonley.mi.ui.main.console.sheets.adapters.GameSetAdapter
+import io.vonley.mi.ui.main.console.sheets.adapters.WebmanGameSetAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,7 +18,7 @@ class WebmanViewHolder(
         launch {
             val games = protocol.searchGames()
             withContext(Dispatchers.Main) {
-                binding.webmanRecycler.adapter = GameSetAdapter(games, protocol)
+                binding.webmanRecycler.adapter = WebmanGameSetAdapter(games, protocol)
             }
         }
     }

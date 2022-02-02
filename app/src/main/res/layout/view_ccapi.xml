@@ -10,36 +10,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="Webman Mod"
+        android:text="CCAPI"
         android:textAlignment="center"
         android:textFontWeight="900"
         android:textSize="32sp"
         android:textStyle="bold" />
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="Games"
+        android:text="Options"
         android:textAlignment="center"
         android:textFontWeight="600"
-        android:textSize="24sp"
+        android:textSize="18sp"
         android:textStyle="bold" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/webman_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="1"
-        tools:itemCount="6"
-        tools:listitem="@layout/vh_webman_option" />
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,14 +1,13 @@
 package io.vonley.mi.ui.main.console.sheets
 
-import io.vonley.mi.base.BaseContract
 import io.vonley.mi.base.BasePresenter
 import io.vonley.mi.di.network.PSXService
 import javax.inject.Inject
 
-class ConsoleOptionPresenter @Inject constructor(
-    val view: ConsoleOptionContract.View,
+class ProtocolPresenter @Inject constructor(
+    val view: ProtocolContract.View,
     val service: PSXService
-) : BasePresenter(), ConsoleOptionContract.Presenter {
+) : BasePresenter(), ProtocolContract.Presenter {
 
 
     override fun init() {
@@ -21,5 +20,5 @@ class ConsoleOptionPresenter @Inject constructor(
     }
 
     override val TAG: String
-        get() = ConsoleOptionPresenter::class.java.name
+        get() = ProtocolPresenter::class.java.name
 }

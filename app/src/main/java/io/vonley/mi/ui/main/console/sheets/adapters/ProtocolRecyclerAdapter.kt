@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import io.vonley.mi.databinding.VhConsoleOptionBinding
+import io.vonley.mi.databinding.ViewCcapiBinding
+import io.vonley.mi.databinding.ViewPs3mapiBinding
 import io.vonley.mi.databinding.ViewWebmanBinding
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.protocols.ccapi.CCAPI
@@ -13,12 +15,12 @@ import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPI
 import io.vonley.mi.di.network.protocols.webman.Webman
 import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.ui.main.MainContract
-import io.vonley.mi.ui.main.console.sheets.adapters.views.CCAPIViewHolder
-import io.vonley.mi.ui.main.console.sheets.adapters.views.PS3MAPIViewHolder
-import io.vonley.mi.ui.main.console.sheets.adapters.views.WebmanViewHolder
+import io.vonley.mi.ui.main.console.sheets.views.CCAPIViewHolder
+import io.vonley.mi.ui.main.console.sheets.views.PS3MAPIViewHolder
+import io.vonley.mi.ui.main.console.sheets.views.WebmanViewHolder
 import javax.inject.Inject
 
-class ConsoleOptionRecyclerAdapter @Inject constructor(
+class ProtocolRecyclerAdapter @Inject constructor(
     val view: MainContract.View,
     val ps3mapi: PS3MAPI,
     val ccapi: CCAPI,
@@ -44,14 +46,14 @@ class ConsoleOptionRecyclerAdapter @Inject constructor(
                 ), webman
             )
             Feature.PS3MAPI.ordinal -> PS3MAPIViewHolder(
-                VhConsoleOptionBinding.inflate(
+                ViewPs3mapiBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 ), ps3mapi
             )
             Feature.CCAPI.ordinal -> CCAPIViewHolder(
-                VhConsoleOptionBinding.inflate(
+                ViewCcapiBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false

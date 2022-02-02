@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +15,7 @@ import io.vonley.mi.ui.main.MainContract
 import io.vonley.mi.ui.main.console.ConsoleFragment
 import io.vonley.mi.ui.main.console.ConsoleViewModel
 import io.vonley.mi.ui.main.console.adapters.ConsoleRecyclerAdapter
-import io.vonley.mi.ui.main.console.sheets.ConsoleOptionSheetFragment
+import io.vonley.mi.ui.main.console.sheets.ProtocolSheetFragment
 import io.vonley.mi.ui.main.ftp.FTPFragment
 import io.vonley.mi.ui.main.home.HomeFragment
 import io.vonley.mi.ui.main.payload.PayloadFragment
@@ -52,8 +51,8 @@ object FragmentContractPresenter {
     }
 
     @Provides
-    fun provideConsoleOptionSheetFragment(activity: Fragment): ConsoleOptionSheetFragment {
-        return if (activity is  ConsoleOptionSheetFragment) activity else ConsoleOptionSheetFragment()
+    fun provideConsoleOptionSheetFragment(activity: Fragment): ProtocolSheetFragment {
+        return if (activity is  ProtocolSheetFragment) activity else ProtocolSheetFragment()
     }
 
     @Provides
@@ -79,7 +78,7 @@ object FragmentContractPresenter {
     fun provideConsoleRecyclerAdapter(
         view: MainContract.View,
         service: SyncService,
-        sheet: ConsoleOptionSheetFragment,
+        sheet: ProtocolSheetFragment,
         fragment: ConsoleFragment
     ): ConsoleRecyclerAdapter {
         return ConsoleRecyclerAdapter(view, service, sheet, fragment.childFragmentManager)

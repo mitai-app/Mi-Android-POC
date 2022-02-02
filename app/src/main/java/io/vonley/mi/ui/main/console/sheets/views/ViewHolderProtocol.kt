@@ -1,4 +1,4 @@
-package io.vonley.mi.ui.main.console.sheets.adapters.views
+package io.vonley.mi.ui.main.console.sheets.views
 
 import io.vonley.mi.di.network.protocols.common.PSXProtocol
 import kotlinx.coroutines.CoroutineScope

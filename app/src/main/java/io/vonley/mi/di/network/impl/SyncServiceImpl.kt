@@ -20,6 +20,7 @@ import io.vonley.mi.di.network.handlers.impl.ConsoleClientHandler
 import io.vonley.mi.di.network.listeners.OnConsoleListener
 import io.vonley.mi.extensions.client
 import io.vonley.mi.extensions.console
+import io.vonley.mi.extensions.e
 import io.vonley.mi.models.Client
 import io.vonley.mi.models.Console
 import io.vonley.mi.models.enums.Feature
@@ -91,9 +92,9 @@ class SyncServiceImpl constructor(
                         break;
                     }
                 } catch (con: ConnectException) {
-                    Log.e(TAG, con.message ?: "Unable to connect")
+                    "${con.message}".e(TAG)
                 } catch (e: Throwable) {
-                    Log.e(TAG, "port failed", e)
+                    "${e.message}".e(TAG)
                 }
             }
         }

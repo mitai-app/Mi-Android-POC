@@ -10,5 +10,5 @@
     android:paddingTop="@dimen/list_item_spacing_half"
     android:paddingBottom="@dimen/list_item_spacing_half"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-    tools:context=".ui.main.console.sheets.ConsoleOptionSheetFragment"
+    tools:context=".ui.main.console.sheets.ProtocolSheetFragment"
     tools:listitem="@layout/vh_console_option" />

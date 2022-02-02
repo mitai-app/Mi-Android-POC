@@ -2,7 +2,7 @@ package io.vonley.mi.ui.main.console.sheets
 
 import io.vonley.mi.base.BaseContract
 
-interface ConsoleOptionContract {
+interface ProtocolContract {
     interface View : BaseContract.View {
 
     }
