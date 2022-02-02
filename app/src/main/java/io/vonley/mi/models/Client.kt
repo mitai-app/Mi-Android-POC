@@ -1,6 +1,5 @@
 package io.vonley.mi.models
 
-import android.util.Log
 import io.vonley.mi.di.network.SyncService
 import io.vonley.mi.di.network.impl.SyncServiceImpl
 import io.vonley.mi.di.network.impl.get
@@ -54,14 +53,19 @@ interface Client {
         val features = Feature.stableFeatures
         val allowed = Feature.allowedToOpen
         val result = features.mapNotNull features@{ feature ->
-            try {
-                if (feature in allowed && feature.protocol == Protocol.SOCKET) {
+            if (feature in allowed && feature.protocol == Protocol.SOCKET) {
+                try {
                     service[this] = feature
                     if (service[this, feature] != null) {
                         return@features feature
-                    } else return@features Feature.NONE
-                } else {
-                    val map = feature.ports.toList().map port@{ port ->
+                    }
+                } catch (e: Throwable) {
+                    "$ip does not have $feature".e("Client:FailToConnect")
+                }
+                return@features Feature.NONE
+            } else {
+                val map = feature.ports.toList().map port@{ port ->
+                    try {
                         val socket = Socket()
                         val socketAddress = InetSocketAddress(ip, port)
                         socket.connect(socketAddress, 1000)
@@ -70,13 +74,14 @@ interface Client {
                             socket.close()
                             return@port feature
                         }
-                        return@port Feature.NONE
-                    }.distinct().firstOrNull()
-                    return@features map
-                }
-            } catch (e: Throwable) {
-                "$ip does not have $feature".e("Client:FailToConnect")
+                    } catch (e: Throwable) {
+                        "$ip does not have $feature".e("Client:FailToConnect")
+                    }
+                    return@port Feature.NONE
+                }.distinct().firstOrNull()
+                return@features map
             }
+
             return@features Feature.NONE
         }.distinct()
         return result
