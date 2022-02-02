@@ -37,6 +37,7 @@ import javax.inject.Singleton
 object NetworkModule {
 
     const val LOG = true
+
     const val BASE_URL = "http://192.168.1.45"
 
     @Provides

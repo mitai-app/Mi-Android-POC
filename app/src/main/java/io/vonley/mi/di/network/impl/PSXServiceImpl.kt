@@ -1,6 +1,5 @@
 package io.vonley.mi.di.network.impl
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
@@ -8,9 +7,11 @@ import io.vonley.mi.di.modules.GuestInterceptorOkHttpClient
 import io.vonley.mi.di.network.MiServer
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.SyncService
+import io.vonley.mi.extensions.d
+import io.vonley.mi.extensions.e
+import io.vonley.mi.extensions.i
 import io.vonley.mi.extensions.toJson
 import io.vonley.mi.models.Client
-import io.vonley.mi.models.enums.PlatformType
 import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import io.vonley.mi.utils.SharedPreferenceManager
@@ -19,7 +20,6 @@ import okhttp3.Headers
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.internal.closeQuietly
 import okhttp3.internal.notifyAll
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -48,23 +48,20 @@ class PSXServiceImpl @Inject constructor(
 
     override val features: LiveData<List<Feature>> = _features
 
+    /**
+     * Initialize socket for designated feature. Newly created sockets are stored in
+     * @see SyncServiceImpl.cachedTargets\. If socket is already stored and if
+     * the connection have not close then the sock will not be created.
+     * features will notify any observers who have an open socket connection.
+     * @see Client.openActivePorts - This also takes place happens here.
+     */
     override fun initialize() {
         target?.let { target ->
             val ip = target.ip
-            val allowed = when (target.type) {
-                PlatformType.PS3 -> arrayOf(Feature.PS3MAPI, Feature.WEBMAN, Feature.CCAPI)
-                PlatformType.PS4 -> arrayOf(
-                    Feature.GOLDENHEN,
-                    Feature.NETCAT,
-                    Feature.ORBISAPI,
-                    Feature.RPI
-                )
-                PlatformType.UNKNOWN -> arrayOf(Feature.FTP)
-            }
+            val allowed = target.type.features
             val filter = target.features.filter { it in allowed }
             launch {
-                val feats = filter.map { feature -> this@PSXServiceImpl[target] = feature; feature }
-                    .filter { this@PSXServiceImpl[target, it] != null }
+                val feats = filter.map { feature -> this@PSXServiceImpl[target] = feature; feature }.filter { this@PSXServiceImpl[target, it] != null }
                 withContext(Dispatchers.Main) {
                     synchronized(_features) {
                         _features.value = feats
@@ -104,6 +101,22 @@ class PSXServiceImpl @Inject constructor(
             direct,
             ref_pkg_url
         }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is RPI) return false
+
+            if (type != other.type) return false
+            if (!packages.contentEquals(other.packages)) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = type.hashCode()
+            result = 31 * result + packages.contentHashCode()
+            return result
+        }
     }
 
     override fun uploadBin(
@@ -131,12 +144,14 @@ class PSXServiceImpl @Inject constructor(
                                 out.write(payload.data)
                                 out.flush()
                             }
-                            socket.closeQuietly()
+                            socket.close()
                             withContext(Dispatchers.Main) {
                                 payload.status = 1
                                 callback.onSent(payload)
                             }
+                            "Payload '${payload.name}' Sent!".i(TAG)
                         } catch (e: Throwable) {
+                            "Failed to send payload '${payload.name}': ${e.message}".e(TAG, e)
                             withContext(Dispatchers.Main) {
                                 payload.status = -1
                                 callback.onPayloadFailed(payload)
@@ -145,36 +160,36 @@ class PSXServiceImpl @Inject constructor(
                     }
                     payload.name.endsWith(".pkg") -> {
                         try {
-                            if (target?.features?.contains(Feature.RPI) == true) {
-                                Log.e(TAG, "Has RPI")
+                            if (target?.features?.contains(Feature.RPI) == false) {
+                                return@onEach
                             }
+                            "Target has Remote Package Installer".i(TAG)
                             val urls = server.hostPackage(payload)
                             val toJson = RPI(RPI.Type.direct, urls).toJson()
                             val contentType = "application/json".toMediaType()
                             val body = toJson.toRequestBody(contentType)
-                            Log.e(TAG, "json: $toJson")
+                            "json: $toJson".d(TAG)
                             val res =
                                 post(
                                     "http://$targetIp:12800/api/install",
                                     body,
                                     Headers.headersOf()
                                 )
-                            Log.e(TAG, "Code: ${res.code}")
-                            res.body?.let { body ->
-                                Log.e(TAG, body.string())
+                            res?.body?.let { body ->
+                                "Code: ${res.code}".d(TAG)
+                                body.string().e(TAG)
                                 withContext(Dispatchers.Main) {
                                     callback.onWriting(payload)
                                 }
                             } ?: run {
-                                Log.e(TAG, "IDK")
+                                "Response was empty...".d(TAG)
                                 withContext(Dispatchers.Main) {
                                     payload.status = -1
                                     callback.onPayloadFailed(payload)
                                 }
                             }
                         } catch (e: Throwable) {
-                            Log.e(TAG, "${e.message}")
-                            e.printStackTrace()
+                            "Something went wrong: ${e.message}".e(TAG, e)
                             withContext(Dispatchers.Main) {
                                 payload.status = -1
                                 callback.onPayloadFailed(payload)

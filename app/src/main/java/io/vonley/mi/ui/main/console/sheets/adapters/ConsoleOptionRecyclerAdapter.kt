@@ -10,7 +10,7 @@ import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.protocols.ccapi.CCAPI
 import io.vonley.mi.di.network.protocols.common.PSXProtocol
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPI
-import io.vonley.mi.di.network.protocols.webman.WebMan
+import io.vonley.mi.di.network.protocols.webman.Webman
 import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.ui.main.MainContract
 import io.vonley.mi.ui.main.console.sheets.adapters.views.CCAPIViewHolder
@@ -22,7 +22,7 @@ class ConsoleOptionRecyclerAdapter @Inject constructor(
     val view: MainContract.View,
     val ps3mapi: PS3MAPI,
     val ccapi: CCAPI,
-    val webman: WebMan,
+    val webman: Webman,
     val service: PSXService
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
     Observer<List<Feature>> {

@@ -79,7 +79,7 @@ fun InetAddress.client(wi: WifiInfo): Client {
 }
 
 fun Client.console(service: SyncService): Console? {
-    val actives = getActivePorts(service)
+    val actives = openActivePorts(service)
     if (actives.isNotEmpty()) {
         val features = actives
         // TODO: For now we only recognize rpi and orbisapi ports, when stable it should perform

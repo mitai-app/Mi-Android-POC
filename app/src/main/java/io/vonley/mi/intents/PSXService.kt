@@ -23,8 +23,7 @@ import kotlin.coroutines.CoroutineContext
 @AndroidEntryPoint
 class PSXService : Service(), BaseClient {
 
-
-    val TAG = PSXService::class.java.name
+    override val TAG = PSXService::class.java.name
 
     @Inject
     lateinit var binder: PSXServiceBinder

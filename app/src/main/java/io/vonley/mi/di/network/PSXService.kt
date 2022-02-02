@@ -16,6 +16,7 @@ import io.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import io.vonley.mi.utils.SharedPreferenceManager
 import okhttp3.Callback
 import okhttp3.Headers
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -89,7 +90,12 @@ interface PSXService : BaseClient, SyncService {
 
     override val target: Client?
         get() = sync.target
+
     val job: Job
+
+    override val TAG: String
+        get() = PSXService::class.java.name
+
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
     override val wifiInfo: WifiInfo

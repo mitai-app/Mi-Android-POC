@@ -59,7 +59,7 @@ interface CCAPI : PSXProtocol {
     val liveProcesses: LiveData<List<Process>>
     var attached: Boolean
     var process: Process?
-    val TAG: String get() = CCAPI::class.java.name
+    override val TAG: String get() = CCAPI::class.java.name
 
     val urlStub get() = "http://${service.targetIp}:${feature.ports.first()}/ccapi/"
 
@@ -69,14 +69,14 @@ interface CCAPI : PSXProtocol {
 
     @Throws(IOException::class)
     fun getSimpleRequest(urlString: String): String? {
-        return getRequest(urlString).body?.string()
+        return getRequest(urlString)?.body?.string()
     }
 
     @Throws(IOException::class)
     fun getListRequest(urlString: String): List<String> {
         return BufferedReader(
             InputStreamReader(
-                getRequest(urlString).body?.byteStream() ?: return emptyList()
+                getRequest(urlString)?.body?.byteStream() ?: return emptyList()
             )
         ).use { br ->
             val stringList: MutableList<String> = ArrayList()
@@ -93,11 +93,11 @@ interface CCAPI : PSXProtocol {
      * @param boot SHUTDOWN, SOFTBOOT, HARDBOOT
      * @throws IOException
      */
-    override fun boot(ps3boot: Boot) {
+    override suspend fun boot(ps3boot: Boot) {
         getSimpleRequest(compileUrl(CCAPIUrlBuilder.shutDown(ps3boot)))
     }
 
-    override fun notify(message: String) {
+    override suspend fun notify(message: String) {
         getSimpleRequest(
             compileUrl(
                 CCAPIUrlBuilder.notify(
@@ -196,9 +196,10 @@ interface CCAPI : PSXProtocol {
      * @throws IOException
      */
     @Throws(IOException::class)
-    fun ringBuzzer(buzzer: Buzzer): String? {
-        return getSimpleRequest(compileUrl(CCAPIUrlBuilder.ringBuzzer(buzzer)))
+    override suspend fun buzzer(buzzer: Buzzer) {
+        getSimpleRequest(compileUrl(CCAPIUrlBuilder.ringBuzzer(buzzer)))
     }
+
 
     /**
      * Attaches to the game process
@@ -433,12 +434,8 @@ interface CCAPI : PSXProtocol {
         }
 
         fun setBootConsoleIds(type: ConsoleId, onBoot: Boolean, id: String?): String {
-            return DIR.SETBOOTCONSOLEIDS.name.toLowerCase() + "?type=${type.ordinal}&on=${if (onBoot) 1 else 0}&id=$id"
+            return DIR.SETBOOTCONSOLEIDS.name.lowercase() + "?type=${type.ordinal}&on=${if (onBoot) 1 else 0}&id=$id"
 
-        }
-
-        fun ringBuzzer(buzzer: Buzzer): String {
-            return DIR.RINGBUZZER.name.lowercase() + "?type=${buzzer.ordinal}"
         }
 
         fun setMemory(pid: String?, addr: String?, value: String?): String {
@@ -448,6 +445,10 @@ interface CCAPI : PSXProtocol {
 
         fun getMemory(pid: String?, addr: String?, size: Int): String {
             return DIR.GETMEMORY.name.lowercase() + "?pid=$pid&addr=$addr&size=$size"
+        }
+
+        fun ringBuzzer(buzzer: Buzzer): String {
+            return DIR.RINGBUZZER.name.lowercase() + "?type=${buzzer.ordinal}"
         }
 
         private enum class DIR {

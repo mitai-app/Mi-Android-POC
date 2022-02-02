@@ -12,8 +12,27 @@ import kotlinx.android.parcel.Parcelize
 
 @Entity
 @Parcelize
-enum class PlatformType : Parcelable {
-    UNKNOWN, PS3, PS4
+enum class PlatformType(vararg val features: Feature) : Parcelable {
+    UNKNOWN(
+        Feature.FTP
+    ),
+    PS3(
+        *arrayOf(
+            Feature.PS3MAPI,
+            Feature.WEBMAN,
+            Feature.CCAPI
+        )
+    ),
+    PS4(
+        *arrayOf(
+            Feature.GOLDENHEN,
+            Feature.NETCAT,
+            Feature.ORBISAPI,
+            Feature.RPI
+        )
+    )
+
+
 }
 
 @Entity
@@ -36,19 +55,34 @@ enum class Feature(
     vararg val ports: Int
 ) : Parcelable {
     NONE("None", R.string.feature_none, Protocol.NONE, 0),
-    NETCAT("Netcat", R.string.feature_netcat, Protocol.SOCKET,9021, 9020),
-    GOLDENHEN("Golden Hen", R.string.feature_goldhen, Protocol.SOCKET,9090),
+    NETCAT("Netcat", R.string.feature_netcat, Protocol.SOCKET, 9021, 9020),
+    GOLDENHEN("Golden Hen", R.string.feature_goldhen, Protocol.SOCKET, 9090),
     ORBISAPI("Orbis API", R.string.feature_orbisapi, Protocol.SOCKET, 6023),
-    RPI("Remote Package Installer", R.string.feature_rpi, Protocol.HTTP,12800),
-    PS3MAPI("PS3MAPI", R.string.feature_ps3mapi, Protocol.SOCKET,7887),
-    CCAPI("CCAPI", R.string.feature_ccapi, Protocol.HTTP,6333),
-    WEBMAN("WEBMAN", R.string.feature_webman, Protocol.HTTP,80),
+    RPI("Remote Package Installer", R.string.feature_rpi, Protocol.HTTP, 12800),
+    PS3MAPI("PS3MAPI", R.string.feature_ps3mapi, Protocol.SOCKET, 7887),
+    CCAPI("CCAPI", R.string.feature_ccapi, Protocol.HTTP, 6333),
+    WEBMAN("WEBMAN", R.string.feature_webman, Protocol.HTTP, 80),
     FTP("FTP", R.string.feature_ftp, Protocol.FTP, 21, 2121);
 
     companion object {
         fun find(context: Context, id: String): Feature? {
-            return values().filter { p -> context.getString(p.id) == id }.firstOrNull()
+            return values().firstOrNull { p -> context.getString(p.id) == id }
         }
+
+        /**
+         * These fields are for client
+         * Due to GoldenHen & NetCat being the payload sender,
+         * we want to be extract careful what we send there.
+         * Goldenhen Bin Uploader stops working after a while
+         * NetCat
+         */
+        //arrayOf(ORBISAPI, RPI, PS3MAPI, CCAPI, WEBMAN, FTP)
+        val stableFeatures: Array<Feature> = Feature.values().filterNot { p -> p in arrayOf(NONE, NETCAT, GOLDENHEN) }.toTypedArray()
+
+        /**
+         * These are stable sockets that are allowed to be opened for however long
+         */
+        val allowedToOpen: Array<Feature> = arrayOf(PS3MAPI, CCAPI, WEBMAN, ORBISAPI)
     }
 }
 
@@ -58,7 +92,7 @@ class ProtocolTypeConverter {
     fun toType(value: String): Protocol = enumValueOf(value)
 
     @TypeConverter
-    fun fromType(value: Protocol) =  value.name
+    fun fromType(value: Protocol) = value.name
 
 }
 

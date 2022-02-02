@@ -149,6 +149,7 @@ object NetworkModule {
     @Provides
     @AuthRetrofitClient
     fun provideAuthenticatedRetrofit(
+        service: SyncService,
         @AuthInterceptorOkHttpClient okHttpClient: OkHttpClient
     ): Retrofit {
         return Retrofit.Builder()

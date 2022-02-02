@@ -16,7 +16,8 @@ import io.vonley.mi.di.network.protocols.ccapi.CCAPI
 import io.vonley.mi.di.network.protocols.ccapi.CCAPIImpl
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPI
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIImpl
-import io.vonley.mi.di.network.protocols.webman.WebMan
+import io.vonley.mi.di.network.protocols.webman.WebManImplTest
+import io.vonley.mi.di.network.protocols.webman.Webman
 import javax.inject.Singleton
 
 
@@ -34,7 +35,7 @@ abstract class InterfaceModule {
 
     @Binds
     @Singleton
-    abstract fun bindWebManService(impl: WebManImpl): WebMan
+    abstract fun bindWebManService(impl: WebManImplTest): Webman
 
     @Binds
     @Singleton
