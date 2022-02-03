@@ -260,14 +260,14 @@ interface Webman : PSXProtocol {
         return null
     }
 
-    @Throws(IOException::class)
-    private fun exists(url: String): Boolean {
+    private fun validate(url: String): Boolean {
         val response = getRequest(url)
         val s = response?.body?.string().toString()
         Log.e("CONTENT", s.toString())
         return s.lowercase().contains("ps3mapi") || s.lowercase()
             .contains("webman") || s.lowercase().contains("dex") ||
-                s.lowercase().contains("d-rex") || s.lowercase().contains("cex") || s.lowercase()
+                s.lowercase().contains("d-rex") || s.lowercase()
+            .contains("cex") || s.lowercase()
             .contains("rebug") ||
                 s.lowercase().contains("rsx")
     }
@@ -302,7 +302,7 @@ interface Webman : PSXProtocol {
 
     @Throws(SocketException::class)
     fun verify(): Boolean {
-        return exists("http://${service.targetIp}:80/index.ps3")
+        return validate("http://${service.targetIp}:80/index.ps3")
     }
 
     override suspend fun refresh() {

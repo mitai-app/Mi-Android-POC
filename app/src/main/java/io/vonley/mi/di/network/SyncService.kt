@@ -10,6 +10,7 @@ import io.vonley.mi.models.Client
 import io.vonley.mi.di.network.impl.SyncServiceImpl
 import io.vonley.mi.models.enums.Feature
 import kotlinx.coroutines.CoroutineScope
+import okhttp3.OkHttpClient
 import java.net.Socket
 
 /**
@@ -27,6 +28,7 @@ interface SyncService : CoroutineScope {
     val isConnected: Boolean
     val handlers: HashMap<Class<*>, ClientHandler>
     val TAG: String
+    val client: OkHttpClient
 
     fun cleanup()
     fun initialize()

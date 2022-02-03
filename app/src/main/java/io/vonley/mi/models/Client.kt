@@ -1,5 +1,6 @@
 package io.vonley.mi.models
 
+import android.util.Log
 import io.vonley.mi.di.network.SyncService
 import io.vonley.mi.di.network.impl.SyncServiceImpl
 import io.vonley.mi.di.network.impl.get
@@ -9,6 +10,7 @@ import io.vonley.mi.extensions.i
 import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.models.enums.PlatformType
 import io.vonley.mi.models.enums.Protocol
+import okhttp3.Request
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -66,19 +68,26 @@ interface Client {
             } else {
                 val map = feature.ports.toList().map port@{ port ->
                     try {
-                        val socket = Socket()
-                        val socketAddress = InetSocketAddress(ip, port)
-                        socket.connect(socketAddress, 1000)
-                        if (socket.isConnected) {
-                            "${ip}:{$port} aka $feature is active".i("Client:Connected")
-                            socket.close()
-                            return@port feature
+                        //TODO Fix for webman and ccapi
+                        return@port when (feature) {
+                            Feature.WEBMAN -> if(feature.validate(this, service)) feature else Feature.NONE
+                            else -> { //Feature.CCAPI should validate via http too
+                                val socket = Socket()
+                                val socketAddress = InetSocketAddress(ip, port)
+                                socket.connect(socketAddress, 1000)
+                                if (socket.isConnected) {
+                                    "${ip}:{$port} aka $feature is active".i("Client:Connected")
+                                    socket.close()
+                                    return@port feature
+                                }
+                                return@port Feature.NONE
+                            }
                         }
                     } catch (e: Throwable) {
                         "$ip does not have $feature".e("Client:FailToConnect")
                     }
-                   Feature.NONE
-                }.distinct().firstOrNull{ p -> p != Feature.NONE }
+                    return@port Feature.NONE
+                }.distinct().firstOrNull { p -> p != Feature.NONE }
                 return@features map
             }
         }.distinct()

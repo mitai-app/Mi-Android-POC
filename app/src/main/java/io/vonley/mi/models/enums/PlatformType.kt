@@ -7,8 +7,11 @@ import androidx.room.Entity
 import androidx.room.TypeConverter
 import com.google.gson.GsonBuilder
 import io.vonley.mi.R
+import io.vonley.mi.di.network.SyncService
 import io.vonley.mi.extensions.fromJson
+import io.vonley.mi.models.Client
 import kotlinx.android.parcel.Parcelize
+import okhttp3.Request
 
 @Entity
 @Parcelize
@@ -64,6 +67,36 @@ enum class Feature(
     WEBMAN("WEBMAN", R.string.feature_webman, Protocol.HTTP, 80),
     FTP("FTP", R.string.feature_ftp, Protocol.FTP, 21, 2121);
 
+    fun validate(client: Client, service: SyncService): Boolean {
+        fun req(url: String): String? {
+            val req = Request.Builder()
+                .url(url)
+                .get()
+                .build()
+            val execute = service.client.newCall(req)
+            val response = execute.execute()
+            val s = response.body?.string()
+            return s
+        }
+
+        return when (this) {
+            WEBMAN -> req("http://${client.ip}:${ports.first()}/index.ps3")?.let { s ->
+                s.lowercase().contains("ps3mapi") || s.lowercase()
+                    .contains("webman") || s.lowercase().contains("dex") ||
+                        s.lowercase().contains("d-rex") || s.lowercase()
+                    .contains("cex") || s.lowercase()
+                    .contains("rebug") ||
+                        s.lowercase().contains("rsx")
+            }?:false
+            CCAPI -> req("http://${client.ip}:${ports.first()}/ccapi")?.let { s ->
+
+                true
+            }?:false
+            else -> true
+        }
+
+    }
+
     companion object {
         fun find(context: Context, id: String): Feature? {
             return values().firstOrNull { p -> context.getString(p.id) == id }
@@ -77,7 +110,8 @@ enum class Feature(
          * NetCat
          */
         //arrayOf(ORBISAPI, RPI, PS3MAPI, CCAPI, WEBMAN, FTP)
-        val stableFeatures: Array<Feature> = Feature.values().filterNot { p -> p in arrayOf(NONE, NETCAT, GOLDENHEN) }.toTypedArray()
+        val stableFeatures: Array<Feature> =
+            Feature.values().filterNot { p -> p in arrayOf(NONE, NETCAT, GOLDENHEN) }.toTypedArray()
 
         /**
          * These are stable sockets that are allowed to be opened for however long

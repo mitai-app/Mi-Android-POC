@@ -128,7 +128,6 @@ class PSXServiceImpl @Inject constructor(
             payloads.onEach { payload ->
                 when {
                     payload.name.endsWith(".bin") -> {
-
                         try {
                             val socket = Socket()
                             socket.connect(

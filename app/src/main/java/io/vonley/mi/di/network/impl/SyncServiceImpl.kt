@@ -12,7 +12,9 @@ import android.text.format.Formatter
 import android.util.Log
 import androidx.annotation.RequiresApi
 import io.vonley.mi.BuildConfig
+import io.vonley.mi.di.annotations.GuestRetrofitClient
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
+import io.vonley.mi.di.modules.GuestInterceptorOkHttpClient
 import io.vonley.mi.di.network.SyncService
 import io.vonley.mi.di.network.handlers.ClientHandler
 import io.vonley.mi.di.network.handlers.base.BaseClientHandler
@@ -27,6 +29,7 @@ import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.persistence.AppDatabase
 import io.vonley.mi.utils.SharedPreferenceManager
 import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
 import java.lang.ref.WeakReference
 import java.net.ConnectException
 import java.net.InetAddress
@@ -55,7 +58,8 @@ import kotlin.coroutines.CoroutineContext
 class SyncServiceImpl constructor(
     context: Context,
     database: AppDatabase,
-    @SharedPreferenceStorage val manager: SharedPreferenceManager
+    @SharedPreferenceStorage val manager: SharedPreferenceManager,
+    @GuestInterceptorOkHttpClient override val client: OkHttpClient
 ) : SyncService, CoroutineScope {
 
     override val TAG = SyncServiceImpl::class.java.name
