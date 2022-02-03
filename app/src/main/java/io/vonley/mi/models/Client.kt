@@ -107,3 +107,9 @@ val Client.activeFeatures
     get() = features.filter { p -> p != Feature.NONE }
 val Client.featureString
     get() = activeFeatures.joinToString { f -> f.title }
+
+val List<Feature>.isPs3
+    get() = this.any { p -> p  in PlatformType.PS3.features }
+
+val List<Feature>.isPs4
+    get() = this.any { p -> p  in PlatformType.PS4.features }

@@ -39,7 +39,6 @@ class PSXServiceImpl @Inject constructor(
             feature: Feature
         ): Boolean {
             val socket = sync[client, feature]
-
             return false
         }
     }
@@ -127,7 +126,7 @@ class PSXServiceImpl @Inject constructor(
         launch {
             payloads.onEach { payload ->
                 when {
-                    payload.name.endsWith(".bin") -> {
+                    payload.name.endsWith(".bin") || payload.name.endsWith(".pkg") -> {
                         try {
                             val socket = Socket()
                             socket.connect(

@@ -10,10 +10,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.vonley.mi.R
 import io.vonley.mi.databinding.VhConsoleBinding
 import io.vonley.mi.di.network.SyncService
-import io.vonley.mi.models.Client
-import io.vonley.mi.models.Console
-import io.vonley.mi.models.activeFeatures
-import io.vonley.mi.models.featureString
+import io.vonley.mi.models.*
 import io.vonley.mi.ui.main.MainContract
 import io.vonley.mi.ui.main.console.sheets.ProtocolSheetFragment
 import javax.inject.Inject
@@ -60,12 +57,17 @@ class ConsoleRecyclerAdapter @Inject constructor(
             sync.setTarget(console)
             view.setSummary("Current Target: ${console.name}, w/ ${console.featureString}")
             Toast.makeText(itemView.context, "Target set!", Toast.LENGTH_SHORT).show()
-            sheet.show(manager, sheet.tag)
+            if (console.features.isPs3) {
+                sheet.show(manager, sheet.tag)
+            } else if (console.features.isPs4) {
+                //TODO: Something with KLOG?
+            }
         }
 
         fun setConsole(console: Client) {
             this.client = console
-            val headers = if (console.name == console.ip) console.ip else "${console.name} - ${console.ip}"
+            val headers =
+                if (console.name == console.ip) console.ip else "${console.name} - ${console.ip}"
             val colorInt = if (console.pinned) {
                 R.color.material_red
             } else {

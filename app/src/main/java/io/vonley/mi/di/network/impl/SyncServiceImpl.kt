@@ -59,7 +59,7 @@ class SyncServiceImpl constructor(
     context: Context,
     database: AppDatabase,
     @SharedPreferenceStorage val manager: SharedPreferenceManager,
-    @GuestInterceptorOkHttpClient override val client: OkHttpClient
+    @GuestInterceptorOkHttpClient override val http: OkHttpClient
 ) : SyncService, CoroutineScope {
 
     override val TAG = SyncServiceImpl::class.java.name

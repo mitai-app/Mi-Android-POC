@@ -28,7 +28,7 @@ interface SyncService : CoroutineScope {
     val isConnected: Boolean
     val handlers: HashMap<Class<*>, ClientHandler>
     val TAG: String
-    val client: OkHttpClient
+    val http: OkHttpClient
 
     fun cleanup()
     fun initialize()
