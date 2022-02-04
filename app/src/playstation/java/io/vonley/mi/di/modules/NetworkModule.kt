@@ -20,6 +20,7 @@ import io.vonley.mi.di.network.impl.MiServerImpl
 import io.vonley.mi.di.network.impl.PSXServiceImpl
 import io.vonley.mi.di.network.impl.SyncServiceImpl
 import io.vonley.mi.di.network.protocols.ccapi.CCAPIImpl
+import io.vonley.mi.di.network.protocols.klog.KLogImpl
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIImpl
 import io.vonley.mi.di.network.protocols.webman.WebManImpl
 import io.vonley.mi.persistence.AppDatabase
@@ -77,9 +78,10 @@ object NetworkModule {
     fun provideClientSyncService(
         @ApplicationContext context: Context,
         database: AppDatabase,
-        @SharedPreferenceStorage manager: SharedPreferenceManager
+        @SharedPreferenceStorage manager: SharedPreferenceManager,
+        @GuestInterceptorOkHttpClient client: OkHttpClient
     ): SyncServiceImpl {
-        return SyncServiceImpl(context, database, manager)
+        return SyncServiceImpl(context, database, manager, client)
     }
 
     @Provides

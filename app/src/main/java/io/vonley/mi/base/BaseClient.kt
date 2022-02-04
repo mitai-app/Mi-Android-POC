@@ -1,6 +1,7 @@
 package io.vonley.mi.base
 
 import io.vonley.mi.BuildConfig
+import io.vonley.mi.di.network.protocols.common.PSXProtocol
 import io.vonley.mi.extensions.e
 import kotlinx.coroutines.CoroutineScope
 import okhttp3.*
@@ -60,7 +61,7 @@ interface BaseClient : CoroutineScope {
     }
 
     val TAG: String
-        get() = BaseClient::class.java.name
+        get() = BaseClient::class.qualifiedName?: BaseClient::javaClass.name
 
 }
 

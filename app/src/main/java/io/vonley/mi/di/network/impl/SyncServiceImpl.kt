@@ -12,7 +12,6 @@ import android.text.format.Formatter
 import android.util.Log
 import androidx.annotation.RequiresApi
 import io.vonley.mi.BuildConfig
-import io.vonley.mi.di.annotations.GuestRetrofitClient
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
 import io.vonley.mi.di.modules.GuestInterceptorOkHttpClient
 import io.vonley.mi.di.network.SyncService
@@ -27,6 +26,7 @@ import io.vonley.mi.models.Client
 import io.vonley.mi.models.Console
 import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.persistence.AppDatabase
+import io.vonley.mi.persistence.ConsoleDao
 import io.vonley.mi.utils.SharedPreferenceManager
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
@@ -68,6 +68,8 @@ class SyncServiceImpl constructor(
     private lateinit var cm: ConnectivityManager
     private lateinit var wm: WifiManager
     private val job = Job()
+    private val dao: ConsoleDao = database.consoleDao()
+
     private lateinit var activeJob: Job
 
     override val isConnected: Boolean get() = isWifiAvailable()
@@ -78,11 +80,13 @@ class SyncServiceImpl constructor(
     private val cachedTargets = hashMapOf<String, EnumMap<Feature, Socket>>()
 
 
-    override fun getSocket(client: Client, feature: Feature): Socket? {
+    override fun getSocket(client: Client?, feature: Feature): Socket? {
+        if(client == null) return null
         return cachedTargets[client.ip]?.get(feature)
     }
 
-    override fun createSocket(client: Client, feature: Feature): Socket? {
+    override fun createSocket(client: Client?, feature: Feature): Socket? {
+        if(client == null) return null
         if (!cachedTargets.containsKey(client.ip)) {
             cachedTargets[client.ip] = EnumMap<Feature, Socket>(Feature::class.java)
         }
@@ -269,19 +273,22 @@ class SyncServiceImpl constructor(
      * Fetch PS4 & PS3 Consoles on the current
      * network for jailbroken devices
      */
-    private fun fetchConsoles(clients: List<Client>): List<Console> {
+    private suspend fun fetchConsoles(clients: List<Client>): List<Console> {
         try {
             Log.i(TAG, "[FetchConsoles::Start] Active Network: $activeNetworkInfo")
             Log.i(TAG, "[Device Local IP] $localDeviceIp")
             val prefix = localDeviceIp.substring(0, localDeviceIp.lastIndexOf(".") + 1)
             Log.i(TAG, "[Local IP Prefix] $prefix")
             val consoles = clients
-                .mapNotNull { client -> client.console(this) }
-                .filter { client -> client.features.isNotEmpty() }
-            launch {
-                withContext(Dispatchers.Main) {
-                    this@SyncServiceImpl[ConsoleClientHandler::class.java].handle(consoles)
-                }
+                .mapNotNull { client ->
+                    val console = client.console(this)
+                    if (console == null) {
+                        dao.delete(client.ip, client.wifi)
+                    }
+                    console
+                }.filter { console -> console.features.isNotEmpty() }
+            withContext(Dispatchers.Main) {
+                this@SyncServiceImpl[ConsoleClientHandler::class.java].handle(consoles)
             }
             Log.v(TAG, "[FetchConsoles::End] End of Scan #: ${consoles.size}")
             return consoles
@@ -374,10 +381,10 @@ operator fun <T : ClientHandler> SyncService.get(clazz: Class<T>): T {
     return handlers[clazz] as T
 }
 
-operator fun <T : Client> SyncService.set(client: T, feature: Feature): Socket? {
+operator fun <T : Client> SyncService.set(client: T?, feature: Feature): Socket? {
     return createSocket(client, feature)
 }
 
-operator fun <T : Client> SyncService.get(client: T, feature: Feature): Socket? {
+operator fun <T : Client> SyncService.get(client: T?, feature: Feature): Socket? {
     return getSocket(client, feature)
 }

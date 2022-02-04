@@ -10,6 +10,7 @@ import io.vonley.mi.di.network.protocols.common.cmds.LedStatus
 import io.vonley.mi.di.network.protocols.common.models.*
 import io.vonley.mi.di.network.protocols.ps3mapi.cmds.*
 import io.vonley.mi.di.network.protocols.ps3mapi.models.PS3MAPIResponse
+import io.vonley.mi.di.network.protocols.webman.Webman
 import io.vonley.mi.models.enums.Feature
 import java.io.IOException
 import java.net.InetSocketAddress
@@ -438,4 +439,6 @@ interface PS3MAPI : PSXProtocol, PSXNotifier {
     }
 
 
+    override val TAG: String
+        get() = PS3MAPI::class.simpleName?: PS3MAPI::class.java.name
 }

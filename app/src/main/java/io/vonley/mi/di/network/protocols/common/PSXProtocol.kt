@@ -4,6 +4,7 @@ import io.vonley.mi.base.BaseClient
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.protocols.common.cmds.Boot
 import io.vonley.mi.di.network.protocols.common.cmds.Buzzer
+import io.vonley.mi.di.network.protocols.klog.KLog
 import io.vonley.mi.models.enums.Feature
 import okhttp3.Callback
 import okhttp3.Headers
@@ -33,6 +34,8 @@ interface PSXProtocol : BaseClient {
     override fun getRequest(url: String, response: Callback) = service.getRequest(url, response)
     override fun getRequest(url: String) = service.getRequest(url)
 
+    override val TAG: String
+        get() = PSXProtocol::class.qualifiedName?: PSXProtocol::javaClass.name
 
     val service: PSXService
     val feature: Feature

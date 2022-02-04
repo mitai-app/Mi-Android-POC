@@ -5,7 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-class WebManImpl(override val service: PSXService) : WebMan {
+class WebManImpl(override val service: PSXService) : Webman {
 
     private val job = Job()
 

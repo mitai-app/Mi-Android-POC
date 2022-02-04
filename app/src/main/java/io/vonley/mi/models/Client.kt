@@ -64,13 +64,13 @@ interface Client {
                 } catch (e: Throwable) {
                     "$ip does not have $feature".e("Client:FailToConnect")
                 }
-                return@features Feature.NONE
+                return@features null
             } else {
-                val map = feature.ports.toList().map port@{ port ->
+                val map = feature.ports.toList().mapNotNull port@{ port ->
                     try {
                         //TODO Fix for webman and ccapi
                         return@port when (feature) {
-                            Feature.WEBMAN -> if(feature.validate(this, service)) feature else Feature.NONE
+                            Feature.WEBMAN -> if(feature.validate(this, service)) feature else null
                             else -> { //Feature.CCAPI should validate via http too
                                 val socket = Socket()
                                 val socketAddress = InetSocketAddress(ip, port)
@@ -80,17 +80,17 @@ interface Client {
                                     socket.close()
                                     return@port feature
                                 }
-                                return@port Feature.NONE
+                                return@port null
                             }
                         }
                     } catch (e: Throwable) {
                         "$ip does not have $feature".e("Client:FailToConnect")
                     }
-                    return@port Feature.NONE
+                    return@port null
                 }.distinct().firstOrNull { p -> p != Feature.NONE }
                 return@features map
             }
-        }.distinct()
+        }.distinct().filterNot { it == Feature.NONE }
         return result
     }
 

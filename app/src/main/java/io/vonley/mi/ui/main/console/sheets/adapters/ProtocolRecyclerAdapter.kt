@@ -4,20 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
-import io.vonley.mi.databinding.VhConsoleOptionBinding
-import io.vonley.mi.databinding.ViewCcapiBinding
-import io.vonley.mi.databinding.ViewPs3mapiBinding
-import io.vonley.mi.databinding.ViewWebmanBinding
+import io.vonley.mi.databinding.*
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.protocols.ccapi.CCAPI
 import io.vonley.mi.di.network.protocols.common.PSXProtocol
+import io.vonley.mi.di.network.protocols.klog.KLog
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPI
 import io.vonley.mi.di.network.protocols.webman.Webman
 import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.ui.main.MainContract
-import io.vonley.mi.ui.main.console.sheets.views.CCAPIViewHolder
-import io.vonley.mi.ui.main.console.sheets.views.PS3MAPIViewHolder
-import io.vonley.mi.ui.main.console.sheets.views.WebmanViewHolder
+import io.vonley.mi.ui.main.console.sheets.views.*
 import javax.inject.Inject
 
 class ProtocolRecyclerAdapter @Inject constructor(
@@ -25,9 +21,9 @@ class ProtocolRecyclerAdapter @Inject constructor(
     val ps3mapi: PS3MAPI,
     val ccapi: CCAPI,
     val webman: Webman,
+    val klog: KLog,
     val service: PSXService
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
-    Observer<List<Feature>> {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Observer<List<Feature>> {
 
     private var services: List<PSXProtocol> = emptyList()
 
@@ -38,6 +34,11 @@ class ProtocolRecyclerAdapter @Inject constructor(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = when (viewType) {
+            Feature.KLOG.ordinal -> KLogViewHolder(ViewKlogBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            ), klog)
             Feature.WEBMAN.ordinal -> WebmanViewHolder(
                 ViewWebmanBinding.inflate(
                     LayoutInflater.from(parent.context),
@@ -70,9 +71,15 @@ class ProtocolRecyclerAdapter @Inject constructor(
             Feature.WEBMAN -> (holder as? WebmanViewHolder)
             Feature.PS3MAPI -> (holder as? PS3MAPIViewHolder)
             Feature.CCAPI -> (holder as? CCAPIViewHolder)
+            Feature.KLOG -> (holder as? KLogViewHolder)
             else -> null
         }
         holder?.init()
+    }
+
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+        (holder as? ViewHolderProtocol<*>)?.cleanup()
     }
 
     override fun getItemViewType(position: Int): Int = this.services[position].feature.ordinal
@@ -94,6 +101,7 @@ class ProtocolRecyclerAdapter @Inject constructor(
                         ps3mapi.feature -> ps3mapi
                         ccapi.feature -> ccapi
                         webman.feature -> webman
+                        klog.feature -> klog
                         else -> null
                     }
                 }

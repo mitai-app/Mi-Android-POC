@@ -84,8 +84,9 @@ interface PSXService : BaseClient, SyncService {
 
     override fun removeConsoleListener(console: OnConsoleListener) = sync.removeConsoleListener(console)
 
-    override fun createSocket(client: Client, feature: Feature): Socket? = sync.createSocket(client, feature)
-    override fun getSocket(client: Client, feature: Feature): Socket? = sync.getSocket(client, feature)
+    override fun createSocket(client: Client?, feature: Feature): Socket? = sync.createSocket(client, feature)
+
+    override fun getSocket(client: Client?, feature: Feature): Socket? = sync.getSocket(client, feature)
 
     override val target: Client?
         get() = sync.target

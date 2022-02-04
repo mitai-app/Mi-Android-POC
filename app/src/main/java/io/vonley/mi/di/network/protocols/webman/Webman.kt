@@ -3,6 +3,7 @@ package io.vonley.mi.di.network.protocols.webman
 
 import android.os.Environment
 import android.util.Log
+import io.vonley.mi.base.BaseClient
 import io.vonley.mi.di.network.impl.get
 import io.vonley.mi.di.network.protocols.common.PSXProtocol
 import io.vonley.mi.di.network.protocols.common.PSXNotifier
@@ -28,7 +29,7 @@ interface Webman : PSXProtocol, PSXNotifier {
     private val _socket: Socket? get() = service[service.target!!, feature]
     override val socket: Socket get() = _socket!!
 
-    override val TAG: String get() = Webman::class.java.name
+    override val TAG: String get() = Webman::class.simpleName?:Webman::class.java.name
 
     private val gameUrl: String
         get() = "http://${service.targetIp}/dev_hdd0/xmlhost/game_plugin/mygames.xml"

@@ -7,8 +7,8 @@ import com.google.gson.reflect.TypeToken
 import io.vonley.mi.di.network.SyncService
 import io.vonley.mi.models.Client
 import io.vonley.mi.models.Console
-import io.vonley.mi.models.enums.PlatformType
 import io.vonley.mi.models.enums.Feature
+import io.vonley.mi.models.enums.PlatformType
 import java.net.InetAddress
 import java.net.Socket
 
@@ -78,7 +78,7 @@ fun InetAddress.client(wi: WifiInfo): Client {
     }
 }
 
-fun Client.console(service: SyncService): Console? {
+suspend fun Client.console(service: SyncService): Console? {
     val actives = openActivePorts(service)
     if (actives.isNotEmpty()) {
         val features = actives
@@ -86,7 +86,7 @@ fun Client.console(service: SyncService): Console? {
         // TODO: For now we only recognize rpi and orbisapi ports, when stable it should perform
         // Since goldenhen bin loader isnt that stable, we cant really keep doing requests on it
         // It will eventually lock and wont be able to connect or goldenhen will be in a hang state
-        val ps4 = arrayOf(Feature.GOLDENHEN, Feature.NETCAT, Feature.RPI, Feature.ORBISAPI)
+        val ps4 = arrayOf(Feature.GOLDENHEN, Feature.NETCAT, Feature.RPI, Feature.ORBISAPI, Feature.KLOG)
         val ps3 = arrayOf(Feature.CCAPI, Feature.PS3MAPI, Feature.WEBMAN)
         val isPs4 = features.any { p -> p in ps4 }
         val isPs3 = features.any { p -> p in ps3 }

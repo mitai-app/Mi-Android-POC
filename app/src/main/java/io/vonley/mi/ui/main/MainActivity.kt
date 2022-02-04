@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.Spannable
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -154,7 +155,7 @@ class MainActivity : AppCompatActivity(), MainContract.View,
         currentView<BaseContract.View>()?.onDialogCanceled()
     }
 
-    override fun onLog(string: String) {
+    override fun onLog(string: Spannable) {
         binding.fakeToolbarSummary.text = string
     }
 

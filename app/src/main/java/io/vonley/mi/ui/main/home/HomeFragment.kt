@@ -49,6 +49,11 @@ class HomeFragment : Fragment(), HomeContract.View {
         markwon.setMarkdown(binding.md, md)
         adapter = TextViewAdapter()
         binding.logRecycler.adapter = adapter
+        binding.logRecycler.setOnTouchListener { v, event ->
+            v.parent.requestDisallowInterceptTouchEvent(true)
+            v.onTouchEvent(event)
+            true
+        }
         return binding.root
     }
 

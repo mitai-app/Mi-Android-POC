@@ -13,4 +13,8 @@ interface ViewHolderProtocol<S : PSXProtocol> : CoroutineScope {
     private val job get() = Job()
 
     override val coroutineContext get() = Dispatchers.IO + job
+
+    fun cleanup() {
+
+    }
 }

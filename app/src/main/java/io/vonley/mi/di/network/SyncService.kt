@@ -39,6 +39,6 @@ interface SyncService : CoroutineScope {
     fun addConsoleListener(console: OnConsoleListener)
     fun stop()
     fun removeConsoleListener(console: OnConsoleListener)
-    fun createSocket(client: Client, feature: Feature): Socket?
-    fun getSocket(client: Client, feature: Feature): Socket?
+    fun createSocket(client: Client?, feature: Feature): Socket?
+    fun getSocket(client: Client?, feature: Feature): Socket?
 }

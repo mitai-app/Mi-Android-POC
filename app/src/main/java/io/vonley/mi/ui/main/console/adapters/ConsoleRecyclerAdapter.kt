@@ -54,8 +54,9 @@ class ConsoleRecyclerAdapter @Inject constructor(
         RecyclerView.ViewHolder(binding.root) {
 
         var client: Client? = null
+            private set
 
-        fun setTarget(console: Client) {
+        private fun setTarget(console: Client) {
             this.client = console
             sync.setTarget(console)
             view.setSummary("Current Target: ${console.name}, w/ ${console.featureString}")
@@ -63,9 +64,9 @@ class ConsoleRecyclerAdapter @Inject constructor(
             if (console.features.isPs3) {
                 sheet.show(manager, sheet.tag)
             } else if (console.features.isPs4) {
-                //TODO: Something with KLOG?
                 if (Feature.KLOG in console.features) {
-                    klog.connect(view)
+                    klog.connect()
+                    sheet.show(manager, sheet.tag)
                 }
             }
         }
