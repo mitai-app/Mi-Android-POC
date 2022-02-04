@@ -10,6 +10,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.scopes.FragmentScoped
 import io.vonley.mi.di.network.SyncService
+import io.vonley.mi.di.network.protocols.klog.KLog
 import io.vonley.mi.di.repository.ConsoleRepository
 import io.vonley.mi.ui.main.MainContract
 import io.vonley.mi.ui.main.console.ConsoleFragment
@@ -52,7 +53,7 @@ object FragmentContractPresenter {
 
     @Provides
     fun provideConsoleOptionSheetFragment(activity: Fragment): ProtocolSheetFragment {
-        return if (activity is  ProtocolSheetFragment) activity else ProtocolSheetFragment()
+        return if (activity is ProtocolSheetFragment) activity else ProtocolSheetFragment()
     }
 
     @Provides
@@ -79,9 +80,10 @@ object FragmentContractPresenter {
         view: MainContract.View,
         service: SyncService,
         sheet: ProtocolSheetFragment,
-        fragment: ConsoleFragment
+        fragment: ConsoleFragment,
+        klog: KLog,
     ): ConsoleRecyclerAdapter {
-        return ConsoleRecyclerAdapter(view, service, sheet, fragment.childFragmentManager)
+        return ConsoleRecyclerAdapter(view, service, sheet, fragment.childFragmentManager, klog)
     }
 
 }
