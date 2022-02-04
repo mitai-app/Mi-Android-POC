@@ -7,10 +7,7 @@ import io.vonley.mi.di.modules.GuestInterceptorOkHttpClient
 import io.vonley.mi.di.network.MiServer
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.SyncService
-import io.vonley.mi.extensions.d
-import io.vonley.mi.extensions.e
-import io.vonley.mi.extensions.i
-import io.vonley.mi.extensions.toJson
+import io.vonley.mi.extensions.*
 import io.vonley.mi.models.Client
 import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.ui.main.payload.adapters.PayloadAdapter
@@ -60,7 +57,8 @@ class PSXServiceImpl @Inject constructor(
             val allowed = target.type.features
             val filter = target.features.filter { it in allowed }
             launch {
-                val feats = filter.map { feature -> this@PSXServiceImpl[target] = feature; feature }.filter { this@PSXServiceImpl[target, it] != null }
+                val feats = filter.map { feature -> this@PSXServiceImpl[target] = feature; feature }
+                    .filter { this@PSXServiceImpl[target, it] != null }
                 withContext(Dispatchers.Main) {
                     synchronized(_features) {
                         _features.value = feats
@@ -126,7 +124,7 @@ class PSXServiceImpl @Inject constructor(
         launch {
             payloads.onEach { payload ->
                 when {
-                    payload.name.endsWith(".bin") || payload.name.endsWith(".pkg") -> {
+                    payload.name.endsWith(".bin") -> {
                         try {
                             val socket = Socket()
                             socket.connect(
@@ -167,25 +165,43 @@ class PSXServiceImpl @Inject constructor(
                             val contentType = "application/json".toMediaType()
                             val body = toJson.toRequestBody(contentType)
                             "json: $toJson".d(TAG)
+                            withContext(Dispatchers.Main) {
+                                callback.onWriting(payload)
+                            }
                             val res =
                                 post(
                                     "http://$targetIp:12800/api/install",
                                     body,
                                     Headers.headersOf()
                                 )
-                            res?.body?.let { body ->
-                                "Code: ${res.code}".d(TAG)
-                                body.string().e(TAG)
-                                withContext(Dispatchers.Main) {
-                                    callback.onWriting(payload)
-                                }
-                            } ?: run {
-                                "Response was empty...".d(TAG)
-                                withContext(Dispatchers.Main) {
+
+                            withContext(Dispatchers.Main) {
+                                res?.body?.let { body ->
+                                    body.string()
+                                        .fromJson<HashMap<String, String>>()?.let { map ->
+                                            map["status"]?.let { status ->
+                                                if (status == "fail") {
+                                                    payload.status = -1
+                                                    callback.onPayloadFailed(payload)
+                                                } else {
+                                                    payload.status = 1
+                                                    callback.onSent(payload)
+                                                }
+                                            } ?: run {
+                                                payload.status = -1
+                                                callback.onPayloadFailed(payload)
+                                            }
+                                        }?: run {
+                                        payload.status = -1
+                                        callback.onPayloadFailed(payload)       
+                                    }
+                                } ?: run {
+                                    "Response was empty...".d(TAG)
                                     payload.status = -1
                                     callback.onPayloadFailed(payload)
                                 }
                             }
+
                         } catch (e: Throwable) {
                             "Something went wrong: ${e.message}".e(TAG, e)
                             withContext(Dispatchers.Main) {

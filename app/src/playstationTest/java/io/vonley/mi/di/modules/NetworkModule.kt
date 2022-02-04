@@ -71,9 +71,10 @@ object NetworkModule {
     fun provideClientSyncService(
         @ApplicationContext context: Context,
         database: AppDatabase,
-        @SharedPreferenceStorage manager: SharedPreferenceManager
+        @SharedPreferenceStorage manager: SharedPreferenceManager,
+        @GuestInterceptorOkHttpClient client: OkHttpClient
     ): SyncServiceImpl {
-        return SyncServiceImpl(context, database, manager)
+        return SyncServiceImpl(context, database, manager, client)
     }
 
     @Provides

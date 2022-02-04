@@ -15,20 +15,13 @@ import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.Socket
 
-interface PSXNotify {
+interface PSXNotifier {
     suspend fun notify(message: String)
-}
-
-interface PSXSystem {
     suspend fun boot(ps3boot: Boot)
     suspend fun buzzer(buzz: Buzzer)
-    suspend fun refresh()
-    suspend fun insert()
-    suspend fun eject()
-    suspend fun unmount()
 }
 
-interface PSXProtocol : PSXNotify, PSXSystem, BaseClient {
+interface PSXProtocol : BaseClient {
 
     override val http: OkHttpClient get() = service.http
     override fun post(url: String, body: RequestBody, headers: Headers) =
@@ -91,35 +84,4 @@ interface PSXProtocol : PSXNotify, PSXSystem, BaseClient {
         }
     }
 
-    override suspend fun refresh() {
-        service.target?.let { target ->
-            if (Feature.WEBMAN in target.features) {
-                val url = ("http://${target.ip}:80/refresh.ps3")
-            }
-        }
-    }
-
-    override suspend fun insert() {
-        service.target?.let { target ->
-            if (Feature.WEBMAN in target.features) {
-                val url = ("http://${target.ip}:80/insert.ps3")
-            }
-        }
-    }
-
-    override suspend fun eject() {
-        service.target?.let { target ->
-            if (Feature.WEBMAN in target.features) {
-                val url = ("http://${target.ip}:80/eject.ps3")
-            }
-        }
-    }
-
-    override suspend fun unmount() {
-        service.target?.let { target ->
-            if (Feature.WEBMAN in target.features) {
-                val url = ("http://${target.ip}:80/mount.ps3/unmount")
-            }
-        }
-    }
 }

@@ -31,7 +31,8 @@ enum class PlatformType(vararg val features: Feature) : Parcelable {
             Feature.GOLDENHEN,
             Feature.NETCAT,
             Feature.ORBISAPI,
-            Feature.RPI
+            Feature.RPI,
+            Feature.KLOG
         )
     )
 
@@ -65,6 +66,7 @@ enum class Feature(
     PS3MAPI("PS3MAPI", R.string.feature_ps3mapi, Protocol.SOCKET, 7887),
     CCAPI("CCAPI", R.string.feature_ccapi, Protocol.HTTP, 6333),
     WEBMAN("WEBMAN", R.string.feature_webman, Protocol.HTTP, 80),
+    KLOG("KLOG", R.string.feature_klog, Protocol.SOCKET, 3232),
     FTP("FTP", R.string.feature_ftp, Protocol.FTP, 21, 2121);
 
     fun validate(client: Client, service: SyncService): Boolean {
@@ -73,7 +75,7 @@ enum class Feature(
                 .url(url)
                 .get()
                 .build()
-            val execute = service.client.newCall(req)
+            val execute = service.http.newCall(req)
             val response = execute.execute()
             val s = response.body?.string()
             return s
@@ -116,7 +118,7 @@ enum class Feature(
         /**
          * These are stable sockets that are allowed to be opened for however long
          */
-        val allowedToOpen: Array<Feature> = arrayOf(PS3MAPI, CCAPI, WEBMAN, ORBISAPI)
+        val allowedToOpen: Array<Feature> = arrayOf(PS3MAPI, CCAPI, WEBMAN, ORBISAPI, KLOG)
     }
 }
 

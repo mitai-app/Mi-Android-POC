@@ -2,6 +2,7 @@ package io.vonley.mi.di.network.protocols.ccapi
 
 import androidx.lifecycle.LiveData
 import io.vonley.mi.di.network.impl.get
+import io.vonley.mi.di.network.protocols.common.PSXNotifier
 import io.vonley.mi.di.network.protocols.common.PSXProtocol
 import io.vonley.mi.di.network.protocols.common.cmds.Boot
 import io.vonley.mi.di.network.protocols.common.cmds.Buzzer
@@ -39,7 +40,7 @@ class CCAPIException(error: CCAPIERROR, errorMsg: String) : Throwable() {
     }
 }
 
-interface CCAPI : PSXProtocol {
+interface CCAPI : PSXProtocol, PSXNotifier {
 
 
     /**

@@ -5,6 +5,7 @@ import android.os.Environment
 import android.util.Log
 import io.vonley.mi.di.network.impl.get
 import io.vonley.mi.di.network.protocols.common.PSXProtocol
+import io.vonley.mi.di.network.protocols.common.PSXNotifier
 import io.vonley.mi.di.network.protocols.common.cmds.Boot
 import io.vonley.mi.di.network.protocols.common.cmds.Buzzer
 import io.vonley.mi.di.network.protocols.webman.models.Game
@@ -21,7 +22,7 @@ import java.net.*
 import java.util.*
 
 
-interface Webman : PSXProtocol {
+interface Webman : PSXProtocol, PSXNotifier {
 
     override val feature: Feature get() = Feature.WEBMAN
     private val _socket: Socket? get() = service[service.target!!, feature]
@@ -305,22 +306,22 @@ interface Webman : PSXProtocol {
         return validate("http://${service.targetIp}:80/index.ps3")
     }
 
-    override suspend fun refresh() {
+    suspend fun refresh() {
         val url = ("http://${service.targetIp}:80/refresh.ps3")
         download(url)
     }
 
-    override suspend fun insert() {
+    suspend fun insert() {
         val url = ("http://${service.targetIp}:80/insert.ps3")
         download(url)
     }
 
-    override suspend fun eject() {
+    suspend fun eject() {
         val url = ("http://${service.targetIp}:80/eject.ps3")
         download(url)
     }
 
-    override suspend fun unmount() {
+    suspend fun unmount() {
         val url = ("http://${service.targetIp}:80/mount.ps3/unmount")
         download(url)
     }

@@ -18,6 +18,7 @@ import io.vonley.mi.R
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
 import io.vonley.mi.di.network.MiServer
 import io.vonley.mi.di.network.PSXService
+import io.vonley.mi.extensions.e
 import io.vonley.mi.extensions.fromJson
 import io.vonley.mi.models.Device
 import io.vonley.mi.models.Mi
@@ -51,11 +52,47 @@ class MiServerImpl constructor(
         fun onUnsupported(s: String)
         fun onCommand(mi: Mi<Mi.Cmd>)
         fun onSendPayloadAttempt(attempt: Int)
+        fun onSendPkgSuccess(payload: PayloadAdapter.Payload) {
+
+        }
+
+        fun onSendPkgFail(payload: PayloadAdapter.Payload) {
+
+        }
     }
 
     override var server: NanoHTTPD? = null
     private val callbacks: HashMap<Class<*>, MiJbServerListener> = hashMapOf()
     private val callback: MiJbServerListener = object : MiJbServerListener {
+
+        override fun onSendPkgFail(payload: PayloadAdapter.Payload) {
+            val name = "onSendPkgFail"
+            launch {
+                withContext(Dispatchers.Main) {
+                    callbacks.onEach { a ->
+                        if (BuildConfig.DEBUG) {
+                            Log.e(TAG, "Calling ${a.key.name}::${name}(string) / ${payload.name}")
+                        }
+                        a.value.onSendPkgFail(payload)
+                    }
+                }
+            }
+        }
+
+        override fun onSendPkgSuccess(payload: PayloadAdapter.Payload) {
+            val name = "onSendPkgSuccess"
+            launch {
+                withContext(Dispatchers.Main) {
+                    callbacks.onEach { a ->
+                        if (BuildConfig.DEBUG) {
+                            Log.e(TAG, "Calling ${a.key.name}::${name}(string) / ${payload.name}")
+                        }
+                        a.value.onSendPkgSuccess(payload)
+                    }
+                }
+            }
+        }
+
         override fun onDeviceConnected(device: Device) {
             val name = "onDeviceConnected"
             launch {
@@ -287,6 +324,17 @@ class MiServerImpl constructor(
                 s?.let { session ->
                     val uri = session.uri.toString()
                     val console = parse(session)
+                    "URL: $uri".e(TAG)
+                    fun installPayload(): Response {
+                        val bytes = payloads[uri]!!
+                        "PAYLOAD DOES CONTAIN URI: $uri, size: ${bytes.size}".e("BOO YEAH")
+                        val response = Response(
+                            Response.Status.OK,
+                            "application/x-newton-compatible-pkg",
+                            ByteArrayInputStream(bytes)
+                        )
+                        return response
+                    }
                     console?.let {
                         manager.ftpPass
                         callback.onDeviceConnected(it)
@@ -365,13 +413,9 @@ class MiServerImpl constructor(
                                     )
                                 }
                             }
-                        } else if(payloads.containsKey(uri)) {
-                            return Response(
-                                Response.Status.OK,
-                                "application/x-newton-compatible-pkg",
-                                ByteArrayInputStream(payloads[uri])
-                            )
-                        }else {
+                        } else if (payloads.containsKey(uri)) {
+                            return installPayload()
+                        } else {
                             return Response(
                                 Response.Status.OK,
                                 "text/html",
@@ -380,11 +424,7 @@ class MiServerImpl constructor(
                         }
                     } ?: run {
                         if (payloads.containsKey(uri)) {
-                            return Response(
-                                Response.Status.OK,
-                                "application/x-newton-compatible-pkg",
-                                ByteArrayInputStream(payloads[uri])
-                            )
+                            return installPayload()
                         }
                         callback.onUnsupported("This device is not supported!")
                         return Response(

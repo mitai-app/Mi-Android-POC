@@ -66,7 +66,6 @@ interface PSXService : BaseClient, SyncService {
 
     fun uploadBin (server: MiServer, payloads: ArrayList<PayloadAdapter.Payload>, callback: PSXListener)
 
-
     override fun cleanup() = sync.cleanup()
 
     override fun initialize() = sync.initialize()

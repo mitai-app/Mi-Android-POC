@@ -38,4 +38,5 @@
     <string name="feature_ps3mapi">PS3MAPI</string>
     <string name="feature_ccapi">CCAPI</string>
     <string name="feature_webman">Webman</string>
+    <string name="feature_klog">KLog</string>
 </resources>

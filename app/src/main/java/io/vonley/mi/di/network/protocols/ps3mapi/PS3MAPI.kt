@@ -15,7 +15,7 @@ import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
 
-interface PS3MAPI : PSXProtocol {
+interface PS3MAPI : PSXProtocol, PSXNotifier {
 
     override val feature: Feature get() = Feature.PS3MAPI
     private val _socket: Socket? get() = service[service.target!!, feature]
