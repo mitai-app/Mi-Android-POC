@@ -154,6 +154,10 @@ class MainActivity : AppCompatActivity(), MainContract.View,
         currentView<BaseContract.View>()?.onDialogCanceled()
     }
 
+    override fun onLog(string: String) {
+        binding.fakeToolbarSummary.text = string
+    }
+
     override fun onDialogInput(input: String) {
         super.onDialogInput(input)
         currentView<BaseContract.View>()?.onDialogInput(input)

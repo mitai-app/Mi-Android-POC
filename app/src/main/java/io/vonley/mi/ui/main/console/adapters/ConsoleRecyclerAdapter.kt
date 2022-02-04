@@ -10,7 +10,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.vonley.mi.R
 import io.vonley.mi.databinding.VhConsoleBinding
 import io.vonley.mi.di.network.SyncService
+import io.vonley.mi.di.network.protocols.klog.KLog
 import io.vonley.mi.models.*
+import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.ui.main.MainContract
 import io.vonley.mi.ui.main.console.sheets.ProtocolSheetFragment
 import javax.inject.Inject
@@ -19,7 +21,8 @@ class ConsoleRecyclerAdapter @Inject constructor(
     val view: MainContract.View,
     val sync: SyncService,
     val sheet: ProtocolSheetFragment,
-    val manager: FragmentManager
+    val manager: FragmentManager,
+    val klog: KLog
 ) : RecyclerView.Adapter<ConsoleRecyclerAdapter.ConsoleViewHolder>() {
 
     private var consoles = emptyList<Console>()
@@ -61,6 +64,9 @@ class ConsoleRecyclerAdapter @Inject constructor(
                 sheet.show(manager, sheet.tag)
             } else if (console.features.isPs4) {
                 //TODO: Something with KLOG?
+                if (Feature.KLOG in console.features) {
+                    klog.connect(view)
+                }
             }
         }
 

@@ -24,9 +24,9 @@ interface KLog : PSXProtocol {
 
     var onGoing: Job?
 
-    fun connect() {
-        if(onGoing?.isActive == true) return
-        if(onGoing?.isCompleted == true || onGoing?.isCancelled == true|| onGoing == null) {
+    fun connect(log: KLogger) {
+        if (onGoing?.isActive == true) return
+        if (onGoing?.isCompleted == true || onGoing?.isCancelled == true || onGoing == null) {
             when (_socket?.isConnected) {
                 true -> {
                     onGoing = launch {
@@ -35,7 +35,10 @@ interface KLog : PSXProtocol {
                         while (socket.isConnected) {
                             while (br.readLine()?.let { stub = it } != null) {
                                 withContext(Dispatchers.Main) {
-                                    stub?.let { logger.onLog(it) }
+                                    stub?.let {
+                                        log.onLog(it)
+                                        logger.onLog(it)
+                                    }
                                 }
                             }
                         }
@@ -44,7 +47,7 @@ interface KLog : PSXProtocol {
                 else -> try {
                     val sockAddr = InetSocketAddress(service.targetIp, feature.ports.first())
                     socket.connect(sockAddr, 2000)
-                    connect()
+                    connect(log)
                 } catch (e: Throwable) {
 
                 }
