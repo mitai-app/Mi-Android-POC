@@ -49,6 +49,14 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideKlogService(
+        service: PSXService,
+    ): KLogImpl {
+        return KLogImpl(service)
+    }
+
+    @Provides
+    @Singleton
     fun provideWebManService(
         service: PSXService
     ): WebManImpl {

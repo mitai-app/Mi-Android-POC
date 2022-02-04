@@ -111,7 +111,7 @@ enum class Feature(
          * Goldenhen Bin Uploader stops working after a while
          * NetCat
          */
-        //arrayOf(ORBISAPI, RPI, PS3MAPI, CCAPI, WEBMAN, FTP)
+        //arrayOf(ORBISAPI, RPI, PS3MAPI, CCAPI, WEBMAN, FTP, KLOG)
         val stableFeatures: Array<Feature> =
             Feature.values().filterNot { p -> p in arrayOf(NONE, NETCAT, GOLDENHEN) }.toTypedArray()
 

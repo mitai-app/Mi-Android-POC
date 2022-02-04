@@ -12,7 +12,7 @@ import java.net.Socket
 
 interface KLog : PSXProtocol {
 
-    override val feature: Feature get() = Feature.PS3MAPI
+    override val feature: Feature get() = Feature.KLOG
     private val _socket: Socket? get() = service[service.target!!, feature]
     override val socket: Socket get() = _socket!!
 
