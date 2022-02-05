@@ -54,5 +54,4 @@
 
     <style name="Theme.Lambda.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <color name="material_red">#B00020</color>
 </resources>

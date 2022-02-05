@@ -15,10 +15,21 @@
         android:textSize="32sp"
         android:textStyle="bold" />
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/pager"
+
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Games"
+        android:textFontWeight="600"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <include
+        android:id="@+id/vh_console_disc"
+        layout="@layout/vh_console_disc"
+        />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
@@ -33,9 +44,9 @@
         android:id="@+id/webman_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="1"
+        app:spanCount="3"
         tools:itemCount="6"
         tools:listitem="@layout/vh_webman_option" />
 

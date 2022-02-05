@@ -21,18 +21,6 @@ class PayloadPresenter @Inject constructor(
 ) : BasePresenter(),
     PayloadContract.Presenter {
 
-    override fun sendPayload(bytes: ByteArray) {
-        ps4.uploadBin(bytes, object: Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                view.onError(e)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                view.onPayloadSent(response)
-            }
-        })
-    }
-
     override fun sendMultiplePayloads(payloads: ArrayList<PayloadAdapter.Payload>) {
         ps4.uploadBin(server, payloads, view)
     }

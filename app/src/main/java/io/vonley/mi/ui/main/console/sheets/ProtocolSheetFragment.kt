@@ -38,17 +38,18 @@ class ProtocolSheetFragment : BottomSheetDialogFragment(), ProtocolContract.View
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentConsoleOptionSheetBinding.inflate(inflater, container, false)
+        binding.list.layoutManager = GridLayoutManager(context, 1)
+        binding.list.adapter = adapter
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.list.layoutManager = GridLayoutManager(context, 1)
-        binding.list.adapter = adapter
+       adapter.init()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onDestroy() {
+        super.onDestroy()
+        adapter.cleanup()
     }
 
     override fun onError(e: Throwable) {

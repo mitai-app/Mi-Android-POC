@@ -19,13 +19,6 @@ interface PayloadContract {
     interface Presenter : BaseContract.Presenter {
         val manager: SharedPreferenceManager
 
-        fun sendPayload(bytes: ByteArray)
-        fun sendPayload(stream: InputStream) {
-            val bytes = DataInputStream(stream).use {
-                it.readBytes()
-            }
-            return sendPayload(bytes)
-        }
         fun sendMultiplePayloads(payloads: ArrayList<PayloadAdapter.Payload>)
     }
 

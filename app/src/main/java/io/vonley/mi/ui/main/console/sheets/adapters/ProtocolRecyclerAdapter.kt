@@ -4,13 +4,17 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
-import io.vonley.mi.databinding.*
+import io.vonley.mi.databinding.ViewCcapiBinding
+import io.vonley.mi.databinding.ViewKlogBinding
+import io.vonley.mi.databinding.ViewPs3mapiBinding
+import io.vonley.mi.databinding.ViewWebmanBinding
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.protocols.ccapi.CCAPI
 import io.vonley.mi.di.network.protocols.common.PSXProtocol
 import io.vonley.mi.di.network.protocols.klog.KLog
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPI
 import io.vonley.mi.di.network.protocols.webman.Webman
+import io.vonley.mi.models.Client
 import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.ui.main.MainContract
 import io.vonley.mi.ui.main.console.sheets.views.*
@@ -23,22 +27,34 @@ class ProtocolRecyclerAdapter @Inject constructor(
     val webman: Webman,
     val klog: KLog,
     val service: PSXService
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Observer<List<Feature>> {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var services: List<PSXProtocol> = emptyList()
 
+    private val clientObserver = Observer<Client> {
+        it?.let { client ->
+            init(client.features)
+        }
+    }
+
     init {
-        service.features.observeForever(this)
+        init()
+    }
+
+    fun init() {
+        service.liveTarget.observeForever(clientObserver)
         service.initialize()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = when (viewType) {
-            Feature.KLOG.ordinal -> KLogViewHolder(ViewKlogBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            ), klog)
+            Feature.KLOG.ordinal -> KLogViewHolder(
+                ViewKlogBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ), klog
+            )
             Feature.WEBMAN.ordinal -> WebmanViewHolder(
                 ViewWebmanBinding.inflate(
                     LayoutInflater.from(parent.context),
@@ -88,27 +104,23 @@ class ProtocolRecyclerAdapter @Inject constructor(
         return this.services.size
     }
 
-    fun cleanup(){
-        service.features.removeObserver(this)
+    fun cleanup() {
+        service.liveTarget.removeObserver(clientObserver)
     }
 
-    override fun onChanged(t: List<Feature>?) {
-        t?.let { features ->
-            val target = service.target
-            if (target != null) {
-                services = features.mapNotNull { f ->
-                    when (f) {
-                        ps3mapi.feature -> ps3mapi
-                        ccapi.feature -> ccapi
-                        webman.feature -> webman
-                        klog.feature -> klog
-                        else -> null
-                    }
+    fun init(features: List<Feature>) {
+        val target = service.target
+        if (target != null) {
+            services = features.mapNotNull { f ->
+                when (f) {
+                    ps3mapi.feature -> ps3mapi
+                    ccapi.feature -> ccapi
+                    webman.feature -> webman
+                    klog.feature -> klog
+                    else -> null
                 }
-                notifyDataSetChanged()
             }
-        } ?: run {
-
+            notifyDataSetChanged()
         }
     }
 

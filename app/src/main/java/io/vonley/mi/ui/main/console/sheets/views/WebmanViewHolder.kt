@@ -16,9 +16,13 @@ class WebmanViewHolder(
 
     override fun init() {
         launch {
-            val games = protocol.searchGames()
-            withContext(Dispatchers.Main) {
-                binding.webmanRecycler.adapter = WebmanGameSetAdapter(games, protocol)
+            try {
+                val games = protocol.searchGames()
+                withContext(Dispatchers.Main) {
+                    binding.webmanRecycler.adapter = WebmanGameSetAdapter(games, protocol)
+                }
+            }catch (e: Throwable){
+
             }
         }
     }

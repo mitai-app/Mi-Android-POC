@@ -25,7 +25,11 @@ import java.net.Socket
 import java.util.ArrayList
 import kotlin.coroutines.CoroutineContext
 
-interface PSXService : BaseClient, SyncService {
+interface PSXBin: BaseClient {
+    fun uploadBin (server: MiServer, payloads: ArrayList<PayloadAdapter.Payload>, callback: PSXService.PSXListener)
+}
+
+interface PSXService : PSXBin, SyncService {
 
     interface PSXListener {
         fun onFinished()
@@ -34,37 +38,15 @@ interface PSXService : BaseClient, SyncService {
         fun onPayloadFailed(payload: PayloadAdapter.Payload)
     }
 
-    val features: LiveData<List<Feature>>
-
     val sync: SyncService
 
     val manager: SharedPreferenceManager
 
     val targetIp get() = target?.ip
 
-    /**
-     * Uploads file to web
-     */
-    fun uploadBin(file: ByteArray, callback: Callback) {
-        if (target == null) return
-        val url = "$targetIp:${manager.featurePort.ports.first()}"
-        val body: RequestBody = file.toRequestBody()
-        Log.e("URL", url)
-        post(url, body, Headers.headersOf(), callback)
-    }
+    override val liveTarget: LiveData<Client>
+        get() = sync.liveTarget
 
-    /**
-     * Uploads file to web
-     */
-    fun uploadBin(file: File, callback: Callback) {
-        if (target == null) return
-        val url = "$targetIp:${manager.featurePort.ports.first()}"
-        val body: RequestBody = file.asRequestBody()
-        Log.e("URL", url)
-        post(url, body, Headers.headersOf(), callback)
-    }
-
-    fun uploadBin (server: MiServer, payloads: ArrayList<PayloadAdapter.Payload>, callback: PSXListener)
 
     override fun cleanup() = sync.cleanup()
 

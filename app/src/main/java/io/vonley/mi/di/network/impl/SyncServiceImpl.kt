@@ -11,6 +11,8 @@ import android.os.Build
 import android.text.format.Formatter
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import io.vonley.mi.BuildConfig
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
 import io.vonley.mi.di.modules.GuestInterceptorOkHttpClient
@@ -30,6 +32,8 @@ import io.vonley.mi.persistence.ConsoleDao
 import io.vonley.mi.utils.SharedPreferenceManager
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
+import okhttp3.internal.notify
+import okhttp3.internal.notifyAll
 import java.lang.ref.WeakReference
 import java.net.ConnectException
 import java.net.InetAddress
@@ -81,12 +85,12 @@ class SyncServiceImpl constructor(
 
 
     override fun getSocket(client: Client?, feature: Feature): Socket? {
-        if(client == null) return null
+        if (client == null) return null
         return cachedTargets[client.ip]?.get(feature)
     }
 
     override fun createSocket(client: Client?, feature: Feature): Socket? {
-        if(client == null) return null
+        if (client == null) return null
         if (!cachedTargets.containsKey(client.ip)) {
             cachedTargets[client.ip] = EnumMap<Feature, Socket>(Feature::class.java)
         }
@@ -120,17 +124,11 @@ class SyncServiceImpl constructor(
         return cachedTargets[client.ip]!![feature]
     }
 
-    var _target: Client? = null
-        set(value) {
-            field = value
-            if (value != null) {
+    private val _liveTarget: MutableLiveData<Client> = MutableLiveData()
 
-                manager.targetName = value.ip
-            }
-        }
+    override val liveTarget: LiveData<Client>
+        get() = _liveTarget
 
-    override val target: Client?
-        get() = _target
 
     override val activeNetworkInfo: NetworkInfo?
         get() = cm.activeNetworkInfo
@@ -234,7 +232,10 @@ class SyncServiceImpl constructor(
     }
 
     override fun setTarget(client: Client) {
-        this._target = client
+        manager.targetName = client.ip
+        synchronized(_liveTarget){
+            _liveTarget.postValue(client)
+        }
     }
 
 
@@ -381,8 +382,8 @@ operator fun <T : ClientHandler> SyncService.get(clazz: Class<T>): T {
     return handlers[clazz] as T
 }
 
-operator fun <T : Client> SyncService.set(client: T?, feature: Feature): Socket? {
-    return createSocket(client, feature)
+operator fun <T : Client> SyncService.set(client: T?, feature: Feature) {
+    createSocket(client, feature)
 }
 
 operator fun <T : Client> SyncService.get(client: T?, feature: Feature): Socket? {

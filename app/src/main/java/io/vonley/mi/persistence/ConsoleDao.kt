@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
 import io.vonley.mi.models.Console
-import io.vonley.mi.models.enums.PlatformType
 import io.vonley.mi.models.enums.Feature
+import io.vonley.mi.models.enums.PlatformType
 
 @Dao
 interface ConsoleDao : IDao<Console, String> {
@@ -37,4 +37,7 @@ interface ConsoleDao : IDao<Console, String> {
 
     @Query("DELETE FROM Console WHERE ip = :ip_ AND wifi = :wifi_")
     fun delete(ip_: String, wifi_: String)
+
+    @Query("DELETE FROM Console WHERE pinned = 0 AND ip not in (:ips_)")
+    fun delete(ips_: Array<String>)
 }

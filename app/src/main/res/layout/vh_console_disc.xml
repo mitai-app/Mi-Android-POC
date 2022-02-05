@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/unmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardPreventCornerOverlap="true"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="16dp">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="8dp"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_svg_refresh"
+                    app:tint="?attr/colorOnSurface" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:scaleType="centerCrop"
+                    android:textColor="?attr/colorOnSurface"
+                    android:src="@drawable/icon_svg_refresh"
+                    android:text="Unmount"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/insert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardPreventCornerOverlap="true"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="16dp">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="8dp"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_svg_rotate"
+                    app:tint="?attr/colorOnSurface" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/icon_svg_refresh"
+                    android:text="Insert"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/eject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardPreventCornerOverlap="true"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="16dp">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="8dp"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_svg_refresh"
+                    app:tint="?attr/colorOnSurface" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/icon_svg_shutdown"
+                    android:text="Eject"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.cardview.widget.CardView>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardPreventCornerOverlap="true"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="16dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:padding="16dp"
+                android:textSize="12sp"
+                android:textAlignment="center"
+                android:text="Webman Settings coming soon...."
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </androidx.appcompat.widget.AppCompatTextView>
+
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/refresh_xml"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardPreventCornerOverlap="true"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="16dp">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:layout_marginBottom="8dp"
+                    android:padding="4dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_svg_sound_waves"
+                    app:tint="?attr/colorOnSurface" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/icon_svg_shutdown"
+                    android:text="Refresh Game XML"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.cardview.widget.CardView>
+
+
+    </LinearLayout>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

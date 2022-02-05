@@ -2,6 +2,7 @@ package io.vonley.mi.di.network.protocols.ps3mapi
 
 import androidx.lifecycle.LiveData
 import io.vonley.mi.di.network.impl.get
+import io.vonley.mi.di.network.impl.set
 import io.vonley.mi.di.network.protocols.common.*
 import io.vonley.mi.di.network.protocols.common.cmds.Boot
 import io.vonley.mi.di.network.protocols.common.cmds.Buzzer
@@ -10,7 +11,6 @@ import io.vonley.mi.di.network.protocols.common.cmds.LedStatus
 import io.vonley.mi.di.network.protocols.common.models.*
 import io.vonley.mi.di.network.protocols.ps3mapi.cmds.*
 import io.vonley.mi.di.network.protocols.ps3mapi.models.PS3MAPIResponse
-import io.vonley.mi.di.network.protocols.webman.Webman
 import io.vonley.mi.models.enums.Feature
 import java.io.IOException
 import java.net.InetSocketAddress
@@ -19,7 +19,7 @@ import java.net.Socket
 interface PS3MAPI : PSXProtocol, PSXNotifier {
 
     override val feature: Feature get() = Feature.PS3MAPI
-    private val _socket: Socket? get() = service[service.target!!, feature]
+    private val _socket: Socket? get() = service[service.target, feature]
     override val socket: Socket get() = _socket!!
 
     val listener: Listener
@@ -36,10 +36,20 @@ interface PS3MAPI : PSXProtocol, PSXNotifier {
         } else null // Not Connected!
     }
 
+
     suspend fun connect(): Boolean {
+        if (_socket == null) {
+            try {
+                authed = false
+                service[service.target] = feature
+                if (_socket == null) return false
+            }catch (e: Throwable){
+                return false
+            }
+        }
         return when {
-            authed && socket.isConnected -> true
-            !authed && socket.isConnected -> {
+            authed && _socket?.isConnected == true -> true
+            !authed && _socket?.isConnected == true -> {
                 try {
                     val first: PS3MAPIResponse = PS3MAPIResponse.parse(recv() ?: return false)
                     if (first.success && first.code === PS3MAPIResponse.Code.PS3MAPICONNECTED) {
@@ -57,9 +67,12 @@ interface PS3MAPI : PSXProtocol, PSXNotifier {
                 }
             }
             else -> try {
-                val sockAddr = InetSocketAddress(service.targetIp, feature.ports.first())
-                socket.connect(sockAddr, 2000)
-                connect()
+                authed = false
+                service[service.target] = feature
+                if (_socket != null) {
+                    connect()
+                }
+                false
             } catch (e: Throwable) {
                 false
             }
@@ -440,5 +453,5 @@ interface PS3MAPI : PSXProtocol, PSXNotifier {
 
 
     override val TAG: String
-        get() = PS3MAPI::class.simpleName?: PS3MAPI::class.java.name
+        get() = PS3MAPI::class.simpleName ?: PS3MAPI::class.java.name
 }

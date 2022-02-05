@@ -36,19 +36,19 @@ class PSXServiceImpl @Inject constructor(
             feature: Feature
         ): Boolean {
             val socket = sync[client, feature]
+
+            if(socket?.isConnected == true){
+
+            }
             return false
         }
     }
-
-    private val _features = MutableLiveData<List<Feature>>()
-
-    override val features: LiveData<List<Feature>> = _features
-
     /**
      * Initialize socket for designated feature. Newly created sockets are stored in
      * @see SyncServiceImpl.cachedTargets\. If socket is already stored and if
      * the connection have not close then the sock will not be created.
-     * features will notify any observers who have an open socket connection.
+     * features will notify any observers who have an open socket connection
+     * thats listening in on target change
      * @see Client.openActivePorts - This also takes place happens here.
      */
     override fun initialize() {
@@ -60,9 +60,8 @@ class PSXServiceImpl @Inject constructor(
                 val feats = filter.map { feature -> this@PSXServiceImpl[target] = feature; feature }
                     .filter { this@PSXServiceImpl[target, it] != null }
                 withContext(Dispatchers.Main) {
-                    synchronized(_features) {
-                        _features.value = feats
-                        _features.notifyAll()
+                    synchronized(liveTarget) {
+                        setTarget(target)
                     }
                 }
             }
@@ -73,22 +72,15 @@ class PSXServiceImpl @Inject constructor(
 
     suspend fun notify(msg: String): Boolean {
         target?.let { console ->
-            features.value?.let { feat ->
-                return@notify when {
-                    Feature.PS3MAPI in feat -> {
-                        notify(this, target!!, msg, Feature.PS3MAPI)
-                    }
-                    Feature.WEBMAN in feat -> {
-                        notify(this, target!!, msg, Feature.WEBMAN)
-                    }
-                    Feature.CCAPI in feat -> {
-                        notify(this, target!!, msg, Feature.CCAPI)
-                    }
-                    else -> {
-                        return false
-                    }
-                }
-            }
+            val common = console.features.firstOrNull {
+                it in arrayOf(
+                    Feature.PS3MAPI,
+                    Feature.WEBMAN,
+                    Feature.CCAPI
+                )
+            } ?:return false
+
+            return notify(this, console, msg, common)
         }
         return false
     }
@@ -193,7 +185,7 @@ class PSXServiceImpl @Inject constructor(
                                             }
                                         }?: run {
                                         payload.status = -1
-                                        callback.onPayloadFailed(payload)       
+                                        callback.onPayloadFailed(payload)
                                     }
                                 } ?: run {
                                     "Response was empty...".d(TAG)
