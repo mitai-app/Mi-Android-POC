@@ -44,6 +44,7 @@ interface PSXService : PSXBin, SyncService {
 
     val targetIp get() = target?.ip
 
+
     override val liveTarget: LiveData<Client>
         get() = sync.liveTarget
 

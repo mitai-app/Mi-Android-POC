@@ -34,12 +34,13 @@ class PSXServiceImpl @Inject constructor(
         ): Boolean {
             val socket = sync[client, feature]
 
-            if(socket?.isConnected == true){
+            if (socket?.isConnected == true) {
 
             }
             return false
         }
     }
+
     /**
      * Initialize socket for designated feature. Newly created sockets are stored in
      * @see SyncServiceImpl.cachedTargets\. If socket is already stored and if
@@ -75,7 +76,7 @@ class PSXServiceImpl @Inject constructor(
                     Feature.WEBMAN,
                     Feature.CCAPI
                 )
-            } ?:return false
+            } ?: return false
 
             return notify(this, console, msg, common)
         }
@@ -111,96 +112,95 @@ class PSXServiceImpl @Inject constructor(
         callback: PSXService.PSXListener
     ) {
         launch {
-            payloads.onEach { payload ->
-                when {
-                    payload.name.endsWith(".bin") -> {
-                        try {
-                            val socket = Socket()
-                            socket.connect(
-                                InetSocketAddress(
-                                    targetIp,
-                                    manager.featurePort.ports.first()
-                                )
-                            )
-                            withContext(Dispatchers.Main) {
-                                callback.onWriting(payload)
-                            }
-                            socket.getOutputStream().use { out ->
-                                out.write(payload.data)
-                                out.flush()
-                            }
-                            socket.close()
-                            withContext(Dispatchers.Main) {
-                                payload.status = 1
-                                callback.onSent(payload)
-                            }
-                            "Payload '${payload.name}' Sent!".i(TAG)
-                        } catch (e: Throwable) {
-                            "Failed to send payload '${payload.name}': ${e.message}".e(TAG, e)
-                            withContext(Dispatchers.Main) {
-                                payload.status = -1
-                                callback.onPayloadFailed(payload)
-                            }
+            val bins = payloads.filter { it.name.endsWith(".bin") }
+            val pkgs = payloads.filter { it.name.endsWith(".pkg") }
+            if (bins.isNotEmpty()) {
+                bins.onEach { payload ->
+                    try {
+                        val socket = Socket()
+                        socket.connect(
+                            InetSocketAddress(
+                                targetIp,
+                                manager.featurePort.ports.first()
+                            ),
+                            3000
+                        )
+                        withContext(Dispatchers.Main) {
+                            callback.onWriting(payload)
                         }
-                    }
-                    payload.name.endsWith(".pkg") -> {
-                        try {
-                            if (target?.features?.contains(Feature.RPI) == false) {
-                                return@onEach
-                            }
-                            "Target has Remote Package Installer".i(TAG)
-                            val urls = server.hostPackage(payload)
-                            val toJson = RPI(RPI.Type.direct, urls).toJson()
-                            val contentType = "application/json".toMediaType()
-                            val body = toJson.toRequestBody(contentType)
-                            "json: $toJson".d(TAG)
-                            withContext(Dispatchers.Main) {
-                                callback.onWriting(payload)
-                            }
-                            val res =
-                                post(
-                                    "http://$targetIp:12800/api/install",
-                                    body,
-                                    Headers.headersOf()
-                                )
-
-                            withContext(Dispatchers.Main) {
-                                res?.body?.let { body ->
-                                    body.string()
-                                        .fromJson<HashMap<String, String>>()?.let { map ->
-                                            map["status"]?.let { status ->
-                                                if (status == "fail") {
-                                                    payload.status = -1
-                                                    callback.onPayloadFailed(payload)
-                                                } else {
-                                                    payload.status = 1
-                                                    callback.onSent(payload)
-                                                }
-                                            } ?: run {
-                                                payload.status = -1
-                                                callback.onPayloadFailed(payload)
-                                            }
-                                        }?: run {
-                                        payload.status = -1
-                                        callback.onPayloadFailed(payload)
-                                    }
-                                } ?: run {
-                                    "Response was empty...".d(TAG)
-                                    payload.status = -1
-                                    callback.onPayloadFailed(payload)
-                                }
-                            }
-
-                        } catch (e: Throwable) {
-                            "Something went wrong: ${e.message}".e(TAG, e)
-                            withContext(Dispatchers.Main) {
-                                payload.status = -1
-                                callback.onPayloadFailed(payload)
-                            }
+                        socket.getOutputStream().use { out ->
+                            out.write(payload.data)
+                            out.flush()
+                        }
+                        withContext(Dispatchers.Main) {
+                            payload.status = 1
+                            callback.onSent(payload)
+                        }
+                        "Payload '${payload.name}' Sent!".i(TAG)
+                        delay(3000)
+                    } catch (e: Throwable) {
+                        "Failed to send payload '${payload.name}': ${e.message}".e(TAG, e)
+                        withContext(Dispatchers.Main) {
+                            payload.status = -1
+                            callback.onPayloadFailed(payload)
                         }
                     }
                 }
-                delay(3000)
+            }
+
+            if (pkgs.isNotEmpty() && target?.features?.contains(Feature.RPI) == true) {
+                "Target has Remote Package Installer".i(TAG)
+                pkgs.onEach { payload ->
+                    try {
+                        val urls = server.hostPackage(payload)
+                        val toJson = RPI(RPI.Type.direct, urls).toJson()
+                        val contentType = "application/json".toMediaType()
+                        val body = toJson.toRequestBody(contentType)
+                        "json: $toJson".d(TAG)
+                        withContext(Dispatchers.Main) {
+                            callback.onWriting(payload)
+                        }
+                        val res =
+                            post(
+                                "http://$targetIp:12800/api/install",
+                                body,
+                                Headers.headersOf()
+                            )
+                        withContext(Dispatchers.Main) {
+                            res?.body?.let { body ->
+                                body.string()
+                                    .fromJson<HashMap<String, String>>()?.let { map ->
+                                        map["status"]?.let { status ->
+                                            if (status == "fail") {
+                                                payload.status = -1
+                                                callback.onPayloadFailed(payload)
+                                            } else {
+                                                payload.status = 1
+                                                callback.onSent(payload)
+                                            }
+                                        } ?: run {
+                                            payload.status = -1
+                                            callback.onPayloadFailed(payload)
+                                        }
+                                    } ?: run {
+                                    payload.status = -1
+                                    callback.onPayloadFailed(payload)
+                                }
+                            } ?: run {
+                                "Response was empty...".d(TAG)
+                                payload.status = -1
+                                callback.onPayloadFailed(payload)
+                            }
+                        }
+
+                    } catch (e: Throwable) {
+                        "Something went wrong: ${e.message}".e(TAG, e)
+                        withContext(Dispatchers.Main) {
+                            payload.status = -1
+                            callback.onPayloadFailed(payload)
+                        }
+                    }
+                }
             }
             withContext(Dispatchers.Main) {
                 callback.onFinished()
