@@ -3,13 +3,15 @@ package io.vonley.mi.di.network.protocols.ps3mapi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.vonley.mi.di.network.PSXService
-import io.vonley.mi.di.network.protocols.ps3mapi.models.PS3MAPIResponse
 import io.vonley.mi.di.network.protocols.common.models.Process
 import io.vonley.mi.di.network.protocols.common.models.Temperature
+import io.vonley.mi.di.network.protocols.ps3mapi.models.PS3MAPIResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import okhttp3.internal.notifyAll
+import java.io.BufferedReader
 import java.io.IOException
+import java.io.InputStreamReader
+import java.io.PrintWriter
 import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.net.Socket
@@ -27,16 +29,46 @@ class PS3MAPIImpl(
     private var _liveProcesses = MutableLiveData<List<Process>>()
     override val liveProcesses: LiveData<List<Process>> get() = _liveProcesses
 
+    private var _br: BufferedReader? = null
+
+
+    override suspend fun send(data: String?) {
+        try {
+            val pw = PrintWriter(socket.getOutputStream())
+            "sending: ${data.toString()}".equals(TAG)
+            pw.println(data)
+            pw.flush()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            _br = null
+        }
+    }
+
+    override suspend fun recv(): String? {
+        return try {
+            if (_br == null) {
+                _br = socket.getInputStream().bufferedReader()
+            }
+            val readLine = _br?.readLine()
+            readLine
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            _br = null
+            null
+        }
+    }
+
     private var _processes: ArrayList<Process> = arrayListOf()
         set(value) {
             if (value.isNotEmpty()) {
                 synchronized(_processes) {
                     _liveProcesses.postValue(value)
-                    _liveProcesses.notifyAll()
                 }
                 field = value
             }
         }
+
+
     override val processes: List<Process> get() = _processes
     override var attached: Boolean = false
     override var process: Process? = null

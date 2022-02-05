@@ -1,8 +1,13 @@
 package io.vonley.mi
 
+import io.vonley.mi.extensions.e
 import org.junit.Test
 
 import org.junit.Assert.*
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.InetSocketAddress
+import java.net.Socket
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -13,6 +18,17 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
+    }
+
+    @Test
+    fun socket(){
+        val sock = Socket()
+        sock.connect(InetSocketAddress("192.168.1.46", 7887), 3000)
+        var br = sock.getInputStream().bufferedReader()
+        println(br.readLine())
+        val decodeToString = br.readLine()
+        println(decodeToString)
+
     }
 
     @Test

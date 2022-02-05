@@ -12,8 +12,6 @@ class CCAPIViewHolder(
 ) : RecyclerView.ViewHolder(binding.root), ViewHolderProtocol<CCAPI> {
 
     override fun init() {
-        launch {
-            protocol.notify(CCAPI.NotifyIcon.INFO, "Attached to CCAPI")
-        }
+        binding.subheader.text = "This feature is available!"
     }
 }

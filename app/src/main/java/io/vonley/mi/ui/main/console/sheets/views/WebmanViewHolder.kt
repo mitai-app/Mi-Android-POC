@@ -15,13 +15,46 @@ class WebmanViewHolder(
 
 
     override fun init() {
+        binding.vhConsoleDisc.eject.setOnClickListener {
+            launch {
+                try {
+                    protocol.eject()
+                } catch (e: Exception) {
+                }
+            }
+        }
+        binding.vhConsoleDisc.unmount.setOnClickListener {
+            launch {
+                try {
+                    protocol.unmount()
+                } catch (e: Exception) {
+                }
+            }
+        }
+        binding.vhConsoleDisc.insert.setOnClickListener {
+            launch {
+                try {
+                    protocol.insert()
+                } catch (e: Exception) {
+                }
+            }
+        }
+        binding.vhConsoleDisc.refreshXml.setOnClickListener {
+            launch {
+                try {
+                    protocol.refresh()
+                } catch (e: Exception) {
+
+                }
+            }
+        }
         launch {
             try {
                 val games = protocol.searchGames()
                 withContext(Dispatchers.Main) {
                     binding.webmanRecycler.adapter = WebmanGameSetAdapter(games, protocol)
                 }
-            }catch (e: Throwable){
+            } catch (e: Throwable) {
 
             }
         }

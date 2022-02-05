@@ -328,12 +328,11 @@ class MiServerImpl constructor(
                     fun installPayload(): Response {
                         val bytes = payloads[uri]!!
                         "PAYLOAD DOES CONTAIN URI: $uri, size: ${bytes.size}".e("BOO YEAH")
-                        val response = Response(
-                            Response.Status.OK,
+
+                        return newFixedLengthResponse(Response.Status.OK,
                             "application/x-newton-compatible-pkg",
-                            ByteArrayInputStream(bytes)
-                        )
-                        return response
+                            ByteArrayInputStream(bytes), bytes.size.toLong())
+
                     }
                     console?.let {
                         manager.ftpPass
@@ -347,14 +346,14 @@ class MiServerImpl constructor(
                             callback.onLog("PS4 -> $uri")
                             when (uri) {
                                 "/" -> {
-                                    return Response(
+                                    return newFixedLengthResponse(
                                         Response.Status.OK,
                                         "text/html",
                                         read("index.html")
                                     )
                                 }
                                 "/mi.js" -> {
-                                    return Response(
+                                    return newFixedLengthResponse(
                                         Response.Status.OK,
                                         "text/javascript",
                                         miJs.decodeToString()
@@ -368,7 +367,7 @@ class MiServerImpl constructor(
                                     if (BuildConfig.DEBUG) {
                                         Log.e(TAG, body)
                                     }
-                                    val mi: Mi<Mi.Cmd> = body.fromJson() ?: return Response(
+                                    val mi: Mi<Mi.Cmd> = body.fromJson() ?: return newFixedLengthResponse(
                                         Response.Status.INTERNAL_ERROR,
                                         "text/*",
                                         "unable to parse body"
@@ -389,24 +388,24 @@ class MiServerImpl constructor(
                                             callback.onLog("Sending Payload")
                                             sendPayload(it)
                                         }
-                                        else -> return Response(
+                                        else -> return newFixedLengthResponse(
                                             Response.Status.NOT_FOUND,
                                             "text/*",
                                             "invalid cmd"
                                         )
                                     }
-                                    return Response(Response.Status.OK, "text/*", "received")
+                                    return newFixedLengthResponse(Response.Status.OK, "text/*", "received")
                                 }
                                 else -> {
                                     val path = uri.drop(1)
                                     if (uri.contains(".manifest")) {
                                         if (!manager.cached) {
-                                            return Response(Response.Status.OK, "/*", "")
+                                            return newFixedLengthResponse(Response.Status.OK, "/*", "")
                                         }
                                     }
                                     Log.e(TAG, "URI: $uri")
 
-                                    return Response(
+                                    return newFixedLengthResponse(
                                         Response.Status.OK,
                                         mime,
                                         read(path)
@@ -416,7 +415,7 @@ class MiServerImpl constructor(
                         } else if (payloads.containsKey(uri)) {
                             return installPayload()
                         } else {
-                            return Response(
+                            return newFixedLengthResponse(
                                 Response.Status.OK,
                                 "text/html",
                                 failHtml.decodeToString()
@@ -427,7 +426,7 @@ class MiServerImpl constructor(
                             return installPayload()
                         }
                         callback.onUnsupported("This device is not supported!")
-                        return Response(
+                        return newFixedLengthResponse(
                             Response.Status.OK, "text/html", failHtml.decodeToString()
                         )
                     }

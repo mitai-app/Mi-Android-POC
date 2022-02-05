@@ -53,9 +53,14 @@ interface KLog : PSXProtocol {
             Pair("[SceHidConfigService]", Color.CYAN.toLong()),
             Pair("[SceNetEv]", blue),
             Pair("[SceLncService]", purple),
+            Pair("[ScePatchChecker]", gold),
+            Pair("[BgDailyChecker]", gold),
             Pair("[SceSystemStateMgr]", slateblue),
+            Pair("[AppMgr Trace]", slateblue),
             Pair("[SceRnpsAppMgr]", slateblue),
+            Pair("[sceProcessStarter]", blue),
             Pair("[Scecore App]", gold),
+            Pair("[Syscore App]", gold),
             Pair("[LoginMgr]", peach),
             Pair("#LOGIN MGR#", peach),
             Pair("[LoginMgr:EventQueue]", peach),
@@ -63,7 +68,12 @@ interface KLog : PSXProtocol {
             Pair("[ProfileCacheManager]", brown),
             Pair("<118>", transparent),
             Pair("118>", transparent),
-            Pair("<klog>", gold)
+            Pair("<klog>", gold),
+            Pair("[SceUserServiceServer]", gold),
+            Pair("[SceUserService]", gold),
+            Pair("[SceLncUtil]", brown),
+            Pair("[Syscore Umd]", gold),
+            Pair("[AppDb]", gold),
         )
 
         val bold = StyleSpan(Typeface.BOLD)
@@ -93,10 +103,9 @@ interface KLog : PSXProtocol {
                 true -> {
                     onGoing = launch {
                         try {
-                            val br = socket.getInputStream().bufferedReader()
                             var stub: String? = null
                             while (socket.isConnected) {
-                                while (br.readLine()?.let { stub = it } != null) {
+                                while (recv()?.let { stub = it } != null) {
                                     withContext(Dispatchers.Main) {
                                         stub?.let {
                                             loggers.onEach { entry ->

@@ -11,7 +11,6 @@ import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.utils.SharedPreferenceManager
 import io.vonley.mi.utils.set
 import kotlinx.coroutines.*
-import okhttp3.internal.notifyAll
 import org.apache.commons.net.ProtocolCommandEvent
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
@@ -217,8 +216,7 @@ class MiFTPClientImpl constructor(
             } else arrayOf()
             withContext(Dispatchers.Main) {
                 synchronized(_cwd) {
-                    _cwd.value = dir
-                    _cwd.notifyAll()
+                    _cwd.postValue(dir)
                 }
             }
         } catch (e: Throwable) {

@@ -21,9 +21,7 @@ import io.vonley.mi.di.network.handlers.ClientHandler
 import io.vonley.mi.di.network.handlers.base.BaseClientHandler
 import io.vonley.mi.di.network.handlers.impl.ConsoleClientHandler
 import io.vonley.mi.di.network.listeners.OnConsoleListener
-import io.vonley.mi.extensions.client
-import io.vonley.mi.extensions.console
-import io.vonley.mi.extensions.e
+import io.vonley.mi.extensions.*
 import io.vonley.mi.models.Client
 import io.vonley.mi.models.Console
 import io.vonley.mi.models.enums.Feature
@@ -32,8 +30,6 @@ import io.vonley.mi.persistence.ConsoleDao
 import io.vonley.mi.utils.SharedPreferenceManager
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
-import okhttp3.internal.notify
-import okhttp3.internal.notifyAll
 import java.lang.ref.WeakReference
 import java.net.ConnectException
 import java.net.InetAddress
@@ -193,6 +189,12 @@ class SyncServiceImpl constructor(
     override fun getClients(loop: Boolean) {
         val block: suspend CoroutineScope.() -> Unit = {
             do {
+                /**
+                 * First fetch and see if console are legit
+                 */
+                dao.get(wifiInfo.ssid).value?.let { consoles ->
+                    fetchConsolesListAsync(consoles)
+                }
                 if (BuildConfig.DEBUG) {
                     Log.e(TAG, "[Finding Clients]")
                 }
@@ -233,7 +235,7 @@ class SyncServiceImpl constructor(
 
     override fun setTarget(client: Client) {
         manager.targetName = client.ip
-        synchronized(_liveTarget){
+        synchronized(_liveTarget) {
             _liveTarget.postValue(client)
         }
     }
@@ -276,10 +278,6 @@ class SyncServiceImpl constructor(
      */
     private suspend fun fetchConsoles(clients: List<Client>): List<Console> {
         try {
-            Log.i(TAG, "[FetchConsoles::Start] Active Network: $activeNetworkInfo")
-            Log.i(TAG, "[Device Local IP] $localDeviceIp")
-            val prefix = localDeviceIp.substring(0, localDeviceIp.lastIndexOf(".") + 1)
-            Log.i(TAG, "[Local IP Prefix] $prefix")
             val consoles = clients
                 .mapNotNull { client ->
                     val console = client.console(this)
@@ -291,10 +289,10 @@ class SyncServiceImpl constructor(
             withContext(Dispatchers.Main) {
                 this@SyncServiceImpl[ConsoleClientHandler::class.java].handle(consoles)
             }
-            Log.v(TAG, "[FetchConsoles::End] End of Scan #: ${consoles.size}")
+            "[FetchConsoles::End] End of Scan #: ${consoles.size}".v(TAG)
             return consoles
         } catch (t: Throwable) {
-            Log.e(TAG, "[FetchConsoles::End] Well... that's not good. ${t.message}", t)
+             "[FetchConsoles::End] Well... that's not good. ${t.message}".e(TAG, t)
         }
         return emptyList()
     }
@@ -306,10 +304,8 @@ class SyncServiceImpl constructor(
      */
     private fun fetchClients(): List<Client> {
         try {
-            Log.i(TAG, "[FetchClients::Start] Active Network: $activeNetworkInfo")
-            Log.i(TAG, "[Device Local IP] $localDeviceIp")
+            "[FetchClients::Start] Active Network: $activeNetworkInfo".i(TAG)
             val prefix = localDeviceIp.substring(0, localDeviceIp.lastIndexOf(".") + 1)
-            Log.i(TAG, "[Local IP Prefix] $prefix")
             val clients = ArrayList<Client>()
             for (i in 1 until 256) {
                 try {
@@ -321,25 +317,22 @@ class SyncServiceImpl constructor(
                     }
 
                     if (byName.isReachable(100)) {
-                        Log.i(
-                            TAG,
-                            "[Client IP] (${byName.hostAddress ?: byName.canonicalHostName}) is reachable"
+                        "[Client IP] (${byName.hostAddress ?: byName.canonicalHostName}) is reachable".v(
+                            TAG
                         )
                         val client = byName.client(wi = wifiInfo)
                         client.lastKnownReachable = true
                         clients.add(client)
                     } else {
-                        if (BuildConfig.DEBUG) {
-                            //Log.e(TAG, "[Client IP] ${byName.hostAddress ?: byName.canonicalHostName} is unreachable")
-                        }
+                        "[Client IP] ${byName.hostAddress ?: byName.canonicalHostName} is unreachable".v(
+                            TAG
+                        )
                     }
                 } catch (e: Throwable) {
-                    if (BuildConfig.DEBUG) {
-                        Log.e(TAG, "[Error] ${e.message}")
-                    }
+                    "[Error] ${e.message}".e(TAG)
                 }
             }
-            Log.v(TAG, "[FetchClients::End] End of scan, #: ${clients.size}")
+            "[FetchClients::End] End of scan, #: ${clients.size}".v(TAG)
             return clients
         } catch (t: Throwable) {
             Log.e(TAG, "[Error] Hmmm. that's not good. ${t.message}", t)

@@ -54,6 +54,7 @@ interface PSXProtocol : BaseClient {
     suspend fun send(data: String?) {
         try {
             val pw = PrintWriter(socket.getOutputStream())
+            "sending: ${data.toString()}".equals(TAG)
             pw.println(data)
             pw.flush()
         } catch (ex: Exception) {
@@ -64,7 +65,8 @@ interface PSXProtocol : BaseClient {
     suspend fun recv(): String? {
         return try {
             val br = BufferedReader(InputStreamReader(socket.getInputStream()))
-            br.readLine()
+            val readLine = br.readLine()
+            readLine
         } catch (ex: Exception) {
             ex.printStackTrace()
             null

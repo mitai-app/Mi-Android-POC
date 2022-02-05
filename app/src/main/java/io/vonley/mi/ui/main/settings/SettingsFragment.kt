@@ -144,8 +144,8 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
 
     override fun onError(e: Throwable) = Unit
 
-    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        return when (preference?.key) {
+    override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+        return when (preference.key) {
             ftpUser.key -> {
                 ftpUser.summary = newValue?.toString()
                 true
@@ -185,8 +185,8 @@ class SettingsFragment @Inject constructor() : PreferenceFragmentCompat(), Setti
         }
     }
 
-    override fun onPreferenceClick(preference: Preference?): Boolean {
-        when (preference?.key) {
+    override fun onPreferenceClick(preference: Preference): Boolean {
+        when (preference.key) {
             wifi.key -> {}
             rest.key,
             reboot.key,

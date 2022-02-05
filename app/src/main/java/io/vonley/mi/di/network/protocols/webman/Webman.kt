@@ -49,7 +49,7 @@ interface Webman : PSXProtocol, PSXNotifier {
 
     @Throws(Exception::class)
     suspend fun getPSXGames(document: Document): List<Game> {
-        val games = document.getElementById("seg_wm_psx_items")
+        val games = document.getElementById("seg_wm_psx_items")?:return emptyList()
         val tables = games.getElementsByTag("Table")
         val ps2Games: MutableList<Game> = ArrayList<Game>()
         for (table in tables) {
@@ -92,7 +92,7 @@ interface Webman : PSXProtocol, PSXNotifier {
 
     @Throws(Exception::class)
     suspend fun getPSPGames(document: Document): List<Game> {
-        val games = document.getElementById("seg_wm_psp_items")
+        val games = document.getElementById("seg_wm_psp_items")?:return emptyList()
         val tables = games.getElementsByTag("Table")
         val ps2Games: MutableList<Game> = ArrayList<Game>()
         for (table in tables) {
@@ -135,7 +135,7 @@ interface Webman : PSXProtocol, PSXNotifier {
 
     @Throws(Exception::class)
     suspend fun getPS2Games(document: Document): List<Game> {
-        val ps2_games = document.getElementById("seg_wm_ps2_items")
+        val ps2_games = document.getElementById("seg_wm_ps2_items")?:return emptyList()
         val ps2_tables = ps2_games.getElementsByTag("Table")
         val ps2Games: MutableList<Game> = ArrayList<Game>()
         for (table in ps2_tables) {
@@ -178,7 +178,7 @@ interface Webman : PSXProtocol, PSXNotifier {
 
     @Throws(Exception::class)
     suspend fun getPS3Games(document: Document): List<Game> {
-        val ps3_game = document.getElementById("seg_wm_ps3_items")
+        val ps3_game = document.getElementById("seg_wm_ps3_items")?:return emptyList()
         val ps3_tables = ps3_game.getElementsByTag("Table")
         val ps3Games: MutableList<Game> = ArrayList<Game>()
         for (table in ps3_tables) {

@@ -1,7 +1,5 @@
 package io.vonley.mi.di.network.impl
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
 import io.vonley.mi.di.modules.GuestInterceptorOkHttpClient
 import io.vonley.mi.di.network.MiServer
@@ -17,7 +15,6 @@ import okhttp3.Headers
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.internal.notifyAll
 import java.net.InetSocketAddress
 import java.net.Socket
 import javax.inject.Inject

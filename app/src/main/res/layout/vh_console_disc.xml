@@ -18,6 +18,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+
+            android:clickable="true"
+            android:focusable="true"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
             app:cardPreventCornerOverlap="true"
@@ -60,6 +63,8 @@
             android:layout_weight="1"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
+            android:clickable="true"
+            android:focusable="true"
             app:cardPreventCornerOverlap="true"
             app:cardUseCompatPadding="true"
             app:contentPadding="16dp">
@@ -98,6 +103,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+
+            android:clickable="true"
+            android:focusable="true"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
             app:cardPreventCornerOverlap="true"
@@ -173,6 +181,8 @@
             android:layout_weight="2"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
+            android:clickable="true"
+            android:focusable="true"
             app:cardPreventCornerOverlap="true"
             app:cardUseCompatPadding="true"
             app:contentPadding="16dp">

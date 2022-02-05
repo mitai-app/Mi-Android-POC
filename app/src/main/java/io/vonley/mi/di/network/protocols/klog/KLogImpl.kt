@@ -3,9 +3,9 @@ package io.vonley.mi.di.network.protocols.klog
 import android.text.Spannable
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.extensions.i
-import io.vonley.mi.ui.main.console.sheets.adapters.KLoggingAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import java.io.BufferedReader
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -14,6 +14,8 @@ class KLogImpl @Inject constructor(override val service: PSXService) : KLog, KLo
     private val job = Job()
 
     override val loggers: HashMap<Class<*>, KLog.KLogger> = hashMapOf(Pair(this.javaClass, this))
+
+    private var _br: BufferedReader? = null
 
     override var onGoing: Job? = null
 
@@ -32,7 +34,21 @@ class KLogImpl @Inject constructor(override val service: PSXService) : KLog, KLo
         string.i(TAG)
     }
 
+    override suspend fun recv(): String? {
+        return try {
+            if (_br == null) {
+                _br = socket.getInputStream().bufferedReader()
+            }
+            val readLine = _br?.readLine()
+            readLine
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            _br = null
+            null
+        }
+    }
+
     override val TAG: String
-        get() = KLogImpl::class.simpleName?:KLogImpl::class.java.simpleName
+        get() = KLogImpl::class.simpleName ?: KLogImpl::class.java.simpleName
 
 }

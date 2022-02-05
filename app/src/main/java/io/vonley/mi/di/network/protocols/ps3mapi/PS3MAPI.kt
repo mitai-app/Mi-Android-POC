@@ -11,6 +11,8 @@ import io.vonley.mi.di.network.protocols.common.cmds.LedStatus
 import io.vonley.mi.di.network.protocols.common.models.*
 import io.vonley.mi.di.network.protocols.ps3mapi.cmds.*
 import io.vonley.mi.di.network.protocols.ps3mapi.models.PS3MAPIResponse
+import io.vonley.mi.extensions.e
+import io.vonley.mi.extensions.toJson
 import io.vonley.mi.models.enums.Feature
 import java.io.IOException
 import java.net.InetSocketAddress
@@ -51,9 +53,27 @@ interface PS3MAPI : PSXProtocol, PSXNotifier {
             authed && _socket?.isConnected == true -> true
             !authed && _socket?.isConnected == true -> {
                 try {
-                    val first: PS3MAPIResponse = PS3MAPIResponse.parse(recv() ?: return false)
+                    val recv = recv()?:run {
+                        "Did not receive value".e(TAG)
+                        return false
+                    }
+                    "Got Value: $recv".e(TAG)
+                    val first: PS3MAPIResponse = PS3MAPIResponse.parse(recv)
+                    "Parsed: ${first.toJson()}".e(TAG)
                     if (first.success && first.code === PS3MAPIResponse.Code.PS3MAPICONNECTED) {
-                        val second: PS3MAPIResponse = PS3MAPIResponse.parse(recv() ?: return false)
+                        "Checking Next Value".e(TAG)
+                        val secondResponse = recv()?:run {
+                            "value is null".e(TAG)
+                            recv()?.let { r ->
+                                "HMM OK: $r".e(TAG)
+                            }?:run{
+                                "FAILED: yup".e(TAG)
+                            }
+                            return false
+                        }
+                        "Next Value: $secondResponse".e(TAG)
+                        val second: PS3MAPIResponse = PS3MAPIResponse.parse(secondResponse)
+                        "Parsed second: ${second.toJson()}".e(TAG)
                         if (second.success && second.code === PS3MAPIResponse.Code.PS3MAPICONNECTEDOK) {
                             authed = true
                             return true
@@ -69,9 +89,6 @@ interface PS3MAPI : PSXProtocol, PSXNotifier {
             else -> try {
                 authed = false
                 service[service.target] = feature
-                if (_socket != null) {
-                    connect()
-                }
                 false
             } catch (e: Throwable) {
                 false
