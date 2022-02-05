@@ -59,7 +59,7 @@ class ConsoleRecyclerAdapter @Inject constructor(
         private fun setTarget(console: Client) {
             this.client = console
             sync.setTarget(console)
-            view.setSummary("Current Target: ${console.name}, w/ ${console.featureString}")
+            view.setSummary("Current Target: ${console.name} / ${console.type.name}")
             Toast.makeText(itemView.context, "Target set!", Toast.LENGTH_SHORT).show()
             if (console.features.isPs3) {
                 sheet.show(manager, sheet.tag)
@@ -73,8 +73,7 @@ class ConsoleRecyclerAdapter @Inject constructor(
 
         fun setConsole(console: Client) {
             this.client = console
-            val headers =
-                if (console.name == console.ip) console.ip else "${console.name} - ${console.ip}"
+            val headers = if (console.name == console.ip) "${console.type}: ${console.ip}" else "${console.name} (${console.type}): ${console.ip}"
             val colorInt = if (console.pinned) {
                 R.color.material_red
             } else {

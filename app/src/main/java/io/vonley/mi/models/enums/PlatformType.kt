@@ -65,8 +65,8 @@ enum class Feature(
     RPI("Remote Package Installer", R.string.feature_rpi, Protocol.HTTP, 12800),
     PS3MAPI("PS3MAPI", R.string.feature_ps3mapi, Protocol.SOCKET, 7887),
     CCAPI("CCAPI", R.string.feature_ccapi, Protocol.HTTP, 6333),
-    WEBMAN("WEBMAN", R.string.feature_webman, Protocol.HTTP, 80),
-    KLOG("KLOG", R.string.feature_klog, Protocol.SOCKET, 3232),
+    WEBMAN("WebMan", R.string.feature_webman, Protocol.HTTP, 80),
+    KLOG("Klog", R.string.feature_klog, Protocol.SOCKET, 3232),
     FTP("FTP", R.string.feature_ftp, Protocol.FTP, 21, 2121);
 
     fun validate(client: Client, service: SyncService): Boolean {
