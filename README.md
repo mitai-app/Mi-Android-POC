@@ -19,7 +19,7 @@ Jailbreak Complete UI
 # ミ Mi - PS4 & PS3 Remote Tool　
 Android App Developed by Vonley (formally Mr-Smithy-x)
 
-- [Github:  @Vonley](https://github.com/Mr-Smithy-x)
+- [Github:  @vonley-io](https://github.com/Mr-Smithy-x)
 - [Twitter: @MrSmithyx](https://twitter.com/MrSmithyx)
 - [Patreon: @MrSmithyx](https://patreon.com/MrSmithyx)
 
