@@ -29,6 +29,7 @@ Android App Developed by Vonley (formally Mr-Smithy-x)
 - mi.js (an extension to help send status updates to the android app)
 - Can send payloads to GoldenHen.
 - FTP Manager + config
+- PS3 Support, via PS3MAPI & WEBMAN, Reboot, Shutdown Launch Games + More (WebMan default FTP credentials, anonymous:anonymous)
 
 ## Steps:
 - Clear PS4 cache
