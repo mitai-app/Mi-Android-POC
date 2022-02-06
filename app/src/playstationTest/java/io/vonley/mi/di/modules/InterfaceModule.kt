@@ -14,6 +14,8 @@ import io.vonley.mi.di.network.impl.SyncServiceImpl
 import io.vonley.mi.di.network.impl.PSXServiceImpl
 import io.vonley.mi.di.network.protocols.ccapi.CCAPI
 import io.vonley.mi.di.network.protocols.ccapi.CCAPIImpl
+import io.vonley.mi.di.network.protocols.goldenhen.Goldhen
+import io.vonley.mi.di.network.protocols.goldenhen.GoldhenImpl
 import io.vonley.mi.di.network.protocols.klog.KLog
 import io.vonley.mi.di.network.protocols.klog.KLogImpl
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPI
@@ -42,6 +44,10 @@ abstract class InterfaceModule {
     @Binds
     @Singleton
     abstract fun bindPS3MAPIService(impl: PS3MAPIImpl): PS3MAPI
+
+    @Binds
+    @Singleton
+    abstract fun bindGoldhenService(impl: GoldhenImpl): Goldhen
 
     @Binds
     @Singleton
