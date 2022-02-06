@@ -75,7 +75,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun providePS3MAPIService(
+    fun provideGoldhenService(
         service: PSXService,
         server: MiServer
     ): GoldhenImpl {
