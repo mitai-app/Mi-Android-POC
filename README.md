@@ -4,16 +4,16 @@ Android App Developed by Mr-Smithy-x
 
 Jailbreak Complete UI
 <p float="left">
-  <img src="/success.png" width="300" />
-  <img src="/instructions.png" width="300" /> 
-  <img src="/home.png" width="300" /> 
-  <img src="/console.png" width="300" />
+  <img src="/success.png" width="200" />
+  <img src="/instructions.png" width="200" /> 
+  <img src="/home.png" width="200" /> 
+  <img src="/console.png" width="200" />
 </p>
 <p float="left">
-  <img src="/payload.png" width="300" />
-  <img src="/ftp.png" width="300" />
-  <img src="/setting.png" width="300" />
-  <img src="/failed.png" width="300" />
+  <img src="/payload.png" width="200" />
+  <img src="/ftp.png" width="200" />
+  <img src="/setting.png" width="200" />
+  <img src="/failed.png" width="200" />
 </p>
 
 # ミ Mi - PS4 & PS3 Remote Tool　
