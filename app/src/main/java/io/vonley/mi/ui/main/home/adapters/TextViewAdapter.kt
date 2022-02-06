@@ -18,6 +18,10 @@ class TextViewAdapter : RecyclerView.Adapter<TextViewAdapter.TextViewHolder>() {
         return TextViewHolder(inflate)
     }
 
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        recyclerView.scrollToPosition(itemCount)
+    }
     fun add(string: String) {
         logs += string
         notifyDataSetChanged()

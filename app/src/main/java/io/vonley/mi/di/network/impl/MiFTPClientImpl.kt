@@ -3,29 +3,32 @@ package io.vonley.mi.di.network.impl
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.*
 import io.vonley.mi.BuildConfig
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
 import io.vonley.mi.di.network.MiFTPClient
+import io.vonley.mi.di.network.SyncService
+import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.utils.SharedPreferenceManager
 import io.vonley.mi.utils.set
-import okhttp3.internal.notifyAll
+import kotlinx.coroutines.*
 import org.apache.commons.net.ProtocolCommandEvent
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPConnectionClosedException
 import org.apache.commons.net.ftp.FTPFile
-import java.io.*
-import javax.inject.Inject
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.net.InetSocketAddress
+import java.net.Socket
 
-class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val manager: SharedPreferenceManager) :
-    MiFTPClient {
+class MiFTPClientImpl constructor(
+    @SharedPreferenceStorage override val manager: SharedPreferenceManager,
+    override val sync: SyncService
+) : MiFTPClient {
 
     override val job: Job = Job()
 
-    private
-
-    var client: FTPClient = FTPClient()
+    private var client: FTPClient = FTPClient()
     private val ftpPath get() = manager.ftpPath
     private val ftpUser get() = manager.ftpUser
     private val ftpPass get() = manager.ftpPass
@@ -38,7 +41,6 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
         const val TAG = ".MiFTPClientImpl"
     }
 
-
     private val callback = object : MiFTPEventListener {
 
         override fun onFailedToConnect() {
@@ -50,6 +52,12 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
         override fun onClosed() {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "ftp connection closed")
+            }
+        }
+
+        override fun onNoSelectedTarget() {
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "No Selected Target")
             }
         }
 
@@ -86,6 +94,7 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
         fun isLoggedInAlready()
         fun onFailedToConnect()
         fun onClosed()
+        fun onNoSelectedTarget()
     }
 
     private suspend fun _connect(ip: String, port: Int) {
@@ -108,32 +117,52 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
         }
     }
 
+    override fun connect() {
+        sync.target?.let { target ->
+            launch {
+                Feature.FTP.ports.filter { port ->
+                    try {
+                        val socket = Socket()
+                        socket.connect(InetSocketAddress(target.ip, port))
+                        socket.close()
+                        return@filter true
+                    } catch (e: Throwable) {
+                        return@filter false
+                    }
+                }.firstOrNull()?.let { port ->
+                    withContext(Dispatchers.Main) {
+                        connect(target.ip, port)
+                    }
+                } ?: run {
+                    callback.onFailedToConnect()
+                }
+            }
+        } ?: run {
+            callback.onNoSelectedTarget()
+        }
+    }
+
     override fun connect(ip: String, port: Int) {
         if (_ip == null || _port == null) {
             _ip = ip
             _port = port
-        }
-        if (client.isConnected) {
-            client.disconnect()
+        } else if (_ip != ip || _port != port) {
+            if (client.isConnected) {
+                client.disconnect()
+            }
         }
         val block: suspend CoroutineScope.() -> Unit = {
             if (client.isConnected) {
                 if (_ip != ip || _port != port) {
                     _ip = ip
                     _port = port
-                    try {
-                        client.logout()
-                        client.disconnect()
-                    } catch (e: Throwable) {
-                        if (BuildConfig.DEBUG) {
-                            Log.e(TAG, e.message ?: "Something went wrong")
-                        }
-                    }
                     _connect(ip, port)
                 } else {
                     callback.isLoggedInAlready()
                 }
             } else {
+                _ip = ip
+                _port = port
                 _connect(ip, port)
             }
         }
@@ -187,8 +216,7 @@ class MiFTPClientImpl @Inject constructor(@SharedPreferenceStorage override val 
             } else arrayOf()
             withContext(Dispatchers.Main) {
                 synchronized(_cwd) {
-                    _cwd.value = dir
-                    _cwd.notifyAll()
+                    _cwd.postValue(dir)
                 }
             }
         } catch (e: Throwable) {

@@ -51,6 +51,8 @@ window.midExploit = function()
         scripts.push(params.p0);
     if('p1' in params)
         scripts.push(params.p1);
+
+    scripts.push('mira/mira.js');
     scripts.push('netcat.js');
     preloadScripts(scripts, go);
 }
@@ -67,9 +69,9 @@ window.postExploit = function()
     }, 100);
 };
 </script>
-<script src="webkit-7.50/external/utils.js"></script>
-<script src="webkit-7.50/external/int64.js"></script>
-<script src="webkit-7.50/external/ps4.js"></script>
+<script src="utils.js"></script>
+<script src="int64.js"></script>
+<script src="ps4.js"></script>
 <button id="input1" onfocus="handle2()"></button>
 <button id="input2"></button>
 <button id="input3" onfocus="handle2()"></button>

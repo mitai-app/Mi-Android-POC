@@ -10,6 +10,7 @@
         <item name="colorSecondaryVariant">@color/grey</item>
         <item name="colorOnSecondary">@color/white</item>
 
+        <item name="cardBackgroundColor">@color/dark_grey</item>
         <item name="android:textColor">@color/white</item>
         <item name="colorError">@color/material_red</item>
         <item name="colorOnError">@color/white</item>

@@ -1,9 +1,16 @@
 package io.vonley.mi.models
 
 import android.util.Log
-import io.vonley.mi.models.enums.ConsoleType
+import io.vonley.mi.di.network.SyncService
+import io.vonley.mi.di.network.impl.SyncServiceImpl
+import io.vonley.mi.di.network.impl.get
+import io.vonley.mi.di.network.impl.set
+import io.vonley.mi.extensions.e
+import io.vonley.mi.extensions.i
 import io.vonley.mi.models.enums.Feature
-import okhttp3.internal.closeQuietly
+import io.vonley.mi.models.enums.PlatformType
+import io.vonley.mi.models.enums.Protocol
+import okhttp3.Request
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -12,7 +19,7 @@ interface Client {
 
     val ip: String
     var name: String
-    var type: ConsoleType
+    var type: PlatformType
     var features: List<Feature>
     var wifi: String
     var lastKnownReachable: Boolean
@@ -39,25 +46,51 @@ interface Client {
         }
     }
 
-    fun getActivePorts(): List<Int> {
-        val ports = Feature.values().filter { f -> f != Feature.NETCAT && f != Feature.GOLDENHEN}.map { f -> f.ports }.flatMap { it.iterator().asSequence() }
-            .filter { f -> f > 0 }.toTypedArray()
-        val result = ports.map { port ->
-            try {
-                Log.i("[Client:CheckPort]", "Checking ${ip}:$port")
-                val socket = Socket()
-                val socketAddress = InetSocketAddress(ip, port)
-                socket.connect(socketAddress, 1000)
-                if (socket.isConnected) {
-                    Log.i("Client:Connected", "${ip}:$port is active")
-                    socket.closeQuietly()
-                    return@map port
+    /**
+     * Check for active ports. while avoiding unstable ports
+     * Stored allowed ports into
+     * @see SyncServiceImpl.cachedTargets
+     */
+    fun openActivePorts(service: SyncService): List<Feature> {
+        val features = Feature.stableFeatures
+        val allowed = Feature.allowedToOpen
+        val result = features.mapNotNull features@{ feature ->
+            if (feature in allowed && feature.protocol == Protocol.SOCKET) {
+                try {
+                    service[this] = feature
+                    if (service[this, feature] != null) {
+                        return@features feature
+                    }
+                } catch (e: Throwable) {
+                    "$ip does not have $feature" //.e("Client:FailToConnect")
                 }
-            } catch (e: Throwable) {
-                Log.e("[Client:FailedToConnect]", "${ip}:$port ")
+                return@features null
+            } else {
+                val map = feature.ports.toList().mapNotNull port@{ port ->
+                    try {
+                        //TODO Fix for webman and ccapi
+                        return@port when (feature) {
+                            Feature.WEBMAN -> if(feature.validate(this, service)) feature else null
+                            else -> { //Feature.CCAPI should validate via http too
+                                val socket = Socket()
+                                val socketAddress = InetSocketAddress(ip, port)
+                                socket.connect(socketAddress, 1000)
+                                if (socket.isConnected) {
+                                    "${ip}:{$port} aka $feature is active".i("Client:Connected")
+                                    socket.close()
+                                    return@port feature
+                                }
+                                return@port null
+                            }
+                        }
+                    } catch (e: Throwable) {
+                        "$ip does not have $feature"//.e("Client:FailToConnect")
+                    }
+                    return@port null
+                }.distinct().firstOrNull { p -> p != Feature.NONE }
+                return@features map
             }
-            return@map 0
-        }.distinct()
+        }.distinct().filterNot { it == Feature.NONE }
         return result
     }
 
@@ -74,3 +107,9 @@ val Client.activeFeatures
     get() = features.filter { p -> p != Feature.NONE }
 val Client.featureString
     get() = activeFeatures.joinToString { f -> f.title }
+
+val List<Feature>.isPs3
+    get() = this.any { p -> p  in PlatformType.PS3.features }
+
+val List<Feature>.isPs4
+    get() = this.any { p -> p  in PlatformType.PS4.features }

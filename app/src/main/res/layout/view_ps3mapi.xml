@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="PS3MAPI"
+        android:textFontWeight="900"
+        android:textSize="32sp"
+        android:textStyle="bold" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Options"
+        android:textFontWeight="600"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <include
+        android:id="@+id/vh_console_id"
+        layout="@layout/vh_console_id"
+        />
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

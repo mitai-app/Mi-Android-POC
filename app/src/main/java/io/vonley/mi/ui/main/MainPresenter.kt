@@ -2,7 +2,7 @@ package io.vonley.mi.ui.main
 
 import io.vonley.mi.base.BasePresenter
 import io.vonley.mi.di.network.SyncService
-import io.vonley.mi.models.enums.ConsoleType
+import io.vonley.mi.models.enums.PlatformType
 import javax.inject.Inject
 
 class MainPresenter @Inject constructor(
@@ -11,12 +11,12 @@ class MainPresenter @Inject constructor(
 ) : BasePresenter(),
     MainContract.Presenter {
 
-    override fun getConsoles(console: ConsoleType) {
+    override fun getConsoles(platform: PlatformType) {
 
     }
 
     override fun init() {
-        view.setTitle("ミ - PS4 Tool")
+        view.setTitle("ミ - PS4 & PS3 Remote Tool")
         view.setSummary("Current Target: none")
     }
 

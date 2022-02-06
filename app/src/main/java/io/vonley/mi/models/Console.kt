@@ -10,7 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import io.vonley.mi.models.enums.ConsoleType
+import io.vonley.mi.models.enums.PlatformType
 import io.vonley.mi.models.enums.ConsoleTypeConverter
 import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.models.enums.FeaturesConverter
@@ -23,7 +23,7 @@ import kotlin.coroutines.CoroutineContext
 data class Console(
     @PrimaryKey override val ip: String,
     override var name: String,
-    override var type: ConsoleType,
+    override var type: PlatformType,
     override var features: List<Feature> = emptyList(),
     override var lastKnownReachable: Boolean,
     override var wifi: String,

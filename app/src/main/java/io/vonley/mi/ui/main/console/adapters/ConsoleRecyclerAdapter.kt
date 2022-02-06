@@ -4,21 +4,25 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.vonley.mi.R
 import io.vonley.mi.databinding.VhConsoleBinding
 import io.vonley.mi.di.network.SyncService
-import io.vonley.mi.models.Client
-import io.vonley.mi.models.Console
-import io.vonley.mi.models.activeFeatures
-import io.vonley.mi.models.featureString
+import io.vonley.mi.di.network.protocols.klog.KLog
+import io.vonley.mi.models.*
+import io.vonley.mi.models.enums.Feature
 import io.vonley.mi.ui.main.MainContract
+import io.vonley.mi.ui.main.console.sheets.ProtocolSheetFragment
 import javax.inject.Inject
 
 class ConsoleRecyclerAdapter @Inject constructor(
     val view: MainContract.View,
-    val sync: SyncService
+    val sync: SyncService,
+    val sheet: ProtocolSheetFragment,
+    val manager: FragmentManager,
+    val klog: KLog
 ) : RecyclerView.Adapter<ConsoleRecyclerAdapter.ConsoleViewHolder>() {
 
     private var consoles = emptyList<Console>()
@@ -50,17 +54,26 @@ class ConsoleRecyclerAdapter @Inject constructor(
         RecyclerView.ViewHolder(binding.root) {
 
         var client: Client? = null
+            private set
 
-        fun setTarget(console: Client) {
+        private fun setTarget(console: Client) {
             this.client = console
             sync.setTarget(console)
-            view.setSummary("Current Target: ${console.name}, w/ ${console.featureString}")
+            view.setSummary("Current Target: ${console.name} / ${console.type.name}")
             Toast.makeText(itemView.context, "Target set!", Toast.LENGTH_SHORT).show()
+            if (console.features.isPs3) {
+                sheet.show(manager, sheet.tag)
+            } else if (console.features.isPs4) {
+                if (Feature.KLOG in console.features) {
+                    klog.connect()
+                    sheet.show(manager, sheet.tag)
+                }
+            }
         }
 
         fun setConsole(console: Client) {
             this.client = console
-            val headers = if (console.name == console.ip) console.ip else "${console.name} - ${console.ip}"
+            val headers = if (console.name == console.ip) "${console.type}: ${console.ip}" else "${console.name} (${console.type}): ${console.ip}"
             val colorInt = if (console.pinned) {
                 R.color.material_red
             } else {

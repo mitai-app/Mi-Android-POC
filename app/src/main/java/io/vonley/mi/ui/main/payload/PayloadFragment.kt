@@ -26,10 +26,12 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import io.vonley.mi.BuildConfig
 import io.vonley.mi.databinding.FragmentPayloadBinding
+import io.vonley.mi.models.Payload
 import io.vonley.mi.ui.main.MainContract
 import io.vonley.mi.ui.main.home.dialog
 import io.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import okhttp3.Response
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 
@@ -54,7 +56,8 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         get() = requireContext().contentResolver
 
     private lateinit var startForResult: ActivityResultLauncher<Intent>
-    private lateinit var binding: FragmentPayloadBinding
+    private var _binding: FragmentPayloadBinding? = null
+    private val binding get() = _binding!!
     private val payloadAdapter = PayloadAdapter()
 
     private var swipeCallback: ItemTouchHelper.SimpleCallback = object :
@@ -113,7 +116,7 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPayloadBinding.inflate(inflater, container, false)
+        _binding = FragmentPayloadBinding.inflate(inflater, container, false)
         binding.recycler.adapter = payloadAdapter
         swipeTouchHelper.attachToRecyclerView(binding.recycler)
         binding.root.setOnRefreshListener(this)
@@ -138,6 +141,10 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
             } else this.pathSegments.last()
         }
 
+    override fun onDestroyView() {
+        _binding = null;
+        super.onDestroyView()
+    }
 
     override fun onActivityResult(result: ActivityResult) {
         if (result.resultCode == RESULT_OK) {
@@ -149,10 +156,11 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
                     if (BuildConfig.DEBUG) {
                         Log.e("TAG", "uri: ${uri.path}, name: $filename")
                     }
+                    val bos = ByteArrayOutputStream()
                     val stream = contentResolver.openInputStream(uri)?.readBytes()
-                    if (stream != null) {
-                        payloadAdapter.add(PayloadAdapter.Payload(name, stream))
-                    } else {
+                    stream?.let {
+                        payloadAdapter.add(Payload(name, it))
+                    }?: run {
                         Snackbar.make(
                             requireView(),
                             "Couldn't fetch the filestream :(",
@@ -190,7 +198,11 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         ).show()
     }
 
-    override fun onPayloadFailed(payload: PayloadAdapter.Payload) {
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onPayloadFailed(payload: Payload) {
         payloadAdapter.update(payload)
     }
 
@@ -199,11 +211,11 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         binding.root.isRefreshing = false
     }
 
-    override fun onWriting(payload: PayloadAdapter.Payload) {
+    override fun onWriting(payload: Payload) {
 
     }
 
-    override fun onSent(payload: PayloadAdapter.Payload) {
+    override fun onSent(payload: Payload) {
         payloadAdapter.update(payload)
     }
 

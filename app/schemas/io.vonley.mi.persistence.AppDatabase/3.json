@@ -1,0 +1,70 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "c9dc10c87dd600ee3dc962fb9a5d476b",
+    "entities": [
+      {
+        "tableName": "Console",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ip` TEXT NOT NULL, `name` TEXT NOT NULL, `type` INTEGER NOT NULL, `features` TEXT NOT NULL, `lastKnownReachable` INTEGER NOT NULL, `wifi` TEXT NOT NULL, `pinned` INTEGER NOT NULL, PRIMARY KEY(`ip`))",
+        "fields": [
+          {
+            "fieldPath": "ip",
+            "columnName": "ip",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "features",
+            "columnName": "features",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastKnownReachable",
+            "columnName": "lastKnownReachable",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wifi",
+            "columnName": "wifi",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pinned",
+            "columnName": "pinned",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ip"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c9dc10c87dd600ee3dc962fb9a5d476b')"
+    ]
+  }
+}

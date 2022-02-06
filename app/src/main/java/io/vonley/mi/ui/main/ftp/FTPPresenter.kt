@@ -127,7 +127,7 @@ class FTPPresenter @Inject constructor(
             ftp.cwd.observeForever(this)
         }
         sync.target?.run {
-            ftp.connect(ip)
+            ftp.connect()
         } ?: run {
             view.noTarget()
         }

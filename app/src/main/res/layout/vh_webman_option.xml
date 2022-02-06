@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true"
+    app:cardPreventCornerOverlap="true">
+
+    <RelativeLayout
+        android:id="@+id/webman_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/webman_game_cover"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"
+            android:visibility="visible"
+            tools:srcCompat="@drawable/icon_svg_sound_waves" />
+
+        <View
+            android:id="@+id/sep"
+            android:layout_below="@id/webman_game_cover"
+            android:background="@color/grey"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/webman_game_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sep"
+            android:background="@color/dark_grey"
+            android:layout_alignStart="@id/webman_game_cover"
+            android:layout_alignEnd="@id/webman_game_cover"
+            android:layout_alignParentStart="true"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:padding="12dp"
+            android:textColor="@color/white"
+            android:singleLine="true"
+            android:textAlignment="center"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="Example" />
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

@@ -23,7 +23,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment : Fragment(), HomeContract.View {
 
-    private lateinit var binding: FragmentHomeBinding
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var md: String
 
@@ -42,12 +43,17 @@ class HomeFragment : Fragment(), HomeContract.View {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
         md = resources.assets.open("Home.md").readBytes().decodeToString()
         val markwon = Markwon.create(requireContext())
         markwon.setMarkdown(binding.md, md)
         adapter = TextViewAdapter()
         binding.logRecycler.adapter = adapter
+        binding.logRecycler.setOnTouchListener { v, event ->
+            v.parent.requestDisallowInterceptTouchEvent(true)
+            v.onTouchEvent(event)
+            true
+        }
         return binding.root
     }
 
@@ -80,9 +86,10 @@ class HomeFragment : Fragment(), HomeContract.View {
         }.create().show()
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         presenter.cleanup()
-        super.onDestroy()
+        _binding = null
+        super.onDestroyView()
     }
 
     override fun onPayloadSent(msg: String?) {

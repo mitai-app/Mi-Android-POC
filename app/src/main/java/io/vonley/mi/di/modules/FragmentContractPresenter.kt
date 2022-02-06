@@ -9,9 +9,14 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.scopes.FragmentScoped
+import io.vonley.mi.di.network.SyncService
+import io.vonley.mi.di.network.protocols.klog.KLog
 import io.vonley.mi.di.repository.ConsoleRepository
+import io.vonley.mi.ui.main.MainContract
 import io.vonley.mi.ui.main.console.ConsoleFragment
 import io.vonley.mi.ui.main.console.ConsoleViewModel
+import io.vonley.mi.ui.main.console.adapters.ConsoleRecyclerAdapter
+import io.vonley.mi.ui.main.console.sheets.ProtocolSheetFragment
 import io.vonley.mi.ui.main.ftp.FTPFragment
 import io.vonley.mi.ui.main.home.HomeFragment
 import io.vonley.mi.ui.main.payload.PayloadFragment
@@ -47,6 +52,11 @@ object FragmentContractPresenter {
     }
 
     @Provides
+    fun provideConsoleOptionSheetFragment(activity: Fragment): ProtocolSheetFragment {
+        return if (activity is ProtocolSheetFragment) activity else ProtocolSheetFragment()
+    }
+
+    @Provides
     @FragmentScoped
     fun provideConsoleViewModelFactory(
         application: Application,
@@ -62,6 +72,18 @@ object FragmentContractPresenter {
         factory: ConsoleViewModel.Factory
     ): ConsoleViewModel {
         return ViewModelProvider(fragment, factory)[ConsoleViewModel::class.java]
+    }
+
+    @Provides
+    @FragmentScoped
+    fun provideConsoleRecyclerAdapter(
+        view: MainContract.View,
+        service: SyncService,
+        sheet: ProtocolSheetFragment,
+        fragment: ConsoleFragment,
+        klog: KLog,
+    ): ConsoleRecyclerAdapter {
+        return ConsoleRecyclerAdapter(view, service, sheet, fragment.childFragmentManager, klog)
     }
 
 }

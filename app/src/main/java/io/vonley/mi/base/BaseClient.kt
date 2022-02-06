@@ -1,9 +1,12 @@
 package io.vonley.mi.base
 
+import io.vonley.mi.BuildConfig
+import io.vonley.mi.di.network.protocols.common.PSXProtocol
+import io.vonley.mi.extensions.e
 import kotlinx.coroutines.CoroutineScope
 import okhttp3.*
 
-interface BaseClient: CoroutineScope {
+interface BaseClient : CoroutineScope {
 
     val http: OkHttpClient
 
@@ -17,7 +20,22 @@ interface BaseClient: CoroutineScope {
         execute.enqueue(response)
     }
 
-    fun get(url: String, response: Callback) {
+    fun post(url: String, body: RequestBody, headers: Headers): Response? {
+        val req = Request.Builder()
+            .url(url)
+            .headers(headers)
+            .post(body)
+            .build()
+        val execute = http.newCall(req)
+        return try {
+            execute.execute()
+        } catch (e: Throwable) {
+            "Something went wrong: ${e.message}".e(TAG, e)
+            null
+        }
+    }
+
+    fun getRequest(url: String, response: Callback) {
         val req = Request.Builder()
             .url(url)
             .get()
@@ -26,4 +44,24 @@ interface BaseClient: CoroutineScope {
         execute.enqueue(response)
     }
 
+    fun getRequest(url: String): Response? {
+        val req = Request.Builder()
+            .url(url)
+            .get()
+            .build()
+        val execute = http.newCall(req)
+        return try {
+            execute.execute()
+        } catch (e: Throwable) {
+            if (BuildConfig.DEBUG) {
+                "Something went wrong: ${e.message}".e(TAG, e)
+            }
+            null
+        }
+    }
+
+    val TAG: String
+        get() = BaseClient::class.qualifiedName?: BaseClient::javaClass.name
+
 }
+

@@ -18,14 +18,26 @@
         <entry key="app/src/main/res/layout/content_main.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/layout/dialog_mi_input.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/layout/fragment_console.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_console_option_sheet.xml" value="0.2479692176143651" />
+        <entry key="app/src/main/res/layout/fragment_console_option_sheet_list_dialog_item.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/layout/fragment_f_t_p.xml" value="0.335" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.375" />
         <entry key="app/src/main/res/layout/fragment_payload.xml" value="0.2807718182190175" />
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.31927083333333334" />
         <entry key="app/src/main/res/layout/text_view.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/layout/vh_console.xml" value="0.3020833333333333" />
+        <entry key="app/src/main/res/layout/vh_console_disc.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/vh_console_id.xml" value="0.3106264580620659" />
+        <entry key="app/src/main/res/layout/vh_console_option.xml" value="0.2479692176143651" />
         <entry key="app/src/main/res/layout/vh_ftp.xml" value="0.3020833333333333" />
+        <entry key="app/src/main/res/layout/vh_klog.xml" value="0.27191107310816587" />
         <entry key="app/src/main/res/layout/vh_payload.xml" value="0.3020833333333333" />
+        <entry key="app/src/main/res/layout/vh_webman_option.xml" value="0.3532796317606444" />
+        <entry key="app/src/main/res/layout/vh_webman_option_view.xml" value="0.75" />
+        <entry key="app/src/main/res/layout/view_ccapi.xml" value="0.27191107310816587" />
+        <entry key="app/src/main/res/layout/view_klog.xml" value="0.27191107310816587" />
+        <entry key="app/src/main/res/layout/view_ps3mapi.xml" value="0.27191107310816587" />
+        <entry key="app/src/main/res/layout/view_webman.xml" value="0.21701812744140625" />
         <entry key="app/src/main/res/menu/bottom_menu.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/menu/ftp_long_click.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.3020833333333333" />

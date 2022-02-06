@@ -15,10 +15,12 @@ import kotlin.coroutines.CoroutineContext
 
 interface MiFTPClient : CoroutineScope, ProtocolCommandListener {
     val job: Job
+    val sync: SyncService
     val manager: SharedPreferenceManager
     override val coroutineContext: CoroutineContext get() = Dispatchers.IO + job
     val cwd: LiveData<Array<out FTPFile>>
     fun connect(ip: String, port: Int = 2121)
+    fun connect()
     fun setWorkingDir(dir: String?)
     fun setWorkingDir(ftpFile: FTPFile)
     suspend fun upload(file: String, byteArray: InputStream): Boolean

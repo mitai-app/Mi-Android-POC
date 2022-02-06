@@ -51,6 +51,7 @@ class ConsoleClientHandler constructor(
                         consoleDao.insert(console)
                     }
                 }
+                consoleDao.delete(event.map { it.ip }.toTypedArray())
                 withContext(Dispatchers.Main) {
                     if (event.isNotEmpty()) {
                         onClientsFound(event)

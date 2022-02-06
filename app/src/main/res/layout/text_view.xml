@@ -6,5 +6,6 @@
     android:paddingTop="8dp"
     android:textColor="?attr/colorOnSurface"
     android:paddingStart="8dp"
+    android:textFontWeight="600"
     android:paddingEnd="8dp"
     tools:text="Hello"/>

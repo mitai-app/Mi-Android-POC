@@ -52,10 +52,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/fake_toolbar_title"
-                    android:singleLine="true"
                     android:ellipsize="marquee"
-                    android:scrollHorizontally="true"
                     android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     tools:text="Welcome" />

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.Spannable
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -16,11 +17,11 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.NavigationUiSaveStateControl
 import androidx.navigation.ui.navigateUp
 import dagger.hilt.android.AndroidEntryPoint
 import io.vonley.mi.R
@@ -46,7 +47,8 @@ class MainActivity : AppCompatActivity(), MainContract.View,
     lateinit var presenter: MainContract.Presenter
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityMainBinding
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
     private lateinit var navHostFragment: NavHostFragment
     private val navController: NavController
         get() {
@@ -59,13 +61,12 @@ class MainActivity : AppCompatActivity(), MainContract.View,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.bottomAppBar)
         this.navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         NavigationUI.setupWithNavController(binding.bottomNavigation, navController)
-        NavOptions.Builder().setLaunchSingleTop(true).build()
         navController.addOnDestinationChangedListener(this)
         presenter.init()
     }
@@ -89,8 +90,7 @@ class MainActivity : AppCompatActivity(), MainContract.View,
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.fragment_container)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     /** When key down event is triggered, relay it via local broadcast so fragments can handle it */
@@ -153,6 +153,10 @@ class MainActivity : AppCompatActivity(), MainContract.View,
         currentView<BaseContract.View>()?.onDialogCanceled()
     }
 
+    override fun onLog(string: Spannable) {
+        binding.fakeToolbarSummary.text = string
+    }
+
     override fun onDialogInput(input: String) {
         super.onDialogInput(input)
         currentView<BaseContract.View>()?.onDialogInput(input)
@@ -186,6 +190,11 @@ class MainActivity : AppCompatActivity(), MainContract.View,
 
     private val onHomeClick: View.OnClickListener = View.OnClickListener {
         currentView<HomeContract.View>()?.openInfoDialog()
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 
     override fun onDestinationChanged(

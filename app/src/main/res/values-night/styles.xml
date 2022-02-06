@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MiInputTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="MiInputTextAppearance.Error" parent="MiInputTextAppearance">
+        <item name="android:textColor">@color/material_red</item>
+    </style>
+    <style name="MiInputTextAppearance.Helper" parent="MiInputTextAppearance">
+        <item name="android:textColor">@color/green</item>
+    </style>
+    <style name="MiInputTextAppearance.Place" parent="MiInputTextAppearance">
+        <item name="android:textColor">@color/grey_darker</item>
+    </style>
+    <style name="MiInputTextAppearance.Hint" parent="MiInputTextAppearance">
+        <item name="android:textColor">@color/grey_darker</item>
+    </style>
+
+    <style name="MiInputInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxBackgroundColor">@color/grey</item>
+        <item name="boxBackgroundMode">none</item>
+        <item name="android:textColorHint">@color/grey_darker</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>
+        <item name="boxCornerRadiusBottomStart">8dp</item>
+        <item name="boxCornerRadiusTopEnd">8dp</item>
+        <item name="boxCornerRadiusTopStart">8dp</item>
+        <item name="expandedHintEnabled">true</item>
+        <item name="helperTextEnabled">true</item>
+        <item name="hintAnimationEnabled">true</item>
+        <item name="hintEnabled">true</item>
+        <item name="boxStrokeWidth">1dp</item>
+
+        <item name="errorTextAppearance">@style/MiInputTextAppearance.Error</item>
+        <item name="helperTextTextAppearance">@style/MiInputTextAppearance.Helper</item>
+        <item name="hintTextAppearance">@style/MiInputTextAppearance.Hint</item>
+        <item name="placeholderTextAppearance">@style/MiInputTextAppearance.Place</item>
+
+    </style>
+</resources>

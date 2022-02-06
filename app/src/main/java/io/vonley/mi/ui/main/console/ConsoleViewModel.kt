@@ -20,8 +20,7 @@ class ConsoleViewModel(
 
     val consoles get() = _consoles
 
-    class Factory(val application: Application, private val dao: ConsoleRepository) :
-        ViewModelProvider.Factory {
+    class Factory(val application: Application, private val dao: ConsoleRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return modelClass.getConstructor(
                 Application::class.java,
