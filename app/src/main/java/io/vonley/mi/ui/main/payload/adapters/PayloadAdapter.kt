@@ -7,26 +7,10 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.*
 import io.vonley.mi.R
 import io.vonley.mi.databinding.VhPayloadBinding
+import io.vonley.mi.models.Payload
 import kotlin.coroutines.CoroutineContext
 
 class PayloadAdapter : RecyclerView.Adapter<PayloadAdapter.PayloadHolder>(), CoroutineScope {
-
-    /**
-     * status: -1 failed, 0 nothing, 1 succeeded
-     */
-    data class Payload(val name: String, val data: ByteArray, var status: Int = 0) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is Payload) return false
-
-            if (!data.contentEquals(other.data)) return false
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return data.contentHashCode()
-        }
-    }
 
     internal val payloads = ArrayList<Payload>()
 

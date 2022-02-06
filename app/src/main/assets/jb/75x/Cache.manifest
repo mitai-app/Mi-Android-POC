@@ -2,20 +2,20 @@ CACHE MANIFEST
 # random: 7d37eec2a76a44ed1cd305020734a643
 
 CACHE:
-blob.js
-payload.html
-webkit-7.50/external/ps4.js
-webkit-7.50/external/utils.js
-webkit-7.50/external/int64.js
-netcat.js
-jb.js
-mira/mira.js
-mira/mira2.js
-ftp.js
-fakeusb.js
-index.html
-linux/1gb.js
-linux/3gb.js
+/blob.js
+/payload.html
+/ps4.js
+/utils.js
+/int64.js
+/netcat.js
+/jb.js
+/mira/mira.js
+/mira/mira2.js
+/ftp.js
+/fakeusb.js
+/index.html
+/linux/1gb.js
+/linux/3gb.js
 /mi.js
 
 NETWORK:

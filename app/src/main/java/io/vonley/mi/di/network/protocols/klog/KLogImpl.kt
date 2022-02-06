@@ -2,6 +2,7 @@ package io.vonley.mi.di.network.protocols.klog
 
 import android.text.Spannable
 import io.vonley.mi.di.network.PSXService
+import io.vonley.mi.extensions.d
 import io.vonley.mi.extensions.i
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -31,7 +32,7 @@ class KLogImpl @Inject constructor(override val service: PSXService) : KLog, KLo
         get() = Dispatchers.IO + job
 
     override fun onLog(string: Spannable) {
-        string.i(TAG)
+        string.d(TAG)
     }
 
     override suspend fun recv(): String? {

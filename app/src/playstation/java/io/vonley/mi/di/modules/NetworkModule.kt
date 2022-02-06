@@ -8,10 +8,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import io.vonley.mi.di.annotations.AuthInterceptorOkHttpClient
-import io.vonley.mi.di.annotations.AuthRetrofitClient
-import io.vonley.mi.di.annotations.GuestRetrofitClient
-import io.vonley.mi.di.annotations.SharedPreferenceStorage
+import io.vonley.mi.di.annotations.*
+import io.vonley.mi.di.network.MiServer
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.SyncService
 import io.vonley.mi.di.network.auth.OAuth2Authenticator
@@ -20,6 +18,8 @@ import io.vonley.mi.di.network.impl.MiServerImpl
 import io.vonley.mi.di.network.impl.PSXServiceImpl
 import io.vonley.mi.di.network.impl.SyncServiceImpl
 import io.vonley.mi.di.network.protocols.ccapi.CCAPIImpl
+import io.vonley.mi.di.network.protocols.goldenhen.Goldhen
+import io.vonley.mi.di.network.protocols.goldenhen.GoldhenImpl
 import io.vonley.mi.di.network.protocols.klog.KLogImpl
 import io.vonley.mi.di.network.protocols.ps3mapi.PS3MAPIImpl
 import io.vonley.mi.di.network.protocols.webman.WebManImpl
@@ -70,6 +70,15 @@ object NetworkModule {
         service: PSXService,
     ): PS3MAPIImpl {
         return PS3MAPIImpl(service)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGoldhenService(
+        service: PSXService,
+        server: MiServer
+    ): GoldhenImpl {
+        return GoldhenImpl(service, server)
     }
 
 

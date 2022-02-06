@@ -14,8 +14,8 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.vonley.mi.BuildConfig
+import io.vonley.mi.di.annotations.GuestInterceptorOkHttpClient
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
-import io.vonley.mi.di.modules.GuestInterceptorOkHttpClient
 import io.vonley.mi.di.network.SyncService
 import io.vonley.mi.di.network.handlers.ClientHandler
 import io.vonley.mi.di.network.handlers.base.BaseClientHandler
@@ -100,18 +100,18 @@ class SyncServiceImpl constructor(
                         break;
                     }
                 } catch (con: ConnectException) {
-                    "${con.message}".e(TAG)
+                    "${con.message}"//.e(TAG)
                 } catch (e: Throwable) {
-                    "${e.message}".e(TAG)
+                    "${e.message}"//.e(TAG)
                 }
             }
         }
         var socket = cachedTargets[client.ip]?.get(feature)
-        if (socket != null && socket.isClosed) {
+        if (socket != null && (socket.isClosed || !socket.isConnected || socket.isOutputShutdown)) {
             try {
                 val lastPort: Int = socket.port
                 socket = Socket()
-                socket.connect(InetSocketAddress(client.ip, lastPort))
+                socket.connect(InetSocketAddress(client.ip, lastPort), 3000)
                 cachedTargets[client.ip]!![feature] = socket
             } catch (e: Throwable) {
                 cachedTargets[client.ip]!![feature] = null
@@ -292,7 +292,7 @@ class SyncServiceImpl constructor(
             "[FetchConsoles::End] End of Scan #: ${consoles.size}".v(TAG)
             return consoles
         } catch (t: Throwable) {
-             "[FetchConsoles::End] Well... that's not good. ${t.message}".e(TAG, t)
+            "[FetchConsoles::End] Well... that's not good. ${t.message}".e(TAG, t)
         }
         return emptyList()
     }
@@ -324,9 +324,7 @@ class SyncServiceImpl constructor(
                         client.lastKnownReachable = true
                         clients.add(client)
                     } else {
-                        "[Client IP] ${byName.hostAddress ?: byName.canonicalHostName} is unreachable".v(
-                            TAG
-                        )
+                        "[Client IP] ${byName.hostAddress ?: byName.canonicalHostName} is unreachable"
                     }
                 } catch (e: Throwable) {
                     "[Error] ${e.message}".e(TAG)

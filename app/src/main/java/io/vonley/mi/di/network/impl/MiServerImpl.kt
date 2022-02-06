@@ -20,17 +20,14 @@ import io.vonley.mi.di.network.MiServer
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.extensions.e
 import io.vonley.mi.extensions.fromJson
-import io.vonley.mi.models.Device
-import io.vonley.mi.models.Mi
-import io.vonley.mi.models.jbPath
-import io.vonley.mi.models.supported
+import io.vonley.mi.models.*
 import io.vonley.mi.ui.main.MainActivity
-import io.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import io.vonley.mi.utils.SharedPreferenceManager
 import kotlinx.coroutines.*
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
+import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.util.zip.ZipEntry
@@ -52,11 +49,11 @@ class MiServerImpl constructor(
         fun onUnsupported(s: String)
         fun onCommand(mi: Mi<Mi.Cmd>)
         fun onSendPayloadAttempt(attempt: Int)
-        fun onSendPkgSuccess(payload: PayloadAdapter.Payload) {
+        fun onSendPkgSuccess(payload: Payload) {
 
         }
 
-        fun onSendPkgFail(payload: PayloadAdapter.Payload) {
+        fun onSendPkgFail(payload: Payload) {
 
         }
     }
@@ -65,7 +62,7 @@ class MiServerImpl constructor(
     private val callbacks: HashMap<Class<*>, MiJbServerListener> = hashMapOf()
     private val callback: MiJbServerListener = object : MiJbServerListener {
 
-        override fun onSendPkgFail(payload: PayloadAdapter.Payload) {
+        override fun onSendPkgFail(payload: Payload) {
             val name = "onSendPkgFail"
             launch {
                 withContext(Dispatchers.Main) {
@@ -79,7 +76,7 @@ class MiServerImpl constructor(
             }
         }
 
-        override fun onSendPkgSuccess(payload: PayloadAdapter.Payload) {
+        override fun onSendPkgSuccess(payload: Payload) {
             val name = "onSendPkgSuccess"
             launch {
                 withContext(Dispatchers.Main) {
@@ -206,23 +203,23 @@ class MiServerImpl constructor(
         }
     }
     private val miJs: ByteArray = context.assets.open("jb/mi.js").readBytes()
+    private val miJsCached: ByteArray = context.assets.open("jb/mi-cached.js").readBytes()
     private val failHtml: ByteArray = context.assets.open("pages/fail.html").readBytes()
     private val routes: HashMap<String, ByteArray> = hashMapOf()
     private val payloads: HashMap<String, ByteArray> by lazy {
         return@lazy hashMapOf(
-            Pair("6.72", context.assets.open("payloads/goldenhen/672.bin").readBytes()),
-            Pair("7.02", context.assets.open("payloads/goldenhen/702.bin").readBytes()),
-            Pair("7.50", context.assets.open("payloads/goldenhen/750.bin").readBytes()),
-            Pair("7.51", context.assets.open("payloads/goldenhen/751.bin").readBytes()),
-            Pair("7.55", context.assets.open("payloads/goldenhen/755.bin").readBytes()),
-            Pair("9.00", context.assets.open("payloads/goldenhen/900.bin").readBytes())
+            Pair("6.72", context.assets.open("payloads/goldhen/672.bin").readBytes()),
+            Pair("7.02", context.assets.open("payloads/goldhen/702.bin").readBytes()),
+            Pair("7.50", context.assets.open("payloads/goldhen/750.bin").readBytes()),
+            Pair("7.51", context.assets.open("payloads/goldhen/751.bin").readBytes()),
+            Pair("7.55", context.assets.open("payloads/goldhen/755.bin").readBytes()),
+            Pair("9.00", context.assets.open("payloads/goldhen/900.bin").readBytes())
         )
     }
     private val root: String get() = console!!.jbPath
     private var ready: Boolean = false
     private var console: Device? = null
     private var attempts = 3
-
 
     fun create(
         title: String = "ミ (Mi) - PS4 Management Tool",
@@ -324,15 +321,14 @@ class MiServerImpl constructor(
                 s?.let { session ->
                     val uri = session.uri.toString()
                     val console = parse(session)
-                    "URL: $uri".e(TAG)
                     fun installPayload(): Response {
                         val bytes = payloads[uri]!!
                         "PAYLOAD DOES CONTAIN URI: $uri, size: ${bytes.size}".e("BOO YEAH")
-
-                        return newFixedLengthResponse(Response.Status.OK,
+                        return newFixedLengthResponse(
+                            Response.Status.OK,
                             "application/x-newton-compatible-pkg",
-                            ByteArrayInputStream(bytes), bytes.size.toLong())
-
+                            ByteArrayInputStream(bytes), bytes.size.toLong()
+                        )
                     }
                     console?.let {
                         manager.ftpPass
@@ -340,86 +336,109 @@ class MiServerImpl constructor(
                         manager.targetVersion = it.version
                         manager.targetName = it.ip
                         val mime = getMimeType(uri) ?: "text/*"
-                        if (it.supported) {
-                            if (this@MiServerImpl.console?.ip != it.ip) this@MiServerImpl.console =
-                                it
-                            callback.onLog("PS4 -> $uri")
-                            when (uri) {
-                                "/" -> {
-                                    return newFixedLengthResponse(
-                                        Response.Status.OK,
-                                        "text/html",
-                                        read("index.html")
-                                    )
-                                }
-                                "/mi.js" -> {
-                                    return newFixedLengthResponse(
-                                        Response.Status.OK,
-                                        "text/javascript",
-                                        miJs.decodeToString()
-                                    )
-                                }
-                                "/jb/cmd" -> {
-                                    Log.e(TAG, "Method: ${session.method.name}")
-                                    val map = HashMap<String, String>()
-                                    session.parseBody(map)
-                                    val body = session.queryParameterString
-                                    if (BuildConfig.DEBUG) {
-                                        Log.e(TAG, body)
-                                    }
-                                    val mi: Mi<Mi.Cmd> = body.fromJson() ?: return newFixedLengthResponse(
-                                        Response.Status.INTERNAL_ERROR,
-                                        "text/*",
-                                        "unable to parse body"
-                                    )
-                                    callback.onCommand(mi)
-                                    val cmd = mi.data.cmd
-                                    val message = mi.response
-                                    when (cmd) {
-                                        "jb.success" -> {
-                                            callback.onLog("Jailbreak Completed")
-                                            callback.onJailbreakSucceeded(message)
-                                        }
-                                        "jb.failed" -> {
-                                            callback.onLog("Jailbreak Failed")
-                                            callback.onJailbreakFailed(message)
-                                        }
-                                        "send.payload" -> {
-                                            callback.onLog("Sending Payload")
-                                            sendPayload(it)
-                                        }
-                                        else -> return newFixedLengthResponse(
-                                            Response.Status.NOT_FOUND,
-                                            "text/*",
-                                            "invalid cmd"
+                        when {
+                            it.supported -> {
+                                if (this@MiServerImpl.console?.ip != it.ip) this@MiServerImpl.console = it
+                                when (uri) {
+                                    "/" -> {
+                                        return newFixedLengthResponse(
+                                            Response.Status.OK,
+                                            "text/html",
+                                            read("index.html")
                                         )
                                     }
-                                    return newFixedLengthResponse(Response.Status.OK, "text/*", "received")
-                                }
-                                else -> {
-                                    val path = uri.drop(1)
-                                    if (uri.contains(".manifest")) {
-                                        if (!manager.cached) {
-                                            return newFixedLengthResponse(Response.Status.OK, "/*", "")
+                                    "/mi.js" -> {
+                                        val mi = if (manager.cached) {
+                                            miJsCached.decodeToString()
+                                        } else {
+                                            miJs.decodeToString()
                                         }
+                                        return newFixedLengthResponse(
+                                            Response.Status.OK,
+                                            "text/javascript",
+                                            mi
+                                        )
                                     }
-                                    Log.e(TAG, "URI: $uri")
+                                    "/jb/cmd" -> {
+                                        Log.e(TAG, "Method: ${session.method.name}")
+                                        val map = HashMap<String, String>()
+                                        session.parseBody(map)
+                                        val body = map["postData"] ?: run {
+                                            "NO DATA".e(TAG)
+                                            return newFixedLengthResponse(
+                                                Response.Status.INTERNAL_ERROR,
+                                                "text/*",
+                                                "no data"
+                                            )
+                                        }
+                                        "DATA: $body".e(TAG)
+                                        val mi: Mi<Mi.Cmd> = body.fromJson() ?: run {
+                                            "COULD NOT PARSE".e(TAG)
+                                            return newFixedLengthResponse(
+                                                Response.Status.INTERNAL_ERROR,
+                                                "text/*",
+                                                "unable to parse body"
+                                            )
+                                        }
+                                        callback.onCommand(mi)
+                                        val cmd = mi.data.cmd
+                                        val message = mi.response
+                                        when (cmd) {
+                                            "jb.success" -> {
+                                                callback.onLog("[Status] Enjoy!")
+                                                callback.onJailbreakSucceeded(message)
+                                            }
+                                            "jb.failed" -> {
+                                                callback.onLog("[JB:Failed] Somethings not right...")
+                                                callback.onJailbreakFailed(message)
+                                            }
+                                            "send.payload" -> {
+                                                callback.onLog("[Payload] Initializing Payload sender (PS4 about to get blessed.)")
+                                                sendPayload(it)
+                                            }
+                                            else -> return newFixedLengthResponse(
+                                                Response.Status.NOT_FOUND,
+                                                "text/*",
+                                                "invalid cmd"
+                                            )
+                                        }
+                                        return newFixedLengthResponse(
+                                            Response.Status.OK,
+                                            "text/*",
+                                            "received"
+                                        )
+                                    }
+                                    else -> {
+                                        val path = uri.drop(1)
+                                        if (uri.contains(".manifest")) {
+                                            if (!manager.cached) {
+                                                return newFixedLengthResponse(
+                                                    Response.Status.OK,
+                                                    "/*",
+                                                    ""
+                                                )
+                                            }
+                                        }
+                                        Log.e(TAG, "URI: $uri")
 
-                                    return newFixedLengthResponse(
-                                        Response.Status.OK,
-                                        mime,
-                                        read(path)
-                                    )
+                                        return newFixedLengthResponse(
+                                            Response.Status.OK,
+                                            mime,
+                                            read(path)
+                                        )
+                                    }
                                 }
                             }
-                        } else if (payloads.containsKey(uri)) {
-                            return installPayload()
-                        } else {
-                            return newFixedLengthResponse(
-                                Response.Status.OK,
-                                "text/html",
-                                failHtml.decodeToString()
-                            )
+                            payloads.containsKey(uri) -> {
+                                return installPayload()
+                            }
+                            else -> {
+                                return newFixedLengthResponse(
+                                    Response.Status.OK,
+                                    "text/html",
+                                    failHtml.decodeToString()
+                                )
+                            }
                         }
                     } ?: run {
                         if (payloads.containsKey(uri)) {
@@ -483,7 +502,7 @@ class MiServerImpl constructor(
         }
     }
 
-    override fun hostPackage(vararg payloads: PayloadAdapter.Payload): Array<String> {
+    override fun hostPackage(vararg payloads: Payload): Array<String> {
         val urls = payloads.map { payload ->
             val path = "/pkg/${payload.name}"
             this.payloads[path] = payload.data
@@ -524,11 +543,15 @@ class MiServerImpl constructor(
     }
 
     private fun readBytes(path: String): ByteArray {
-        val s = root + path
-        if (BuildConfig.DEBUG) {
-            Log.e(TAG, "Fetching: $s")
+        return try {
+            val s = root + path
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Fetching: $s")
+            }
+            context.assets.open(s).readBytes()
+        } catch (e: Throwable) {
+            ByteArray(0)
         }
-        return context.assets.open(s).readBytes()
     }
 
     private fun createDir(name: String?) {
@@ -568,21 +591,22 @@ class MiServerImpl constructor(
             Log.e(TAG, "Payload Size: ${payload.size}")
             if (payload.isEmpty()) return@let
             val block: suspend CoroutineScope.() -> Unit = {
-                Log.e(TAG, "First we wait like a lion, and watch mira do its thing")
+                callback.onLog("[Payload:Wait] First we will wait 20 seconds for mira+netcat to do its thing.")
                 delay(20000)
-                Log.e(TAG, "Next we pounce and take the opportunity to send gratitude.")
+                callback.onLog("[Payload:Init] Now its time send our payload")
                 attempts = 0
                 while (attempts < ATTEMPT_LIMIT) {
+                    val check = InetAddress.getByName(device.ip).isReachable(3000) ?: break
                     try {
-                        if (BuildConfig.DEBUG) {
-                            Log.e(TAG, "Attempting to connect to ${device.ip}:9021")
-                        }
+                        callback.onLog("[Payload:Connecting] attempting to connect to ${device.ip}:9021")
+
                         val outSock = Socket()
                         val inetSocketAddress = InetSocketAddress(device.ip, 9021)
                         outSock.connect(inetSocketAddress, 10000)
                         val outputStream = outSock.getOutputStream()
-                        val string = "Sending GoldenHen 2.0b2 payload for PS4 ${device.version}"
+                        val string = "[Payload:Connected] Sending GoldHen 2.1 to PS4: ${device.version}"
                         callback.onLog(string)
+                        delay(2000)
                         outputStream.write(payload)
                         outputStream.flush()
                         outputStream.close()
@@ -590,11 +614,8 @@ class MiServerImpl constructor(
                         outSock.close()
                         break
                     } catch (ex: Exception) {
-                        if (BuildConfig.DEBUG) {
-                            Log.e(TAG, "Port not open, ${ex.message}")
-                            Log.e(TAG, "Retrying in 10 seconds")
-                        }
                         attempts++
+                        callback.onLog("[Payload:Retrying:$attempts/3] Attempt #$attempts: unable to connect to PS4...")
                         callback.onSendPayloadAttempt(attempts)
                         delay(10000)
                     }
@@ -607,9 +628,7 @@ class MiServerImpl constructor(
                 this.port9021 = launch(block = block)
             }
         } ?: run {
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "So the payloads aren't event loaded wtf")
-            }
+            "So the payloads aren't event loaded wtf".e(TAG)
         }
     }
 

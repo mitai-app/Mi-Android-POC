@@ -62,7 +62,7 @@ interface Client {
                         return@features feature
                     }
                 } catch (e: Throwable) {
-                    "$ip does not have $feature".e("Client:FailToConnect")
+                    "$ip does not have $feature" //.e("Client:FailToConnect")
                 }
                 return@features null
             } else {
@@ -84,7 +84,7 @@ interface Client {
                             }
                         }
                     } catch (e: Throwable) {
-                        "$ip does not have $feature".e("Client:FailToConnect")
+                        "$ip does not have $feature"//.e("Client:FailToConnect")
                     }
                     return@port null
                 }.distinct().firstOrNull { p -> p != Feature.NONE }

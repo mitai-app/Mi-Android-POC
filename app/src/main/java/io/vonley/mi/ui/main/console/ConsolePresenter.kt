@@ -1,17 +1,17 @@
 package io.vonley.mi.ui.main.console
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import io.vonley.mi.base.BasePresenter
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
 import io.vonley.mi.di.network.SyncService
 import io.vonley.mi.models.Client
 import io.vonley.mi.models.Console
-import io.vonley.mi.models.enums.PlatformType
 import io.vonley.mi.models.enums.Feature
+import io.vonley.mi.models.enums.PlatformType
 import io.vonley.mi.persistence.ConsoleDao
 import io.vonley.mi.utils.SharedPreferenceManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ConsolePresenter @Inject constructor(
@@ -82,6 +82,6 @@ class ConsolePresenter @Inject constructor(
     }
 
     override fun cleanup() {
-
+        sync.removeConsoleListener(this)
     }
 }

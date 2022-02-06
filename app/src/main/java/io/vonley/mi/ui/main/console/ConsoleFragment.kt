@@ -8,12 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import io.vonley.mi.databinding.FragmentConsoleBinding
 import io.vonley.mi.models.Client
+import io.vonley.mi.models.Console
 import io.vonley.mi.ui.dialogs.MiInputDialog
 import io.vonley.mi.ui.main.MainContract
 import io.vonley.mi.ui.main.console.adapters.ConsoleRecyclerAdapter
@@ -23,7 +25,7 @@ import javax.inject.Inject
  * Console Fragment to handle connected clients
  */
 @AndroidEntryPoint
-class ConsoleFragment : Fragment(), ConsoleContract.View {
+class ConsoleFragment : Fragment(), ConsoleContract.View, Observer<List<Console>> {
 
     private var mainView: MainContract.View? = null
 
@@ -73,15 +75,15 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentConsoleBinding.inflate(inflater, container, false)
-        vm.consoles.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                adapter.setData(it)
-            }
-        }
+
+        return binding.root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.consoleRecycler.adapter = adapter
         swipeTouchHelper.attachToRecyclerView(binding.consoleRecycler)
         mainView?.setSummary(presenter.getTargetSummary)
-        return binding.root
+        vm.consoles.observe(viewLifecycleOwner, this)
     }
 
     override fun onAttach(context: Context) {
@@ -97,6 +99,16 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
     override fun onResume() {
         super.onResume()
         presenter.init()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        presenter.cleanup()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        vm.consoles.removeObservers(viewLifecycleOwner)
     }
 
     override fun onDestroyView() {
@@ -134,6 +146,14 @@ class ConsoleFragment : Fragment(), ConsoleContract.View {
 
     override val TAG: String
         get() = ConsoleFragment::class.java.name
+
+    override fun onChanged(consoles: List<Console>?) {
+        consoles?.let { consoles ->
+            if (consoles.isNotEmpty()) {
+                adapter.setData(consoles)
+            }
+        }
+    }
 
 
 }

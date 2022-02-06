@@ -5,7 +5,7 @@ import fi.iki.elonen.NanoHTTPD
 import kotlinx.coroutines.*
 import io.vonley.mi.BuildConfig
 import io.vonley.mi.di.network.impl.MiServerImpl
-import io.vonley.mi.ui.main.payload.adapters.PayloadAdapter
+import io.vonley.mi.models.Payload
 
 interface MiServer : CoroutineScope {
     val activePort: Int
@@ -35,5 +35,5 @@ interface MiServer : CoroutineScope {
 
     fun add(jb: MiServerImpl.MiJbServerListener)
     fun remove(jb: MiServerImpl.MiJbServerListener)
-    fun hostPackage(vararg payload: PayloadAdapter.Payload): Array<String>
+    fun hostPackage(vararg payload: Payload): Array<String>
 }

@@ -17,11 +17,11 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.NavigationUiSaveStateControl
 import androidx.navigation.ui.navigateUp
 import dagger.hilt.android.AndroidEntryPoint
 import io.vonley.mi.R
@@ -67,7 +67,6 @@ class MainActivity : AppCompatActivity(), MainContract.View,
         this.navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         NavigationUI.setupWithNavController(binding.bottomNavigation, navController)
-        NavOptions.Builder().setLaunchSingleTop(true).build()
         navController.addOnDestinationChangedListener(this)
         presenter.init()
     }
@@ -91,8 +90,7 @@ class MainActivity : AppCompatActivity(), MainContract.View,
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.fragment_container)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     /** When key down event is triggered, relay it via local broadcast so fragments can handle it */

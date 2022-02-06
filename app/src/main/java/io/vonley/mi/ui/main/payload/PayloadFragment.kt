@@ -26,11 +26,11 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import io.vonley.mi.BuildConfig
 import io.vonley.mi.databinding.FragmentPayloadBinding
+import io.vonley.mi.models.Payload
 import io.vonley.mi.ui.main.MainContract
 import io.vonley.mi.ui.main.home.dialog
 import io.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import okhttp3.Response
-import okio.source
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
@@ -159,7 +159,7 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
                     val bos = ByteArrayOutputStream()
                     val stream = contentResolver.openInputStream(uri)?.readBytes()
                     stream?.let {
-                        payloadAdapter.add(PayloadAdapter.Payload(name, it))
+                        payloadAdapter.add(Payload(name, it))
                     }?: run {
                         Snackbar.make(
                             requireView(),
@@ -198,7 +198,11 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         ).show()
     }
 
-    override fun onPayloadFailed(payload: PayloadAdapter.Payload) {
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onPayloadFailed(payload: Payload) {
         payloadAdapter.update(payload)
     }
 
@@ -207,11 +211,11 @@ class PayloadFragment : Fragment(), ActivityResultCallback<ActivityResult>, Payl
         binding.root.isRefreshing = false
     }
 
-    override fun onWriting(payload: PayloadAdapter.Payload) {
+    override fun onWriting(payload: Payload) {
 
     }
 
-    override fun onSent(payload: PayloadAdapter.Payload) {
+    override fun onSent(payload: Payload) {
         payloadAdapter.update(payload)
     }
 

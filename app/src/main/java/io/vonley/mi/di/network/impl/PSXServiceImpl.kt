@@ -1,14 +1,15 @@
 package io.vonley.mi.di.network.impl
 
 import io.vonley.mi.di.annotations.SharedPreferenceStorage
-import io.vonley.mi.di.modules.GuestInterceptorOkHttpClient
+import io.vonley.mi.di.annotations.GuestInterceptorOkHttpClient
 import io.vonley.mi.di.network.MiServer
 import io.vonley.mi.di.network.PSXService
 import io.vonley.mi.di.network.SyncService
+import io.vonley.mi.di.network.callbacks.PayloadCallback
 import io.vonley.mi.extensions.*
 import io.vonley.mi.models.Client
+import io.vonley.mi.models.Payload
 import io.vonley.mi.models.enums.Feature
-import io.vonley.mi.ui.main.payload.adapters.PayloadAdapter
 import io.vonley.mi.utils.SharedPreferenceManager
 import kotlinx.coroutines.*
 import okhttp3.Headers
@@ -108,8 +109,8 @@ class PSXServiceImpl @Inject constructor(
 
     override fun uploadBin(
         server: MiServer,
-        payloads: ArrayList<PayloadAdapter.Payload>,
-        callback: PSXService.PSXListener
+        payloads: ArrayList<Payload>,
+        callback: PayloadCallback
     ) {
         launch {
             val bins = payloads.filter { it.name.endsWith(".bin") }
