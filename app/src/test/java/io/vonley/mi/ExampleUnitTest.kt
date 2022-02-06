@@ -21,18 +21,7 @@ class ExampleUnitTest {
     }
 
     @Test
-    fun socket(){
-        val sock = Socket()
-        sock.connect(InetSocketAddress("192.168.1.46", 7887), 3000)
-        var br = sock.getInputStream().bufferedReader()
-        println(br.readLine())
-        val decodeToString = br.readLine()
-        println(decodeToString)
-
-    }
-
-    @Test
-    fun bitch(){
+    fun extract(){
         val extractPlaystation = """\(([^()]*)\)""".toRegex()
         val extractVersion = "([0-9]+(?:\\.[0-9]+)?)".toRegex()
         val string = "Mozilla/5.0 (PlayStation 4 7.55) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.2 Safari/605.1.15"
