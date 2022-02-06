@@ -10,7 +10,7 @@
     "Changed GoldenHen to 2.1",
     "Stability Improvements"
   ],
-  "build": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.1.0",
+  "build": "https://github.com/Mr-Smithy-x/Mi/releases/tag/latest",
   "changelogs": [
     {
       "name": "1.1.0",
@@ -21,7 +21,7 @@
         "GoldenHen 2.1 in this build",
         "Stability"
       ],
-      "build": "https://github.com/Mr-Smithy-x/Mi/releases/tag/1.1.0"
+      "build": "https://github.com/Mr-Smithy-x/Mi/releases/tag/latest"
     },
     {
       "name": "1.0.0",
