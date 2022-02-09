@@ -22,7 +22,6 @@ import androidx.core.database.getStringOrNull
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_f_t_p.*
 import io.vonley.mi.BuildConfig
 import io.vonley.mi.R
 import io.vonley.mi.databinding.FragmentFTPBinding
@@ -107,7 +106,7 @@ class FTPFragment : Fragment(), FTPContract.View, ActivityResultCallback<Activit
 
     override fun onFTPDirOpened(files: Array<out FTPFile>) {
         adapter.set(files)
-        recycler.scrollToPosition(0)
+        binding.recycler.scrollToPosition(0)
         mainView?.setSummary("CWD: ${presenter.currentPath}")
     }
 
