@@ -12,7 +12,7 @@ private fun require(condition: Boolean, message: String) {
 
 private class SemverExt {
     internal companion object {
-        @UseExperimental(ExperimentalContracts::class)
+        @OptIn(ExperimentalContracts::class)
         internal fun parse(input: String): Semver {
             val major: String
             val minor: String
@@ -24,7 +24,8 @@ private class SemverExt {
             val prereleaseDelimiterInRegex = """\${Semver.PRERELEASE_DELIMITER}"""
             val buildMetadataDelimiterInRegex = """\${Semver.BUILD_METADATA_DELIMITER}"""
 
-            val validateRegex = "^([0-9A-Za-z$prereleaseDelimiterInRegex$dotDelimiterInRegex$buildMetadataDelimiterInRegex]+)$".toRegex()
+            val validateRegex =
+                "^([0-9A-Za-z$prereleaseDelimiterInRegex$dotDelimiterInRegex$buildMetadataDelimiterInRegex]+)$".toRegex()
             if (validateRegex.find(input)?.value?.length != input.length) {
                 throw IllegalArgumentException("Invalid character in version ($input)")
             }
@@ -32,7 +33,10 @@ private class SemverExt {
             var remainder = input
             major = "[0-9]+".toRegex().find(remainder)
                 ?.also {
-                    require(remainder.getOrNull(it.range.first - 1) != '-', "Major cannot be negative .($input)")
+                    require(
+                        remainder.getOrNull(it.range.first - 1) != '-',
+                        "Major cannot be negative .($input)"
+                    )
                     remainder = remainder.substring(it.range.last + 1)
                 }
                 ?.value
@@ -48,19 +52,21 @@ private class SemverExt {
                 ?.value
                 ?: "0"
 
-            prereleaseIdentifiers = "(?<=^$prereleaseDelimiterInRegex)([0-9A-Za-z$prereleaseDelimiterInRegex$dotDelimiterInRegex]+)".toRegex()
-                .find(remainder)
-                ?.also { remainder = remainder.substring(it.range.last + 1) }
-                ?.value
-                ?.split(Semver.DOT_DELIMITER)
-                ?: emptyList()
+            prereleaseIdentifiers =
+                "(?<=^$prereleaseDelimiterInRegex)([0-9A-Za-z$prereleaseDelimiterInRegex$dotDelimiterInRegex]+)".toRegex()
+                    .find(remainder)
+                    ?.also { remainder = remainder.substring(it.range.last + 1) }
+                    ?.value
+                    ?.split(Semver.DOT_DELIMITER)
+                    ?: emptyList()
 
-            buildMetadataIdentifiers = "(?<=^$buildMetadataDelimiterInRegex)([0-9A-Za-z$prereleaseDelimiterInRegex$dotDelimiterInRegex]+)".toRegex()
-                .find(remainder)
-                ?.also { remainder = remainder.substring(it.range.last + 1) }
-                ?.value
-                ?.split(Semver.DOT_DELIMITER)
-                ?: emptyList()
+            buildMetadataIdentifiers =
+                "(?<=^$buildMetadataDelimiterInRegex)([0-9A-Za-z$prereleaseDelimiterInRegex$dotDelimiterInRegex]+)".toRegex()
+                    .find(remainder)
+                    ?.also { remainder = remainder.substring(it.range.last + 1) }
+                    ?.value
+                    ?.split(Semver.DOT_DELIMITER)
+                    ?: emptyList()
 
             require(remainder.isEmpty(), "Invalid version ($input)")
 
