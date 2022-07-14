@@ -9,7 +9,7 @@ plugins {
 
 android {
     compileSdk 33
-    ndkVersion "25.0.8775105"
+    ndkVersion '25.0.8775105'
     defaultConfig {
         applicationId "io.vonley.mi"
         minSdk 21
@@ -73,6 +73,7 @@ android {
     lint {
         abortOnError false
     }
+    buildToolsVersion '33.0.0'
 }
 
 dependencies {
@@ -87,6 +88,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
 
     def navigation = "2.5.0"
 
@@ -114,7 +116,7 @@ dependencies {
     implementation("androidx.room:room-runtime:2.4.2")
     implementation 'androidx.room:room-ktx:2.4.2'
 
-    implementation 'com.nanohttpd:nanohttpd-webserver:2.2.0'
+    implementation 'org.nanohttpd:nanohttpd-webserver:2.3.1'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
